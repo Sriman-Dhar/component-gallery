@@ -1,23 +1,21 @@
-import { Link } from 'react-router-dom';
-import { registry } from '../lib/registry';
-import TypeLabel from '../ui/TypeLabel';
+import { catalogue, shipped } from '../lib/catalogue';
+import HeroIntro from '../shell/hero/HeroIntro';
+import LightRail from '../shell/rail/LightRail';
+import TileGrid from '../shell/tiles/TileGrid';
 
+const marks = shipped.map(({ meta }) => ({ slug: meta.slug, date: meta.date }));
+/** Newest shipped first (the feature tile), the week 0 placeholder after them. */
+const tiles = [...shipped].reverse().concat(catalogue.filter((entry) => entry.meta.week === 0));
+
+/** Index: the name and count, the particle light rail (the hero), then the live tile grid. */
 export default function IndexPage() {
   return (
-    <section>
-      <h1 className="mb-6 text-2xl font-semibold">Components</h1>
-      <ul className="divide-y divide-gray-200 border-y border-gray-200">
-        {registry.map(({ meta }) => (
-          <li key={meta.slug} className="flex flex-wrap items-center gap-3 py-3">
-            <Link to={`/components/${meta.slug}`} className="font-medium underline">
-              {meta.name}
-            </Link>
-            <TypeLabel type={meta.type} />
-            <span className="text-sm text-gray-500">Week {meta.week}</span>
-            <span className="text-sm text-gray-500">/components/{meta.slug}</span>
-          </li>
-        ))}
-      </ul>
-    </section>
+    <div className="space-y-20 sm:space-y-24">
+      <section aria-label="Introduction" className="space-y-10 sm:space-y-14">
+        <HeroIntro />
+        <LightRail variant="hero" marks={marks} />
+      </section>
+      <TileGrid entries={tiles} shippedCount={shipped.length} />
+    </div>
   );
 }

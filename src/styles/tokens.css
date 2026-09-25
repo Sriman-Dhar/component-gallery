@@ -1,0 +1,109 @@
+/*
+ * Sriman Gallery v2 tokens, "Light rail studio". Primitive -> semantic.
+ * Colors are space-separated RGB triples so Tailwind can apply alpha: rgb(var(--color-text) / 0.5).
+ * Dark is the default and the flagship. Any element with data-theme scopes its own tokens (the wipe uses this).
+ * One change from the brief: light accent #D9600A measured 3.40:1 on bg #F4F4F7 (fails AA for text),
+ * so it is darkened in-family to #AD4A05 (5.09:1 on bg, 5.59:1 on surface, 4.75:1 on surface-2).
+ */
+:root {
+  /* primitives: dark studio */
+  --p-ink-950: 11 11 14; /* #0B0B0E */
+  --p-ink-925: 19 19 24; /* #131318 */
+  --p-ink-900: 26 26 33; /* #1A1A21 */
+  --p-ink-850: 38 38 46; /* #26262E */
+  --p-mist-50: 243 243 246; /* #F3F3F6 */
+  --p-mist-400: 156 156 171; /* #9C9CAB */
+  /* primitives: light studio */
+  --p-mist-100: 244 244 247; /* #F4F4F7 */
+  --p-mist-0: 255 255 255; /* #FFFFFF */
+  --p-mist-150: 236 236 241; /* #ECECF1 */
+  --p-mist-250: 217 217 225; /* #D9D9E1 */
+  --p-ink-990: 18 18 22; /* #121216 */
+  --p-ink-600: 93 93 107; /* #5D5D6B */
+  /* primitives: the amber ramp and the cool rim */
+  --p-amber-200: 255 195 138; /* #FFC38A glow core */
+  --p-amber-500: 255 138 42; /* #FF8A2A body */
+  --p-amber-700: 173 74 5; /* #AD4A05 light accent (brief #D9600A, darkened for AA) */
+  --p-amber-900: 138 62 10; /* #8A3E0A deep */
+  --p-amber-950: 122 55 8; /* #7A3708 deep, light */
+  --p-rim-300: 124 147 201; /* #7C93C9 */
+  --p-rim-600: 74 102 168; /* #4A66A8 */
+  /* primitives: stage */
+  --p-stage-light: 246 246 248; /* #F6F6F8 */
+  --p-stage-light-grid: 226 226 232; /* #E2E2E8 */
+  --p-stage-dark: 18 18 22; /* #121216 */
+  --p-stage-dark-grid: 36 36 44; /* #24242C */
+
+  /* type */
+  --font-sans: 'Geist', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* motion */
+  --dur-fast: 200ms;
+  --dur-base: 280ms;
+  --dur-slow: 450ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+:root,
+[data-theme='dark'] {
+  color-scheme: dark;
+  --color-bg: var(--p-ink-950);
+  --color-surface: var(--p-ink-925);
+  --color-surface-2: var(--p-ink-900);
+  --color-line: var(--p-ink-850);
+  --color-text: var(--p-mist-50);
+  --color-text-2: var(--p-mist-400);
+  --color-accent: var(--p-amber-500);
+  --color-glow: var(--p-amber-200);
+  --color-accent-deep: var(--p-amber-900);
+  --color-rim: var(--p-rim-300);
+  --key-alpha: 0.18;
+  --rim-alpha: 0.08;
+  --pointer-alpha: 0.06;
+  --shadow-alpha: 0.25;
+  --grain-opacity: 0.05;
+}
+
+[data-theme='light'] {
+  color-scheme: light;
+  --color-bg: var(--p-mist-100);
+  --color-surface: var(--p-mist-0);
+  --color-surface-2: var(--p-mist-150);
+  --color-line: var(--p-mist-250);
+  --color-text: var(--p-ink-990);
+  --color-text-2: var(--p-ink-600);
+  --color-accent: var(--p-amber-700);
+  --color-glow: var(--p-amber-500);
+  --color-accent-deep: var(--p-amber-950);
+  --color-rim: var(--p-rim-600);
+  --key-alpha: 0.1;
+  --rim-alpha: 0.08;
+  --pointer-alpha: 0.05;
+  --shadow-alpha: 0.14;
+  --grain-opacity: 0.04;
+}
+
+/* The stage keeps its own theme, independent of the frame. */
+[data-stage-theme='light'] {
+  color-scheme: light;
+  --stage-bg: var(--p-stage-light);
+  --stage-fg: var(--p-ink-990);
+  --stage-grid: var(--p-stage-light-grid);
+}
+
+[data-stage-theme='dark'] {
+  color-scheme: dark;
+  --stage-bg: var(--p-stage-dark);
+  --stage-fg: var(--p-mist-50);
+  --stage-grid: var(--p-stage-dark-grid);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-fast: 0ms;
+    --dur-base: 0ms;
+    --dur-slow: 0ms;
+  }
+}

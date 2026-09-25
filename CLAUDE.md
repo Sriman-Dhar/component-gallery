@@ -71,7 +71,7 @@ The gallery is judged against the best component work on the web, not against "i
 - No component libraries (no shadcn install, no MUI, no Chakra). Hand-built with Tailwind.
 - Accessible by default: real buttons and labels, keyboard reachable, visible focus,
   respects `prefers-reduced-motion`.
-- Do not change the gallery shell (`src/ui`, `src/pages`) unless the weekly prompt says so.
+- Do not change the gallery shell (`src/shell`, `src/pages`, `src/routes`, `src/styles`) unless the weekly prompt says so.
 
 ## Do not
 

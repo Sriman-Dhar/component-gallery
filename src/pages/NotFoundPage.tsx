@@ -1,13 +1,24 @@
 import { Link } from 'react-router-dom';
+import { FOCUS_RING } from '../shell/focus';
+import LightRail from '../shell/rail/LightRail';
 
+/** 404: the rail with no power, one line, one way back. */
 export default function NotFoundPage() {
   return (
-    <section className="space-y-3">
-      <h1 className="text-2xl font-semibold">Not found</h1>
-      <p className="text-gray-700">There is no component at this address.</p>
-      <Link to="/" className="underline">
-        Back to all components
-      </Link>
+    <section aria-labelledby="not-found" className="space-y-12 pb-12 pt-6">
+      <LightRail variant="unlit" />
+      <div className="space-y-5">
+        <h1 id="not-found" className="text-[36px] font-semibold leading-[40px] tracking-[-0.035em] text-text sm:text-h1">
+          Nothing shipped here.
+        </h1>
+        <p className="max-w-[52ch] text-text-2">No component lives at this address. The index lists every one that does.</p>
+        <Link
+          to="/"
+          className={`inline-flex h-10 items-center rounded-control border border-line bg-surface px-4 font-mono text-small text-text transition-colors duration-fast hover:border-accent/60 ${FOCUS_RING}`}
+        >
+          Back to the index
+        </Link>
+      </div>
     </section>
   );
 }

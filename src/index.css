@@ -1,3 +1,113 @@
+@import './styles/tokens.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  html {
+    background-color: rgb(var(--color-bg));
+  }
+  body {
+    @apply bg-bg font-sans text-body text-text antialiased;
+    font-feature-settings: 'ss01', 'cv11';
+  }
+  ::selection {
+    background-color: rgb(var(--color-accent) / 0.3);
+    color: rgb(var(--color-text));
+  }
+}
+
+@layer components {
+  /* Lighting: the key light top-left, the cool rim bottom-right, the pointer light. Frame only. */
+  .light-key {
+    background: radial-gradient(60% 55% at 12% 0%, rgb(var(--color-accent-deep) / var(--key-alpha)), transparent 70%);
+  }
+  .light-rim {
+    background: radial-gradient(50% 45% at 100% 100%, rgb(var(--color-rim) / var(--rim-alpha)), transparent 70%);
+  }
+  .light-pointer {
+    width: 600px;
+    height: 600px;
+    margin: -300px 0 0 -300px;
+    background: radial-gradient(closest-side, rgb(var(--color-accent) / var(--pointer-alpha)), transparent);
+  }
+
+  /* Grain: fixed, never scrolls. Monochrome noise via feColorMatrix. */
+  .grain {
+    opacity: var(--grain-opacity);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 1.4 -0.2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    mix-blend-mode: overlay;
+  }
+
+  /* Glass: the sticky header only. */
+  .glass {
+    background-color: rgb(var(--color-bg) / 0.7);
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    box-shadow: inset 0 1px 0 rgb(var(--color-text) / 0.06), 0 1px 0 rgb(var(--color-line) / 0.8);
+  }
+
+  /* Stage surface: a faint 1px grid from the stage's own tokens; theme switch crossfades. */
+  .stage-surface {
+    background-color: rgb(var(--stage-bg));
+    background-image: linear-gradient(rgb(var(--stage-grid)) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(var(--stage-grid)) 1px, transparent 1px);
+    background-size: 24px 24px;
+    background-position: -1px -1px;
+    color: rgb(var(--stage-fg));
+    transition: background-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+  }
+
+  /* Tiles: hairline, tinted shadow, border glow on hover or keyboard focus, sheen follows the pointer. */
+  .tile-card {
+    box-shadow: 0 0 0 1px rgb(var(--color-line)), 0 24px 48px -28px rgb(var(--color-accent-deep) / var(--shadow-alpha));
+    transition: box-shadow var(--dur-base) var(--ease-out);
+    transform-style: preserve-3d;
+  }
+  .tile:hover .tile-card,
+  .tile:focus-within .tile-card {
+    box-shadow: 0 0 0 1px rgb(var(--color-accent) / 0.4), 0 0 32px -6px rgb(var(--color-accent) / 0.28),
+      0 28px 56px -28px rgb(var(--color-accent-deep) / 0.5);
+  }
+  .tile-sheen {
+    --sheen-angle: 115deg;
+    --sheen-x: 50%;
+    --sheen-y: 0%;
+    background: radial-gradient(420px circle at var(--sheen-x) var(--sheen-y), rgb(var(--color-glow) / 0.1), transparent 60%),
+      linear-gradient(var(--sheen-angle), transparent 35%, rgb(var(--color-glow) / 0.07) 50%, transparent 65%);
+    opacity: 0;
+    transition: opacity var(--dur-base) var(--ease-out);
+  }
+  .tile:hover .tile-sheen {
+    opacity: 1;
+  }
+
+  /* The rail's lit nodes glow even without WebGL. */
+  .rail-lit {
+    filter: drop-shadow(0 0 4px rgb(var(--color-glow) / 0.9)) drop-shadow(0 0 12px rgb(var(--color-accent) / 0.6));
+  }
+  .rail-pulse {
+    background: linear-gradient(90deg, transparent, rgb(var(--color-accent) / 0.6) 40%, rgb(var(--color-glow)) 50%, rgb(var(--color-accent) / 0.6) 60%, transparent);
+    filter: blur(1px) drop-shadow(0 0 6px rgb(var(--color-glow) / 0.8));
+  }
+
+  /* The code scan: a 2px accent line with a soft glow. */
+  .code-scan {
+    height: 2px;
+    background: rgb(var(--color-accent));
+    box-shadow: 0 0 12px 2px rgb(var(--color-accent) / 0.55), 0 0 40px 8px rgb(var(--color-accent-deep) / 0.35);
+  }
+
+  /* The theme wipe fallback overlay (browsers without view transitions). */
+  .theme-wipe {
+    background-color: rgb(var(--color-bg));
+  }
+}
+
+/* The theme wipe with view transitions: the new frame is revealed by a growing circle. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
