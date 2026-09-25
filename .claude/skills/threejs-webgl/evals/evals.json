@@ -1,0 +1,40 @@
+{
+  "skill_name": "threejs-webgl",
+  "evals": [
+    {
+      "id": 0,
+      "name": "immersive-3d-hero",
+      "prompt": "Build a landing page hero section for 'Driftline', a developer-tools SaaS. I want an immersive dark-theme 3D hero: a particle field that drifts and reacts to the mouse, with the headline 'Ship faster than gravity' and a CTA over it. As you scroll into the next section the particles should morph or scatter with the scroll. Stack: React + TypeScript + Vite + Tailwind. It has to feel award-winning, not templated, and stay smooth on mid-range devices. Set up the project from scratch and make sure it builds.",
+      "expected_output": "A Vite React TS project with an R3F particle hero: shader-driven particles, mouse + scroll reactivity via a single scroll source, DPR cap, reduced-motion and WebGL fallbacks, clean build.",
+      "files": [],
+      "assertions": [
+        "build-passes: tsc --noEmit and npm run build both completed with 0 errors",
+        "uses-r3f-not-raw-renderer: @react-three/fiber is used; no hand-rolled WebGLRenderer in React components",
+        "dpr-capped: Canvas caps device pixel ratio at 2 or below",
+        "no-setstate-in-useframe: per-frame animation mutates refs/uniforms, never React state",
+        "particles-animated-on-gpu: particle motion in the vertex shader, not per-frame JS buffer writes",
+        "single-scroll-source: one scroll system drives the scene",
+        "reduced-motion-handled: prefers-reduced-motion produces a static/minimal experience",
+        "webgl-fallback: styled static fallback when WebGL is unavailable"
+      ]
+    },
+    {
+      "id": 1,
+      "name": "shader-hover-grid",
+      "prompt": "I have a portfolio site idea: a project grid where each project image gets a WebGL hover effect (ripple/RGB-shift distortion, the kind you see on Awwwards sites), images otherwise laid out as a normal responsive grid. Also add a full-screen scroll-driven 3D section above the grid where a simple abstract object rotates and the camera pushes in as you scroll. React + TypeScript + Vite + Tailwind. Use placeholder images. Build it from scratch and verify it compiles.",
+      "expected_output": "A Vite React TS project with DOM-synced shader planes over a real image grid (cover-fit UVs, eased hover uniform), plus a ScrollTrigger-driven 3D section, fallbacks, clean build.",
+      "files": [],
+      "assertions": [
+        "build-passes: tsc --noEmit and npm run build both completed with 0 errors",
+        "uses-r3f-not-raw-renderer: @react-three/fiber manages the render loop",
+        "dpr-capped: every Canvas caps device pixel ratio at 2 or below",
+        "cover-fit-uvs: image shader corrects plane-vs-image aspect so images are not stretched",
+        "eased-hover-uniform: hover uniform eased over time, not snapped",
+        "no-setstate-in-useframe: per-frame animation mutates refs/uniforms, never React state",
+        "single-scroll-source: one scroll system drives the 3D section",
+        "reduced-motion-handled: prefers-reduced-motion produces a static/minimal experience",
+        "dom-grid-integrity: grid stays a real DOM layout that works without WebGL"
+      ]
+    }
+  ]
+}
