@@ -4,7 +4,7 @@ description: Each filter renders its own picked values as removable chips, so th
 domains: [interaction, component-states, information-architecture]
 product_types: [saas, dashboard, productivity, admin]
 tags: [filters, faceted-search, chips, progressive-disclosure, density]
-source: LofiHub Reports task search; Linear, Height
+source: internal reports task search; Linear, Height
 added: 2026-08-13
 ---
 ## Problem

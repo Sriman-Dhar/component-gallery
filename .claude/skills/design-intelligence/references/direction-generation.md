@@ -129,7 +129,7 @@ paragraph is what stops the same debate from reopening halfway through the build
 ## 5. Anti-repeat
 
 ```bash
-python3 ~/.claude/skills/design-intelligence/scripts/kb.py recent
+python3 .claude/skills/design-intelligence/scripts/kb.py recent
 ```
 
 If your instinct matches the family at the top of that list, that is your training data

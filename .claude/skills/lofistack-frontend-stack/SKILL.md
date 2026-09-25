@@ -40,9 +40,6 @@ What scales is **how deep each phase goes**, never **whether it runs**:
 | A page or section | Full Phase 0 brief, full token pass, full QA gate and critique. |
 | A product or redesign | Everything at full depth, plus live research and a states audit. |
 
-The only exception is the standing one: **SIPS/SBD client work is QA-only** — match their
-existing patterns rather than redesigning their product.
-
 If a phase genuinely does not apply (no 3D on a text-only component, no Magic MCP when
 shadcn covers it), say so explicitly in one line and move on. Silence is not a decision, and
 "it seemed small" is not a reason.
@@ -62,7 +59,6 @@ every design task so nothing is skipped by forgetting it exists.
 
 | Skill | Loads when |
 |---|---|
-| **paradox-design** | **ALWAYS, FIRST** — the Paradox OS process wrapper (brief → pipeline → build → measured verification → critique) and the trap list; invoke it before this orchestrator on every design task of any size (not SIPS/SBD) |
 | **design-intelligence** | **ALWAYS** — Phase 0 brief and the closing critique, on every design task of any kind |
 | **ui-ux-pro-max** | **ALWAYS** — tokens, palettes, type pairings, and the UX validation gate |
 | **design-system** | **ALWAYS when tokens or components are produced** — three-layer token architecture (primitive → semantic → component), component specs |
@@ -86,13 +82,12 @@ every design task so nothing is skipped by forgetting it exists.
 | **brand-guidelines** / **brand-review** / **brand-style** | Branded surfaces beside `brand`: brand-guidelines = Anthropic palette only (artifacts), brand-review = copy vs voice, brand-style = small-business style sheet |
 | **canvas-design** / **theme-factory** / **web-artifacts-builder** | Visual art as PNG/PDF; themed artifacts; multi-component claude.ai artifacts (loads with artifact-design) |
 | **create-viz** / **data-visualization** | Python-rendered charts (matplotlib, seaborn, plotly) — dataviz still reads first for form and colour |
-| **pptx** / **slack-gif-creator** | A .pptx file in or out (with slides); animated GIFs for Slack (with remotion-video when rendered) |
+| **pptx** / **slack-gif-creator** | A .pptx file in or out (with slides); animated GIFs for chat tools (with remotion-video when rendered) |
 | **project-scoped skills** | **Check `./.claude/skills/` FIRST on every project** — e.g. `lofi-motion` and `responsive-pass` exist in the LofiStack frontends and override general guidance for those repos |
 
 ## SURFACE ROUTER — what am I making?
 
 Find the row, load everything in it. This removes the judgment call about which skills apply.
-**Every row below starts with `paradox-design`** (the process wrapper); it is implied in each mandatory set.
 
 | Building | Mandatory set |
 |---|---|
@@ -175,7 +170,7 @@ ui-ux-pro-max usually returns** — its actual output is what you accept or reje
 brief, and you cannot reject output you never generated:
 
 ```
-python3 ~/.claude/skills/ui-ux-pro-max/scripts/search.py "<project + vibe>" --design-system -p "<ProjectName>"
+python3 .claude/skills/ui-ux-pro-max/scripts/search.py "<project + vibe>" --design-system -p "<ProjectName>"
 ```
 
 Expect to disagree with some of it. On a trust-first fintech brief it returned a purple accent,
@@ -225,17 +220,24 @@ and density values, so don't re-derive them from scratch.
 - **design-taste-frontend WINS on layout and motion direction** — composition, section rhythm,
   where things sit, how they move, and what NOT to do (anti-generic enforcement).
 
-### Phase 3 — COMPONENTS (shadcn MCP → 21st.dev Magic MCP)
+### Phase 3 — COMPONENTS (shadcn MCP → 21st.dev Magic MCP, when available)
 Never hand-roll a component that already exists.
 
+**Not available here, skip:** the shadcn MCP and the 21st.dev Magic MCP are not connected in
+Claude Code cloud. Do not fake their output. Skip the two MCP queries below, say so in the
+summary, and hand-build the component with Tailwind against the locked tokens instead — this
+gallery also disallows component libraries (no shadcn install, no MUI, no Chakra), so a
+hand-built component is the expected path here regardless of MCP availability.
+
 - **Standard primitives** (button, input, dialog, dropdown, table, form, tabs, card, sheet, etc.):
-  query the **shadcn MCP** for the real, current component API before writing code. Use the
-  actual API — do not guess props.
+  where the MCP is available, query the **shadcn MCP** for the real, current component API
+  before writing code and use the actual API — do not guess props. Here, build it by hand.
 - **Novel / marketing components** (heroes, pricing sections, bento grids, feature showcases,
-  animated CTAs): pull variants from the **21st.dev Magic MCP** and adapt them to the locked
-  tokens.
+  animated CTAs): where the MCP is available, pull variants from the **21st.dev Magic MCP** and
+  adapt them to the locked tokens. Here, design and build it by hand against the brief.
 - **Rule:** if shadcn provides it, use shadcn. Only reach for Magic MCP for the marketing/novel
-  surface shadcn doesn't cover. Never hand-roll a primitive shadcn already ships.
+  surface shadcn doesn't cover. Never hand-roll a primitive shadcn already ships — unless
+  neither MCP is available, in which case hand-building is correct.
 - **Load `ui-styling`** for the implementation itself — shadcn/Radix patterns, Tailwind
   composition, theming, dark mode, and the accessibility behaviour of dialogs, forms, tables
   and dropdowns.
@@ -274,7 +276,7 @@ no raw scroll listeners.
 Run UX validation and reject AI-slop before shipping:
 
 ```
-python3 ~/.claude/skills/ui-ux-pro-max/scripts/search.py "<component/page>" --domain ux
+python3 .claude/skills/ui-ux-pro-max/scripts/search.py "<component/page>" --domain ux
 ```
 
 Check every item:

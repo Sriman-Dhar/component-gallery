@@ -161,7 +161,7 @@ Anything that survived extraction goes into the knowledge base in the same sessi
 you still remember the nuance:
 
 ```bash
-python3 ~/.claude/skills/design-intelligence/scripts/kb.py add --kind pattern \
+python3 .claude/skills/design-intelligence/scripts/kb.py add --kind pattern \
   --name "..." --description "..." \
   --domains "layout,typography" --product-types "fintech,saas" \
   --tags "density,trust" --source "mercury.com" --body-file /tmp/entry.md

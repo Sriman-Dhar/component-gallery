@@ -124,7 +124,7 @@ Full interrogation checklist and worked examples: `references/decision-engine.md
 Check the library first. It is cheaper, and it compounds.
 
 ```bash
-python3 ~/.claude/skills/design-intelligence/scripts/kb.py coverage "<product type + aesthetic + hard problem>"
+python3 .claude/skills/design-intelligence/scripts/kb.py coverage "<product type + aesthetic + hard problem>"
 ```
 
 The verdict tells you what to do next:
@@ -198,7 +198,7 @@ coherent** — if a choice cannot be justified by the Design Read, it is noise.
 Before locking anything, check what you shipped recently:
 
 ```bash
-python3 ~/.claude/skills/design-intelligence/scripts/kb.py recent
+python3 .claude/skills/design-intelligence/scripts/kb.py recent
 ```
 
 If the direction you are drawn to is the same family as the last comparable project,
@@ -330,7 +330,7 @@ because later never comes and the detail is gone by then:
 
 ```bash
 # A pattern worth reusing
-python3 ~/.claude/skills/design-intelligence/scripts/kb.py add --kind pattern \
+python3 .claude/skills/design-intelligence/scripts/kb.py add --kind pattern \
   --name "Name of the pattern" \
   --description "One line: what it is and what it solves" \
   --domains "layout,motion" --product-types "saas,dashboard" \
@@ -338,7 +338,7 @@ python3 ~/.claude/skills/design-intelligence/scripts/kb.py add --kind pattern \
   --body-file /tmp/entry.md
 
 # The direction you shipped (feeds the anti-repeat ledger)
-python3 ~/.claude/skills/design-intelligence/scripts/kb.py add --kind direction \
+python3 .claude/skills/design-intelligence/scripts/kb.py add --kind direction \
   --name "Project — direction name" --description "One line" \
   --project "Client X" --family "cold luxury" --body "What worked, what I'd change."
 ```

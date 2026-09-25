@@ -4,7 +4,7 @@ description: Let the action happen immediately and offer a reversal, rather than
 domains: [interaction, component-states, motion]
 product_types: [saas, productivity, email, mobile, ecommerce]
 tags: [destructive-actions, optimistic-ui, toast, error-prevention, reversibility]
-source: Gmail, Linear, Notion, Slack, iOS
+source: Gmail, Linear, Notion, iOS
 added: 2026-08-12
 ---
 

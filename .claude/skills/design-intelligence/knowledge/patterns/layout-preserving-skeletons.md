@@ -4,7 +4,7 @@ description: Loading states shaped like the content that is coming, instead of a
 domains: [interaction, motion, component-states]
 product_types: [saas, dashboard, ecommerce, content, mobile]
 tags: [loading, perceived-performance, layout-stability, skeleton]
-source: Facebook, Linear, Vercel, YouTube, Slack
+source: Facebook, Linear, Vercel, YouTube
 added: 2026-08-12
 ---
 

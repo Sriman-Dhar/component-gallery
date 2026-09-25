@@ -4,7 +4,7 @@ description: Re-skin a dense ported module to the host product's own idiom: real
 domains: [layout, components, responsive]
 product_types: [saas, dashboard, admin]
 tags: [buttons, status-chip, responsive-table, consistency, finance]
-source: LofiHub Finance 2026-08-19
+source: internal finance module, 2026-08-19
 added: 2026-08-19
 ---
 **Mechanism:** A dense "instrument" module inside a product whose other screens use a friendlier idiom (icon tabs, pill buttons, chips) gets re-skinned to that idiom rather than to a new aesthetic: actions become real buttons with a single primary per row, statuses become icon+word chips, the type scale moves up one step, and wide tables become stacked cards below `md` while the table stays above.

@@ -68,8 +68,6 @@ The gallery is judged against the best component work on the web, not against "i
   design-system, ui-styling, brand, the gsap-* skills for motion, threejs-webgl for 3D).
 - Those skills name MCP servers (shadcn MCP, 21st.dev Magic MCP). They are NOT available in
   Claude Code cloud. Skip those steps and say so in your summary. Never fake their output.
-- The `paradox-*` skills mention memory files and trackers that do not exist here. Use their
-  process and quality rules; skip the steps that need local files.
 - No component libraries (no shadcn install, no MUI, no Chakra). Hand-built with Tailwind.
 - Accessible by default: real buttons and labels, keyboard reachable, visible focus,
   respects `prefers-reduced-motion`.

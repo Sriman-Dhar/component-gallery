@@ -4,7 +4,7 @@ description: A money-entry form shows the exact Dr/Cr legs it will post as the u
 domains: [forms, content]
 product_types: [finance, internal-tool, saas]
 tags: [journal, preview, trust, plain-language]
-source: LofiHub Finance part 2
+source: internal finance module
 added: 2026-08-18
 ---
 Mechanism: a pure client function mirrors the server's posting maths and renders one mono line 'Label Dr X · Account Cr X'; the server re-derives and is authoritative. Problem: double-entry feels opaque; users fear posting. Why it works: the consequence is visible at the moment of decision, in the same words the journal will use. Breaks: if the client mirror drifts from the server (keep both under tests, keep the server the authority). Transfer: any form whose save has non-obvious downstream effects (permissions, billing).
