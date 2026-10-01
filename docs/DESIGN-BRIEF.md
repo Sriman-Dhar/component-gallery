@@ -1,7 +1,7 @@
-# CREATIVE BRIEF v2 — Sriman Gallery (component gallery for the 90 day build challenge)
+# CREATIVE BRIEF v2 — Sriman's Gallery (component gallery for the 90 day build challenge)
 
 Updated 2026-10-01 (index showcase pass: lit type, lit fraction, rail scene, lit stages, atmosphere; then the live
-orrery and the Clash Display swap).
+orrery; then the editorial serif pass: Zodiak replaces Clash Display, the two tone hero, the rename to "Sriman's Gallery").
 
 v1 ("specimen sheet", warm paper, quiet motion) was rejected on 2026-09-25: the gallery itself must be UI/UX rich and
 animated, a showcase piece, not a catalogue. v2 replaces it entirely. Nothing from v1's palette or type survives.
@@ -27,7 +27,7 @@ Vercel's product pages (dark studio, grid texture, crisp DOM type over a canvas 
 pointer but never fights the text).
 
 **Visual language**
-- Structure: max-w 1280, 12-col grid. Index: HERO (left, 7 cols: the lit name, the pace line, then the lit fraction,
+- Structure: max-w 1280, 12-col grid. Index: HERO (left, 7 cols: the editorial statement, the lit roman name over the italic amber pace line, then the lit fraction,
   an oversized lit numerator over a ghosted outline "/30" and a micro rail of 30 ticks with the shipped ones lit;
   right, 5 cols: the ORRERY, the live 3D object, its foot leaning into the rail below; phones: the orrery scales
   into its own row under the fraction, just above the rail; full width below: the particle light rail scene) → BRIDGE (a rail station heading,
@@ -44,21 +44,36 @@ pointer but never fights the text).
   the fill meets that section, lighting as it is reached and jumping there on click; below lg a 2px amber progress
   line under the header. 404: unlit rail with a flicker →
   "Nothing shipped here." → link home. No tabs hide Code or Prompt.
-- Typography (updated 2026-10-01, second pass: Bricolage Grotesque read quirky and editorial, the owner asked for
-  "modern"): the DISPLAY face is Clash Display (Fontshare, free license) at 500 and 600 only, a sleek geometric
-  tech face (Linear and Vercel energy, not editorial). 600 carries the big moments (the hero name, the count, the
-  detail № and component name, the 404 line, the header brand); 500 carries section headings, tile names and the
-  ghosted "/30". Tracking: 0 at 22, -0.005em at 28, -0.01em at 20 (brand), -0.015 to -0.02em at 40 to 64,
-  -0.02em on the № at 72 to 112, -0.03em on the count at 96 to 136. No font-bold anywhere on the display face
-  (700 is not loaded; it would fall back to 600). Geist stays for body and UI (400/500/600), Geist Mono for
-  metadata, prompt and code. Scale 12 / 14 / 16 / 20 / 22 / 28 / 40 / 56 / 64 / 72 / 112 / 136. Oversized moments:
-  the index count at 136 (96 on phones, counts up on load), the detail № at 112 from lg (72 below). Fonts: one
-  Fontshare stylesheet (clash-display@500,600, with a trailing comma in the list; without it the API appends an
-  unasked pairing family) and one Google Fonts <link> for Geist and Geist Mono, both display=swap; a metric
-  fallback face ('Clash Fallback', Arial at size-adjust 112% with ascent 79.5%, descent 22.3%, gap 8%, measured
-  from the Clash font file) sits in the stack so the swap barely shifts layout.
+- Typography (updated 2026-10-01, third pass). The owner sent a reference: a big editorial display serif, quiet
+  roman lines in near-black, then an accent line in the italic of the same serif in a saturated colour ("style
+  font... see how eye catching it is"). That reference explicitly sanctions a serif, overriding the earlier
+  no-serif rule. The DISPLAY face is Zodiak (Fontshare, free license), a sharp high-contrast modern serif whose
+  italic is a true cursive italic, not a slanted roman. Chosen over Gambetta and Sentient (the brief's
+  alternatives) because its italic has the most character at display sizes and it ships a variable wght axis for
+  both roman and italic, so every weight comes from two files. Loaded as `zodiak@1,2,` (the variable roman and
+  italic; the trailing comma stops the API appending a pairing family).
+  THE TWO TONE HERO (the signature, modeled on the reference): line 1 "Sriman's Gallery" in the roman at 500, text
+  colour, tracking -0.025em, leading 1.02, 46 to 76px (13vw below lg, 5.8vw from lg, so one line on desktop and
+  two on phones); then the pace line reborn as the accent, "thirty components in thirteen weeks." (lower case: it
+  continues the name as one sentence in two voices), in the ITALIC at 500, 28 to 54px (9vw / 4.2vw), leading 1.12,
+  text-wrap balance so it breaks into two even lines, painted with the amber ramp (--accent-line-top to
+  --accent-line-bottom, background-clip text) and swept once by a sheen (--accent-sheen) that parks off the right
+  edge. The roman line keeps the letter light (heat follows the pointer). Italic descender rule (hard): leading
+  1.1 minimum plus a padding reserve on every clip box: the accent's ink box pads 0.16em under and 0.1em at the
+  ends (box-decoration-break: clone, so every line fragment gets it), RiseText's word masks pad 0.12em under and
+  0.06em at the ends. Measured: 12.3px clear under the deepest descender at 54px, 0 pixels lost with clipping on
+  versus off at 320, 375 and 1280.
+  Per surface: header brand roman 600 at 21px (-0.015em); lit numerator roman 600 at 96/136; ghost "/30" italic 400
+  outline; detail № roman 600 at 72/112; detail name roman 500 at 40/60 (-0.02 to -0.025em); section headings
+  italic 400 at 30px in text colour (the hero's italic voice, quieter); tile names roman 500 at 23px; "Next: Week N"
+  italic 400 in text-2; 404 "Nothing shipped" roman 500 with "here." in the amber italic ink. The apostrophe is set
+  as U+2019 on screen (typeset() in src/lib/site.ts); titles, meta and accessible names keep the plain string.
+  Geist stays for body and UI (400/500/600), Geist Mono for metadata, prompt and code. A metric fallback face
+  ('Zodiak Fallback', Georgia and Georgia Italic at size-adjust 119% with ascent 83.2%, descent 23.5%, gap 7.6%,
+  measured from the Zodiak files) sits in the stack so the swap barely shifts layout.
   Tokens: --font-display / --font-sans / --font-mono in tokens.css, Tailwind font-display / font-sans / font-mono.
-  Never Inter, Fraunces or Instrument Serif; no serif.
+  Never Inter, Fraunces or Instrument Serif. The dev-only font lab keeps Zodiak first (the default) with Clash and
+  five sans candidates to compare by eye.
 - Color (semantic tokens, both frame themes real, dark is the default and the flagship):
   Dark: bg #0B0B0E · surface #131318 · surface-2 #1A1A21 · line #26262E · text #F3F3F6 · text-2 #9C9CAB ·
   accent ramp: glow #FFC38A (core) · accent #FF8A2A (body) · accent-deep #8A3E0A (shadow) · rim #7C93C9 (cool,
@@ -66,6 +81,9 @@ pointer but never fights the text).
   Light: bg #F4F4F7 · surface #FFFFFF · surface-2 #ECECF1 · line #D9D9E1 · text #121216 · text-2 #5D5D6B ·
   accent #D9600A (AA on light) · glow #FF8A2A · accent-deep #7A3708 · rim #4A66A8. Every text pair AA measured;
   accent text on dark bg only where ratio ≥ 4.5 (#FF8A2A on #0B0B0E is 8.3, fine).
+  Hero accent line (2026-10-01): dark ramp #FFC38A to #FF8A2A (12.57 and 8.35 on bg), sheen #FFECD6 (17.05);
+  light ramp #AD4A05 to #7A3708 (5.09 and 8.05), sheen #8A3E0A (6.9), a darkening sweep, since amber-500 on the
+  light bg (2.1) would dip below large-text AA mid sweep. No purple anywhere.
 - Light (the craft floor): a fixed radial key light top-left in accent-deep at 18% over the bg, a cool rim
   bottom-right at 8%, three ultra-soft beams falling from the top of the page (glow at 5%, blurred, drifting over
   11 to 17s, lighter on phones), a fixed vignette pulling the eye to the center (black at 55% dark, 4% light), and
