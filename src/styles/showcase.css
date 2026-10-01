@@ -102,3 +102,24 @@
 .rail-label {
   fill: color-mix(in srgb, rgb(var(--color-heat)) calc(var(--heat, 0) * 100%), rgb(var(--color-text-2)));
 }
+
+/* The orrery (hero, right): a warm atmosphere behind it with a faint cool rim, and the still's core.
+   Both scale with --bloom-alpha, so they step down on the light frame. */
+.orrery-atmos {
+  background: radial-gradient(closest-side, rgb(var(--color-accent) / calc(var(--bloom-alpha) * 0.5)), rgb(var(--color-accent-deep) / calc(var(--bloom-alpha) * 0.4)) 30%, transparent 70%),
+    radial-gradient(50% 42% at 50% 50%, transparent 70%, rgb(var(--color-rim) / calc(var(--bloom-alpha) * 0.12)), transparent);
+}
+.orrery-stop-core {
+  stop-color: rgb(var(--color-glow));
+}
+.orrery-stop-body {
+  stop-color: rgb(var(--color-accent));
+  stop-opacity: 0.45;
+}
+.orrery-stop-clear {
+  stop-color: rgb(var(--color-accent));
+  stop-opacity: 0;
+}
+.orrery-hot {
+  fill: color-mix(in srgb, rgb(var(--color-glow)) 40%, rgb(var(--color-text)));
+}
