@@ -28,6 +28,15 @@
   --p-amber-950: 122 55 8; /* #7A3708 deep, light */
   --p-rim-300: 124 147 201; /* #7C93C9 */
   --p-rim-600: 74 102 168; /* #4A66A8 */
+  /* primitives: component field neutrals and status hues (read by component themes over literal fallbacks) */
+  --p-warm-250: 200 196 190; /* #C8C4BE placeholder dash, light */
+  --p-warm-500: 140 135 128; /* #8C8780 field border, light (3:1 on white and on the stage) */
+  --p-slate-500: 120 120 132; /* #787884 field border, dark */
+  --p-ink-750: 72 72 84; /* #484854 placeholder dash, dark */
+  --p-red-600: 194 37 58; /* #C2253A error, light (4.5:1 on white) */
+  --p-red-300: 255 107 122; /* #FF6B7A error, dark */
+  --p-green-600: 21 128 61; /* #15803D success, light (3:1+ on white) */
+  --p-green-400: 74 222 128; /* #4ADE80 success, dark */
   /* primitives: stage */
   --p-stage-light: 246 246 248; /* #F6F6F8 */
   --p-stage-light-grid: 226 226 232; /* #E2E2E8 */
