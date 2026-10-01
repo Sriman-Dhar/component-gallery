@@ -3,6 +3,7 @@ import { useLocation, useOutlet } from 'react-router-dom';
 import { gsap, motionAllowed, ScrollTrigger } from '../lib/motion';
 
 /**
+ * Opacity only, never visibility, so a demo can take focus while its view fades in.
  * Route continuity: the leaving view fades and lifts 12px (160ms), then the entering view rises 16px
  * into place (200ms). Navigation is never blocked; reduced motion swaps instantly.
  */
@@ -24,7 +25,7 @@ export default function RouteTransition() {
       window.scrollTo(0, 0);
     };
     if (!motionAllowed() || !view.current) return swap();
-    const out = gsap.to(view.current, { autoAlpha: 0, y: -12, duration: 0.16, ease: 'power2.in', onComplete: swap });
+    const out = gsap.to(view.current, { opacity: 0, y: -12, duration: 0.16, ease: 'power2.in', onComplete: swap });
     return () => {
       out.kill();
     };
@@ -33,9 +34,9 @@ export default function RouteTransition() {
   useLayoutEffect(() => {
     if (!view.current) return;
     if (motionAllowed()) {
-      gsap.fromTo(view.current, { autoAlpha: 0, y: 16 }, { autoAlpha: 1, y: 0, duration: 0.2, ease: 'power2.out', clearProps: 'transform' });
+      gsap.fromTo(view.current, { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.2, ease: 'power2.out', clearProps: 'transform' });
     } else {
-      gsap.set(view.current, { autoAlpha: 1, clearProps: 'transform' });
+      gsap.set(view.current, { opacity: 1, clearProps: 'transform' });
     }
     ScrollTrigger.refresh();
   }, [shown.key]);

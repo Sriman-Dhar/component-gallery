@@ -19,7 +19,7 @@ export default function Stage({ entry }: { entry: GalleryEntry }) {
   const { contextSafe } = useGSAP(
     () =>
       withMotion(() => {
-        gsap.from('.stage-frame', { y: 24, autoAlpha: 0, duration: 0.6, ease: 'power3.out', delay: 0.15 });
+        gsap.from('.stage-frame', { y: 24, opacity: 0, duration: 0.6, ease: 'power3.out', delay: 0.15 });
       }),
     { scope: root },
   );
@@ -51,7 +51,7 @@ export default function Stage({ entry }: { entry: GalleryEntry }) {
         <div
           ref={viewport}
           data-width={width}
-          className="mx-auto flex min-h-[520px] w-full items-center justify-center overflow-auto border-x border-dashed p-8"
+          className="mx-auto flex min-h-[520px] w-full items-center justify-center overflow-auto border-x border-dashed p-4 sm:p-8"
           style={{ borderColor: width === 'full' ? 'transparent' : 'rgb(var(--stage-fg) / 0.18)' }}
         >
           <DemoBoundary

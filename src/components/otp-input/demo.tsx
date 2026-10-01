@@ -1,100 +1,106 @@
 import { useEffect, useRef, useState } from 'react';
+import DemoShell from '../../shell/demo/DemoShell';
+import { DEMO_CHIP } from '../../shell/demo/demoTheme';
+import StateSwitch from '../../shell/demo/StateSwitch';
 import OtpInput from './OtpInput';
 
 /** The demo accepts one code. Anything else is rejected, so the error path is one wrong digit away. */
 const DEMO_CODE = '246810';
 const REJECTED = 'That code did not match. Try again.';
+const CHECK_MS = 1100;
+/** The success sweep plays on the cells before the accepted message replaces them. */
+const SWEEP_MS = 700;
+const COPIED_MS = 2000;
 
-const DEMO_THEME =
-  '[--demo-fg:var(--stage-fg,18_18_22)] [--demo-ring:var(--p-amber-700,173_74_5)] [[data-stage-theme=dark]_&]:[--demo-ring:var(--p-amber-500,255_138_42)]';
-const CHIP =
-  'inline-flex min-h-[44px] items-center gap-2 rounded-full border border-[rgb(var(--demo-fg)/0.18)] px-4 text-[14px] font-medium outline-none transition-colors duration-200 hover:border-[rgb(var(--demo-fg)/0.4)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[rgb(var(--demo-ring))] disabled:opacity-50';
+type Phase = 'entry' | 'verifying' | 'success' | 'accepted';
 
-/** A sign-in verification step: the code row, plus controls to copy the code, hold the disabled state, or force an error. */
+/** A sign-in verification step: the code row, plus quiet controls to copy the code, force an error, or disable the field. */
 export default function OtpInputDemo() {
-  const [verifying, setVerifying] = useState(false);
+  const [phase, setPhase] = useState<Phase>('entry');
   const [holdDisabled, setHoldDisabled] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [accepted, setAccepted] = useState(false);
   const [round, setRound] = useState(0);
   const [copied, setCopied] = useState(false);
   const timer = useRef<number>();
+  const copyTimer = useRef<number>();
 
-  useEffect(() => () => window.clearTimeout(timer.current), []);
+  useEffect(
+    () => () => {
+      window.clearTimeout(timer.current);
+      window.clearTimeout(copyTimer.current);
+    },
+    [],
+  );
 
   const verify = (code: string) => {
-    setVerifying(true);
+    setPhase('verifying');
+    window.clearTimeout(timer.current);
     timer.current = window.setTimeout(() => {
-      setVerifying(false);
-      if (code === DEMO_CODE) setAccepted(true);
-      else setError(REJECTED);
-    }, 1100);
+      if (code !== DEMO_CODE) {
+        setPhase('entry');
+        setError(REJECTED);
+        return;
+      }
+      setPhase('success');
+      timer.current = window.setTimeout(() => setPhase('accepted'), SWEEP_MS);
+    }, CHECK_MS);
   };
 
   const copyCode = async () => {
+    window.clearTimeout(copyTimer.current);
     try {
       await navigator.clipboard.writeText(DEMO_CODE);
       setCopied(true);
+      copyTimer.current = window.setTimeout(() => setCopied(false), COPIED_MS);
     } catch {
       setCopied(false);
     }
   };
 
   const restart = () => {
-    setAccepted(false);
+    setPhase('entry');
     setRound((n) => n + 1);
   };
 
-  return (
-    <div className={`${DEMO_THEME} flex w-full max-w-[460px] flex-col gap-8 py-4 font-sans text-[rgb(var(--demo-fg))]`}>
-      <div className="flex flex-col gap-2">
-        <p className="text-[28px] font-semibold leading-8 tracking-[-0.02em]">Check your phone</p>
-        <p className="text-[16px] leading-6 text-[rgb(var(--demo-fg)/0.72)]">
-          We sent a 6 digit code to the number ending 4821. For this demo it is {DEMO_CODE}.
-        </p>
-      </div>
+  const settled = phase !== 'entry';
 
-      {accepted ? (
-        <div role="status" className="flex min-h-[144px] flex-col items-start justify-center gap-3">
+  return (
+    <DemoShell
+      title="Check your phone"
+      lede={`We sent a six-digit code to the number ending 4821. For this demo it is ${DEMO_CODE}.`}
+      controls={
+        <>
+          <button type="button" onClick={copyCode} className={`${DEMO_CHIP} min-w-[10.5rem] justify-center`}>
+            {copied ? 'Copied, now paste it' : 'Copy the demo code'}
+          </button>
+          <button type="button" onClick={() => setError(REJECTED)} disabled={settled} className={DEMO_CHIP}>
+            Show the error
+          </button>
+          <StateSwitch label="Disabled" on={holdDisabled} onToggle={() => setHoldDisabled((v) => !v)} disabled={settled} />
+        </>
+      }
+    >
+      {phase === 'accepted' ? (
+        <div role="status" className="flex min-h-[144px] w-full flex-col items-start justify-center gap-3">
           <p className="text-[20px] font-semibold leading-7">Code accepted. You are signed in.</p>
-          <button type="button" onClick={restart} className={CHIP}>
+          <button type="button" onClick={restart} className={DEMO_CHIP}>
             Start over
           </button>
         </div>
       ) : (
-        <div className="min-h-[144px]">
+        <div className="min-h-[144px] w-full">
           <OtpInput
             key={round}
+            autoFocus
             onComplete={verify}
-            disabled={verifying || holdDisabled}
+            verifying={phase === 'verifying'}
+            success={phase === 'success'}
+            disabled={holdDisabled}
             error={error}
             onErrorReset={() => setError(null)}
-            hint={verifying ? 'Checking the code' : undefined}
           />
         </div>
       )}
-
-      <div role="group" aria-label="Demo controls" className="flex flex-wrap gap-3">
-        <button type="button" onClick={copyCode} className={CHIP}>
-          {copied ? 'Code copied, now paste it' : 'Copy the demo code'}
-        </button>
-        <button type="button" onClick={() => setError(REJECTED)} disabled={accepted || verifying} className={CHIP}>
-          Show the error
-        </button>
-        <button
-          type="button"
-          role="switch"
-          aria-checked={holdDisabled}
-          onClick={() => setHoldDisabled((v) => !v)}
-          className={CHIP}
-        >
-          <span
-            aria-hidden="true"
-            className={`h-3 w-3 rounded-full border-[1.5px] border-[rgb(var(--demo-fg)/0.6)] ${holdDisabled ? 'bg-[rgb(var(--demo-fg))]' : ''}`}
-          />
-          Disabled
-        </button>
-      </div>
-    </div>
+    </DemoShell>
   );
 }
