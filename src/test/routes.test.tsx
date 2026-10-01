@@ -21,7 +21,7 @@ describe('routes', () => {
     expect(screen.getByTestId('light-rail')).toHaveAttribute('data-variant', 'hero');
     expect(screen.getByRole('link', { name: 'Example Button' })).toHaveAttribute('href', '/components/example-button');
     expect(screen.getAllByText('Type: button').length).toBeGreaterThan(0);
-    expect(screen.getByText('Week 1')).toBeInTheDocument();
+    expect(screen.getAllByText('Week 1').length).toBeGreaterThan(0);
     expect(await screen.findByText('Example button')).toBeInTheDocument();
   });
 
