@@ -5,6 +5,8 @@ import MagneticButton from './MagneticButton';
 
 const HINT = 'Bring the pointer close, or press Tab to reach it.';
 const JOINED = 'You are on the list.';
+/** Demo only: a beat before loading starts, so Enter shows the press the way Space does. */
+const PRESS_BEAT_MS = 120;
 /** How long the joined caption stays before the hint returns. */
 const JOINED_MS = 3000;
 
@@ -25,13 +27,17 @@ export default function MagneticButtonDemo() {
   const join = () => {
     clearTimers();
     setJoined(false);
-    setPending(true);
     timers.current.push(
       window.setTimeout(() => {
-        setPending(false);
-        setJoined(true);
-        timers.current.push(window.setTimeout(() => setJoined(false), JOINED_MS));
-      }, 1600),
+        setPending(true);
+        timers.current.push(
+          window.setTimeout(() => {
+            setPending(false);
+            setJoined(true);
+            timers.current.push(window.setTimeout(() => setJoined(false), JOINED_MS));
+          }, 1600),
+        );
+      }, PRESS_BEAT_MS),
     );
   };
 
@@ -42,7 +48,7 @@ export default function MagneticButtonDemo() {
         <>
           <StateSwitch label="Loading" on={holdLoading} onToggle={() => setHoldLoading((v) => !v)} />
           <StateSwitch label="Disabled" on={disabled} onToggle={() => setDisabled((v) => !v)} />
-          <p className="basis-full text-[13px] leading-5 text-[rgb(var(--demo-fg)/0.64)]">
+          <p className="basis-full text-[14px] leading-5 text-[rgb(var(--demo-fg)/0.72)]">
             {holdLoading
               ? 'Loading is held: the spinner stays and clicks are ignored until you turn it off.'
               : 'Loading holds the spinner on so you can inspect it. Disabled blocks the pull and the click.'}

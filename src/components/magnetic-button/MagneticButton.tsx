@@ -161,10 +161,14 @@ export default function MagneticButton({
             style={{ boxShadow: SHADOW }}
             className="absolute inset-0 overflow-hidden rounded-control bg-[rgb(var(--mb-fill))] group-focus-visible:outline group-focus-visible:outline-2 group-focus-visible:outline-offset-2 group-focus-visible:outline-[rgb(var(--mb-ring))]"
           >
-            <span
-              ref={glow}
-              className="pointer-events-none absolute left-1/2 top-1/2 -ml-[60px] -mt-[60px] h-[120px] w-[120px] rounded-full opacity-0 bg-[radial-gradient(closest-side,rgb(var(--mb-glow)/var(--mb-glow-alpha)),transparent)]"
-            />
+            {/* The key light is wide and soft, and a vignette mask fades it to zero at the fill edge,
+                so the clip never cuts a hard wedge through its core. */}
+            <span className="pointer-events-none absolute inset-0 [mask-image:radial-gradient(closest-side,black_45%,transparent)]">
+              <span
+                ref={glow}
+                className="absolute left-1/2 top-1/2 -ml-[80px] -mt-[80px] h-[160px] w-[160px] rounded-full opacity-0 bg-[radial-gradient(closest-side,rgb(var(--mb-glow)/var(--mb-glow-alpha)),rgb(var(--mb-glow)/calc(var(--mb-glow-alpha)*0.4))_45%,transparent)]"
+              />
+            </span>
           </span>
           <span ref={label} className="relative inline-grid place-items-center px-7 text-[16px] font-semibold leading-none tracking-[-0.01em] text-[rgb(var(--mb-ink))]">
             {/* opacity, not visibility: the label stays the accessible name while the spinner shows */}
