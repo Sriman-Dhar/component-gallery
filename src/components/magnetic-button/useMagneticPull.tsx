@@ -7,6 +7,16 @@ gsap.registerPlugin(useGSAP);
 /** full: every tween. reduced: instant press only. none: no matchMedia (tests, SSR), nothing moves. */
 export type MotionMode = 'full' | 'reduced' | 'none';
 
+/**
+ * One spring family for the whole button. The release and the hover scale share an elastic ease, so
+ * the overshoot seen when the pull lets go is the same spring that settles the hover lift.
+ */
+export const SPRING = {
+  settle: { duration: 0.95, ease: 'elastic.out(1, 0.42)' },
+  scale: { duration: 0.6, ease: 'elastic.out(1, 0.55)' },
+  press: { duration: 0.12, ease: 'power2.out' },
+} as const;
+
 const QUERIES = {
   motion: '(prefers-reduced-motion: no-preference)',
   reduced: '(prefers-reduced-motion: reduce)',
@@ -14,20 +24,29 @@ const QUERIES = {
 };
 
 /** Pull engages when the pointer is within this many px of the button's edge. */
-const RADIUS = 80;
-/** The fill travels this fraction of the cursor offset, capped. */
-const FILL = { ratio: 0.22, cap: 8 };
-/** The label leads the fill by a little more, so the press reads as depth, not a flat slide. */
-const LABEL = { ratio: 0.06, cap: 3 };
+export const RADIUS = 80;
+/** Total travel of the label (the fill plus its parallax lead) never exceeds this many px. */
+export const MAX_TRAVEL = 10;
+/** Travel grows with the cursor offset at this rate until the cap. */
+const OFFSET_RATIO = 0.3;
+/** The fill takes this share of the travel; the label takes all of it, so it leads by a little. */
+export const FILL_SHARE = 0.75;
 const TRACK = { duration: 0.4, ease: 'power3.out' };
 
 type QuickTo = ReturnType<typeof gsap.quickTo>;
 
-/** Scales the offset vector down to `cap` without changing its direction. */
-function clampVector(x: number, y: number, cap: number): [number, number] {
-  const length = Math.hypot(x, y);
-  if (length <= cap || length === 0) return [x, y];
-  return [(x / length) * cap, (y / length) * cap];
+/**
+ * The label's pull for a cursor at offset (dx, dy) from the button center, `edgeDist` px outside its
+ * edge. The direction always points at the exact cursor. The magnitude is the offset fraction (capped),
+ * scaled by a smoothstep falloff: full strength on or over the button, fading to 0 at the radius edge.
+ */
+export function pullVector(dx: number, dy: number, edgeDist: number): [number, number] {
+  const length = Math.hypot(dx, dy);
+  if (length === 0 || edgeDist >= RADIUS) return [0, 0];
+  const near = 1 - Math.max(0, edgeDist) / RADIUS;
+  const falloff = near * near * (3 - 2 * near);
+  const travel = Math.min(length * OFFSET_RATIO, MAX_TRAVEL) * falloff;
+  return [(dx / length) * travel, (dy / length) * travel];
 }
 
 interface MagneticTargets {
@@ -42,7 +61,7 @@ interface MagneticTargets {
 /**
  * The magnetic pull. The button element itself never moves (its hit area stays honest); the fill,
  * label and an inner key light drift toward the exact cursor position through quickTo tweens.
- * Leaving the radius pauses the trackers and eases everything home with a soft overshoot.
+ * Leaving the radius pauses the trackers and springs everything home with a visible overshoot.
  * Only for a fine pointer that allows motion; touch and reduced motion never attach the listener.
  */
 export function useMagneticPull({ root, fill, glow, label, mode, enabled }: MagneticTargets) {
@@ -83,7 +102,7 @@ export function useMagneticPull({ root, fill, glow, label, mode, enabled }: Magn
           engaged = false;
           trackers.forEach(([, , to]) => to.tween.pause());
           settle = gsap
-            .timeline({ defaults: { duration: 0.75, ease: 'back.out(2.6)' } })
+            .timeline({ defaults: SPRING.settle })
             .to([f, l], { x: 0, y: 0 }, 0)
             .to(g, { opacity: 0, duration: 0.3, ease: 'power1.out' }, 0);
         });
@@ -94,16 +113,18 @@ export function useMagneticPull({ root, fill, glow, label, mode, enabled }: Magn
           const r = button.getBoundingClientRect();
           const edgeX = Math.max(r.left - event.clientX, 0, event.clientX - r.right);
           const edgeY = Math.max(r.top - event.clientY, 0, event.clientY - r.bottom);
-          if (Math.hypot(edgeX, edgeY) > RADIUS) return release();
+          const edgeDist = Math.hypot(edgeX, edgeY);
+          if (edgeDist > RADIUS) return release();
 
-          // Offset from the button centre to the exact cursor point: the pull aims there, never at an edge.
+          // Offset from the button center to the exact cursor point: the pull aims there, never at an edge.
           const dx = event.clientX - (r.left + r.width / 2);
           const dy = event.clientY - (r.top + r.height / 2);
-          const [fx, fy] = clampVector(dx * FILL.ratio, dy * FILL.ratio, FILL.cap);
-          const [lx, ly] = clampVector(dx * LABEL.ratio, dy * LABEL.ratio, LABEL.cap);
+          const [lx, ly] = pullVector(dx, dy, edgeDist);
+          const fx = lx * FILL_SHARE;
+          const fy = ly * FILL_SHARE;
           const gx = gsap.utils.clamp(-r.width / 2, r.width / 2, dx - fx);
           const gy = gsap.utils.clamp(-r.height / 2, r.height / 2, dy - fy);
-          const values = [fx, fy, fx + lx, fy + ly, gx, gy];
+          const values = [fx, fy, lx, ly, gx, gy];
 
           const fresh = !engaged;
           if (fresh) {

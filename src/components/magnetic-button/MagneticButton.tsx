@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type KeyboardEvent, type MouseEvent, type PointerEvent, type ReactNode } from 'react';
 import { gsap } from 'gsap';
 import { useGSAP } from '@gsap/react';
-import { useMagneticPull, type MotionMode } from './useMagneticPull';
+import { SPRING, useMagneticPull, type MotionMode } from './useMagneticPull';
 
 gsap.registerPlugin(useGSAP);
 
@@ -21,7 +21,19 @@ const THEME = [
   '[[data-stage-theme=dark]_&]:[--mb-ink:var(--p-ink-990,18_18_22)]',
   '[[data-stage-theme=dark]_&]:[--mb-ring:var(--p-amber-500,255_138_42)]',
   '[[data-stage-theme=dark]_&]:[--mb-glow-alpha:0.3]',
+  // Depth: the drop shadow and the inset highlight, tweened down while pressed.
+  '[--mb-shadow-y:14px] [--mb-shadow-blur:32px] [--mb-highlight:0.12]',
 ].join(' ');
+
+/** Rest and pressed depth. Pressed sits the button closer to the surface and drops the top highlight. */
+const DEPTH = {
+  rest: { '--mb-shadow-y': '14px', '--mb-shadow-blur': '32px', '--mb-highlight': 0.12 },
+  pressed: { '--mb-shadow-y': '4px', '--mb-shadow-blur': '10px', '--mb-highlight': 0 },
+};
+const SHADOW =
+  '0 var(--mb-shadow-y) var(--mb-shadow-blur) -14px rgb(var(--mb-shadow) / 0.7), inset 0 1px 0 rgb(var(--mb-ink) / var(--mb-highlight))';
+/** The label and spinner trade places with a 180ms fade and a 6px slide, inside one fixed-width cell. */
+const SWAP = 'transition-[opacity,transform] duration-[180ms] ease-out motion-reduce:transition-none';
 
 /** Scale targets. Touch gets a firmer press because there is no hover to prepare it. */
 const SCALE = { rest: 1, hover: 1.04, press: 0.96, touch: 0.93 } as const;
@@ -60,44 +72,49 @@ export default function MagneticButton({
   const mode = useRef<MotionMode>('none');
   const hovered = useRef(false);
   const blocked = disabled || loading;
+  const blockedRef = useRef(blocked);
+  blockedRef.current = blocked;
 
   const { contextSafe } = useGSAP({ scope: root });
-  useMagneticPull({ root, fill, glow, label, mode, enabled: !disabled });
+  useMagneticPull({ root, fill, glow, label, mode, enabled: !blocked });
 
-  /** One place decides the scale: pressed beats hovered beats rest. Reduced motion only keeps the press. */
+  /**
+   * One place decides the scale and depth: pressed beats hovered beats rest. While disabled or loading
+   * only rest is allowed, so a busy button never lifts or squeezes. Reduced motion keeps the instant press.
+   */
   const scaleTo = contextSafe((target: number) => {
     const el = body.current;
-    if (!el || mode.current === 'none') return;
+    const face = fill.current;
+    if (!el || !face || mode.current === 'none') return;
+    if (blockedRef.current && target !== SCALE.rest) return;
+    const pressing = target < 1;
+    const depth = pressing ? DEPTH.pressed : DEPTH.rest;
     if (mode.current === 'reduced') {
       gsap.set(el, { scale: target > 1 ? SCALE.rest : target });
+      gsap.set(face, depth);
       return;
     }
-    const pressing = target < 1;
-    gsap.to(el, {
-      scale: target,
-      duration: pressing ? 0.12 : 0.5,
-      ease: pressing ? 'power2.out' : 'back.out(2.2)',
-      overwrite: 'auto',
-    });
+    const motion = pressing ? SPRING.press : SPRING.scale;
+    gsap.to(el, { scale: target, ...motion, overwrite: 'auto' });
+    gsap.to(face, { ...depth, ...(pressing ? SPRING.press : { duration: 0.3, ease: 'power2.out' }), overwrite: 'auto' });
   });
 
-  const release = () => scaleTo(hovered.current && !disabled ? SCALE.hover : SCALE.rest);
+  const release = () => scaleTo(hovered.current ? SCALE.hover : SCALE.rest);
 
   const onPointerEnter = (e: PointerEvent<HTMLButtonElement>) => {
     if (e.pointerType === 'touch') return;
     hovered.current = true;
-    if (!disabled) scaleTo(SCALE.hover);
+    scaleTo(SCALE.hover);
   };
   const onPointerLeave = () => {
     hovered.current = false;
     scaleTo(SCALE.rest);
   };
   const onPointerDown = (e: PointerEvent<HTMLButtonElement>) => {
-    if (disabled) return;
     scaleTo(e.pointerType === 'touch' ? SCALE.touch : SCALE.press);
   };
   const onKeyDown = (e: KeyboardEvent<HTMLButtonElement>) => {
-    if (!disabled && !e.repeat && (e.key === 'Enter' || e.key === ' ')) scaleTo(SCALE.press);
+    if (!e.repeat && (e.key === 'Enter' || e.key === ' ')) scaleTo(SCALE.press);
   };
   const onKeyUp = (e: KeyboardEvent<HTMLButtonElement>) => {
     if (e.key === 'Enter' || e.key === ' ') release();
@@ -110,9 +127,10 @@ export default function MagneticButton({
     onClick?.(e);
   };
 
+  // Busy or disabled: settle to rest. Free again with the pointer still over it: lift back to hover.
   useEffect(() => {
-    if (disabled) scaleTo(SCALE.rest);
-  }, [disabled, scaleTo]);
+    scaleTo(blocked || !hovered.current ? SCALE.rest : SCALE.hover);
+  }, [blocked, scaleTo]);
 
   const announcement = useAnnouncement(loading, busyText, doneText);
 
@@ -140,7 +158,8 @@ export default function MagneticButton({
           <span
             ref={fill}
             aria-hidden="true"
-            className="absolute inset-0 overflow-hidden rounded-control bg-[rgb(var(--mb-fill))] shadow-[0_14px_32px_-14px_rgb(var(--mb-shadow)/0.7),inset_0_1px_0_rgb(var(--mb-ink)/0.12)] group-focus-visible:outline group-focus-visible:outline-2 group-focus-visible:outline-offset-[3px] group-focus-visible:outline-[rgb(var(--mb-ring))]"
+            style={{ boxShadow: SHADOW }}
+            className="absolute inset-0 overflow-hidden rounded-control bg-[rgb(var(--mb-fill))] group-focus-visible:outline group-focus-visible:outline-2 group-focus-visible:outline-offset-2 group-focus-visible:outline-[rgb(var(--mb-ring))]"
           >
             <span
               ref={glow}
@@ -149,8 +168,10 @@ export default function MagneticButton({
           </span>
           <span ref={label} className="relative inline-grid place-items-center px-7 text-[16px] font-semibold leading-none tracking-[-0.01em] text-[rgb(var(--mb-ink))]">
             {/* opacity, not visibility: the label stays the accessible name while the spinner shows */}
-            <span className={`whitespace-nowrap [grid-area:1/1] ${loading ? 'opacity-0' : ''}`}>{children}</span>
-            <span aria-hidden="true" className={`[grid-area:1/1] ${loading ? '' : 'invisible'}`}>
+            <span className={`whitespace-nowrap [grid-area:1/1] ${SWAP} ${loading ? '-translate-y-1.5 opacity-0' : ''}`}>
+              {children}
+            </span>
+            <span aria-hidden="true" className={`[grid-area:1/1] ${SWAP} ${loading ? '' : 'translate-y-1.5 opacity-0'}`}>
               <Spinner />
             </span>
           </span>
