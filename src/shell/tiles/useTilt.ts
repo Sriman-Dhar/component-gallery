@@ -4,7 +4,8 @@ import { gsap, POINTER_MOTION, useGSAP } from '../../lib/motion';
 const MAX_DEG = 6;
 
 /**
- * Pointer tilt (max 6deg, damped through quickTo) plus a sheen that follows the pointer angle.
+ * Pointer tilt (max 6deg, damped through quickTo), a sheen that follows the pointer angle, and the
+ * stage spotlight (--spot-x on the card) leaning after the pointer.
  * Only for a fine pointer with motion allowed; otherwise the tile stays flat and still.
  */
 export function useTilt(tile: RefObject<HTMLElement>, card: RefObject<HTMLElement>, sheen: RefObject<HTMLElement>) {
@@ -20,6 +21,13 @@ export function useTilt(tile: RefObject<HTMLElement>, card: RefObject<HTMLElemen
       const setX = gsap.quickSetter(light, '--sheen-x', '%');
       const setY = gsap.quickSetter(light, '--sheen-y', '%');
       const setAngle = gsap.quickSetter(light, '--sheen-angle', 'deg');
+      // The stage spotlight leans toward the pointer, damped, from its resting center.
+      const spot = { x: 50 };
+      const spotTo = gsap.quickTo(spot, 'x', {
+        duration: 0.7,
+        ease: 'power3.out',
+        onUpdate: () => face.style.setProperty('--spot-x', `${spot.x.toFixed(2)}%`),
+      });
 
       const move = (event: PointerEvent) => {
         const rect = host.getBoundingClientRect();
@@ -30,10 +38,12 @@ export function useTilt(tile: RefObject<HTMLElement>, card: RefObject<HTMLElemen
         setX((nx + 0.5) * 100);
         setY((ny + 0.5) * 100);
         setAngle((Math.atan2(ny, nx) * 180) / Math.PI + 90);
+        spotTo(50 + nx * 50);
       };
       const leave = () => {
         rotX(0);
         rotY(0);
+        spotTo(50);
       };
       host.addEventListener('pointermove', move);
       host.addEventListener('pointerleave', leave);

@@ -17,7 +17,8 @@ interface Props {
 /**
  * A live tile, every one the same size: a close-cropped live render of the component at a fixed
  * height, then №, name, type stamp, week and date (the same set the detail header shows).
- * Tilts toward the pointer; an "Open" cue slides in on hover or keyboard focus.
+ * The stage is lit from above: a beam lands as a pool on its floor behind the component and leans
+ * toward the pointer. Tilts toward the pointer; an "Open" cue slides in on hover or keyboard focus.
  */
 export default function Tile({ entry, caption, rel }: Props) {
   const { meta } = entry;
@@ -32,7 +33,7 @@ export default function Tile({ entry, caption, rel }: Props) {
       className="tile group relative rounded-tile transition-transform duration-fast ease-out [perspective:1000px] active:scale-[0.98] has-[a:focus-visible]:outline has-[a:focus-visible]:outline-2 has-[a:focus-visible]:outline-offset-2 has-[a:focus-visible]:outline-accent"
     >
       <div ref={card} className="tile-card relative flex h-full flex-col overflow-hidden rounded-tile bg-surface">
-        <LiveStage entry={entry} className="h-[220px] w-full border-b border-line" />
+        <LiveStage entry={entry} className="stage-spot h-[220px] w-full border-b border-line" />
         <span
           aria-hidden="true"
           className="absolute right-3 top-3 inline-flex items-center gap-1.5 rounded-full border border-line bg-surface/80 px-2.5 py-1 font-mono text-meta text-text opacity-0 transition-[opacity,transform] duration-fast ease-out [transform:translateX(-4px)] group-focus-within:opacity-100 group-focus-within:[transform:none] group-hover:opacity-100 group-hover:[transform:none] motion-reduce:transition-none"

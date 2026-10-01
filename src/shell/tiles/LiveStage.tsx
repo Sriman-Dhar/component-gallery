@@ -48,11 +48,11 @@ export default function LiveStage({ entry, className = '' }: { entry: GalleryEnt
   return (
     <div ref={frame} aria-hidden="true" data-stage-theme={stageTheme} className={`stage-surface pointer-events-none relative overflow-hidden ${className}`}>
       {hasPreview ? (
-        <div className="absolute inset-0 flex items-center justify-center p-6">{content}</div>
+        <div className="stage-content absolute inset-0 flex items-center justify-center p-6">{content}</div>
       ) : (
         <div
           ref={inner}
-          className="absolute left-0 top-0 flex origin-top-left items-center justify-center"
+          className="stage-content absolute left-0 top-0 flex origin-top-left items-center justify-center"
           style={{ width: VIRTUAL.width, height: VIRTUAL.height }}
         >
           {content}
