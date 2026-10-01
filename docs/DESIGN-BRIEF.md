@@ -1,6 +1,7 @@
 # CREATIVE BRIEF v2 — Sriman Gallery (component gallery for the 90 day build challenge)
 
-Updated 2026-10-01 (index showcase pass: lit type, lit fraction, rail scene, lit stages, atmosphere).
+Updated 2026-10-01 (index showcase pass: lit type, lit fraction, rail scene, lit stages, atmosphere; then the live
+orrery and the Clash Display swap).
 
 v1 ("specimen sheet", warm paper, quiet motion) was rejected on 2026-09-25: the gallery itself must be UI/UX rich and
 animated, a showcase piece, not a catalogue. v2 replaces it entirely. Nothing from v1's palette or type survives.
@@ -8,7 +9,7 @@ animated, a showcase piece, not a catalogue. v2 replaces it entirely. Nothing fr
 **Design Read:** Reading this as a *live, dark showcase of 30 UI components built over 90 days* for *a reviewer who
 decides in 40 seconds and a developer who wants to lift one component*, whose single job is *open a link, see the
 component alive, read the prompt that made it, take the code*, in a *confident, cinematic, technical* register, at
-*studio* complexity: one strong WebGL moment, everything else crisp DOM.
+*studio* complexity: one strong WebGL scene (the rail and the orrery it feeds), everything else crisp DOM.
 
 **Direction: "Light rail studio."** A near-black studio with a real lighting story: one warm key light (amber) and a
 faint cool rim (blue-grey). The signature is the 90-DAY LIGHT RAIL: a horizontal line of light spanning
@@ -26,9 +27,10 @@ Vercel's product pages (dark studio, grid texture, crisp DOM type over a canvas 
 pointer but never fights the text).
 
 **Visual language**
-- Structure: max-w 1280, 12-col grid. Index: HERO (left: the lit name + pace line; right: the lit fraction, an
-  oversized lit numerator over a ghosted outline "/30" and a micro rail of 30 ticks with the shipped ones lit, the
-  signature at small scale; full width below: the particle light rail scene) → BRIDGE (a rail station heading,
+- Structure: max-w 1280, 12-col grid. Index: HERO (left, 7 cols: the lit name, the pace line, then the lit fraction,
+  an oversized lit numerator over a ghosted outline "/30" and a micro rail of 30 ticks with the shipped ones lit;
+  right, 5 cols: the ORRERY, the live 3D object, its foot leaning into the rail below; phones: the orrery scales
+  into its own row under the fraction, just above the rail; full width below: the particle light rail scene) → BRIDGE (a rail station heading,
   "Shipped so far", the detail pages' SectionHeading, so index and detail share one system) → TILE GRID (asymmetric: the newest component is a 2x wide feature tile, the rest 3-up on desktop,
   2-up tablet, 1-up phone; each tile is a live mini stage of the component, not a screenshot) → FOOTER (repo link,
   challenge line). Detail: BACK ("All components", arrow + hairline, 44px, first focusable thing on the page) → HEADER
@@ -42,15 +44,19 @@ pointer but never fights the text).
   the fill meets that section, lighting as it is reached and jumping there on click; below lg a 2px amber progress
   line under the header. 404: unlit rail with a flicker →
   "Nothing shipped here." → link home. No tabs hide Code or Prompt.
-- Typography (updated 2026-10-01, the owner found Geist-only headings "too basic"): a DISPLAY face with character,
-  Bricolage Grotesque 600/700 (optical size axis on, so big sizes get the tighter display cut), carries every big
-  moment: the hero count, the site name, the detail № and component name, section headings, tile names, the 404
-  line. Tracking -0.01em at 22, -0.02 to -0.025em at 40 to 60, -0.03em at 72 to 136 (Bricolage is already tight at
-  high opsz; Geist's -0.045 to -0.055 crushed it). Geist stays for body and UI (400/500/600), Geist Mono for
-  metadata, prompt and code. Scale 12 / 14 / 16 / 20 / 22 / 28 / 40 / 56 / 60 / 72 / 112 / 136. Oversized moments:
-  the index count at 136 (96 on phones, counts up on load), the detail № at 112 from lg (72 below). One Google
-  Fonts <link> with display=swap (Bricolage 600..700 only); a metric fallback face ('Bricolage Fallback', Arial
-  size-adjusted to Bricolage's advance and vertical metrics) sits in the stack so the swap barely shifts layout.
+- Typography (updated 2026-10-01, second pass: Bricolage Grotesque read quirky and editorial, the owner asked for
+  "modern"): the DISPLAY face is Clash Display (Fontshare, free license) at 500 and 600 only, a sleek geometric
+  tech face (Linear and Vercel energy, not editorial). 600 carries the big moments (the hero name, the count, the
+  detail № and component name, the 404 line, the header brand); 500 carries section headings, tile names and the
+  ghosted "/30". Tracking: 0 at 22, -0.005em at 28, -0.01em at 20 (brand), -0.015 to -0.02em at 40 to 64,
+  -0.02em on the № at 72 to 112, -0.03em on the count at 96 to 136. No font-bold anywhere on the display face
+  (700 is not loaded; it would fall back to 600). Geist stays for body and UI (400/500/600), Geist Mono for
+  metadata, prompt and code. Scale 12 / 14 / 16 / 20 / 22 / 28 / 40 / 56 / 64 / 72 / 112 / 136. Oversized moments:
+  the index count at 136 (96 on phones, counts up on load), the detail № at 112 from lg (72 below). Fonts: one
+  Fontshare stylesheet (clash-display@500,600, with a trailing comma in the list; without it the API appends an
+  unasked pairing family) and one Google Fonts <link> for Geist and Geist Mono, both display=swap; a metric
+  fallback face ('Clash Fallback', Arial at size-adjust 112% with ascent 79.5%, descent 22.3%, gap 8%, measured
+  from the Clash font file) sits in the stack so the swap barely shifts layout.
   Tokens: --font-display / --font-sans / --font-mono in tokens.css, Tailwind font-display / font-sans / font-mono.
   Never Inter, Fraunces or Instrument Serif; no serif.
 - Color (semantic tokens, both frame themes real, dark is the default and the flagship):
@@ -102,24 +108,50 @@ reduced motion = instant final states, particles frozen as a composed still)**
 - Copy: label morphs to "Copied" (scale pop). 404: the rail flickers twice then stays dim.
 - Still on purpose: body text, the prompt once revealed, the code once revealed, the footer.
 
-**WebGL budget (threejs-webgl QA gate applies):** ≤ 4000 points in one draw call, shared as a scene: filament
+**The orrery (hero, right; added 2026-10-01 after a direction pass: particle earth, orrery, particle forge):** the
+30 components as an orrery, the gallery itself as an object. Three nearly coplanar rings (small inclinations, one
+shared plane seen 0.56 rad from its edge, so it reads as an orrery, never an atom logo) made of the rail's filament
+bent into orbits; ten component slots ride each ring in ship order, inner ring first; a shipped slot is a dense
+lit cluster in the amber ramp, a future slot a small cool speck in rim; a breathing core with a near-white hot
+point at its center. Motion: the system turns once every 40s, each ring's slots travel at their own rate, points
+within 130px lean toward the pointer, a horizontal drag spins it (touch keeps vertical scroll) and a flick keeps
+spinning then eases back to the base rate (~0.9s time constant). It assembles from scatter like the rail, and
+once per pulse cycle the rail's pulse leaving the rail's end rises into it as a band of light sweeping up from its
+foot (railPulse, a shared mutable head value, no React state). Depth: perspective (focal 2.2), point size
+attenuates with perspective squared, near points brighter and far points falling into shade. Decorative:
+aria-hidden, no focus; the fraction says the same in words. It beat the particle earth (a "global" metaphor that
+says nothing about 30 components) and a particle forge (energetic but abstract): the orrery shows 2 of 30 lit
+without reading. Poster (no WebGL, reduced motion, before the canvas is live): the same projection in SVG, dotted
+rings with the near half bright and the far half faint, lit slots blooming, the core glowing around a hot point.
+Atmosphere: a warm radial bloom behind it with a faint cool rim, scaled by --bloom-alpha so it steps down on the
+light frame.
+
+**WebGL budget (threejs-webgl QA gate applies):** the hero's two canvases share 7000 points: the rail ≤ 3600
+(in practice ~3100, the 1184px frame at 2.6 points per pixel), the orrery ≤ 3400 (7.5 per pixel of its box
+width; filament 60% drawn by ring circumference, slot clusters 24% with shipped slots weighted 6 to 1, core 11%,
+dust the rest). Both use one shared crisp sprite (a hard disc with a sub-pixel edge and a faint tight halo, so
+points read as rendered light, not soft dust). DPR is the device's up to 2, and an adaptive step (1s fps windows,
+two slow windows under 55fps step down by 0.25) never goes below 1.5; the orrery canvas is antialiased. The rail
+itself, one draw call: filament
 56%, week node clusters 24%, a reflection of the clusters mirrored on the floor below the line 13% (fading with
 depth, bending toward the pointer's mirror image), dust drifting behind at parallax against the pointer (the rest);
 reflection and dust are borrowed from the budget, never added to it. The poster's line and nodes dim to 40% under
-the particles; its week labels stay at full contrast. dpr [1, 1.5], frameloop demand until the
+the particles; its week labels stay at full contrast. Frameloop demand until the
 assemble finishes then "always" only while the hero is in view (IntersectionObserver pauses it), additive
 sprites in the accent ramp, no post-processing, no textures over 256px, disposal on unmount, context-lost guard,
 a CSS poster (the rail as a plain SVG line with lit nodes) when WebGL is unavailable or reduced motion is on.
 Target 60fps desktop, 30fps mid phone.
 
-**The memorable moment:** the light rail. A reviewer opening the tenth submission sees the same rail, one more
-node lit and the pulse passing through it, and understands the 90 days without reading a word.
+**The memorable moment:** the light rail and the orrery it feeds. A reviewer opening the tenth submission sees the
+same rail, one more node lit and the pulse passing through it and rising into the orrery, where one more slot of
+the thirty burns, and understands the 90 days without reading a word.
 
 **Section choreography**
-- Index: hero (lit name, lit fraction with its micro rail, particle rail scene) → bridge heading (station node
+- Index: hero (lit name, lit fraction with its micro rail, the orrery, particle rail scene) → bridge heading (station node
   blooms, hairline draws, once) → tile grid (lit stages, ignition reveal) → footer (still). The rail is the hero
   and recurs in the micro rail and the station node; the tiles are the work; nothing else competes. Reduced
-  motion: every piece in its settled, lit state (numeral lit, ticks lit, beams still, poster rail, stages lit).
+  motion: every piece in its settled, lit state (numeral lit, ticks lit, beams still, poster rail, poster
+  orrery, stages lit).
 - Detail: back link (still) → header rail (№ bloom + letter rise + lit chips + compressed rail, node bloom) →
   stage (slide in, corner trace) → the ask (station heading, fade) → the code (station heading, scan reveal) →
   prev/next tiles; the scroll rail runs beside all of it. Code, prompt, headings, corners and bloom are still after
