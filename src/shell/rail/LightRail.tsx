@@ -26,7 +26,7 @@ interface Props {
 }
 
 /**
- * The 90-day light rail, the signature on every route. Hero: SVG poster plus a WebGL particle rail
+ * The light rail, the signature on every route. Hero: SVG poster plus a WebGL particle rail
  * mounted when near the viewport and paused when it leaves. Compact: poster with the week blooming.
  * Unlit: the 404's dead rail that flickers twice and rests dim.
  */
@@ -84,9 +84,9 @@ export default function LightRail({ variant, marks = [], litWeek, today = new Da
   }
 
   const label = [
-    '90 day light rail, 1 October to 30 December 2026',
+    'Light rail, 1 Oct to 30 Dec 2026',
     variant === 'unlit' ? 'nothing lit' : `${marks.length} ${marks.length === 1 ? 'component' : 'components'} shipped`,
-    litWeek ? `week ${litWeek} highlighted` : '',
+    litWeek ? `Week ${litWeek} highlighted` : '',
   ]
     .filter(Boolean)
     .join(', ');

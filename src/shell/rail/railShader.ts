@@ -1,7 +1,7 @@
 /**
  * The rail particle shader. Every particle has a home on the line (aU along it, aOff across it) and a
  * scattered start (aScatter). All motion runs here, driven by uniforms; JS never rewrites positions.
- * Coordinates are CSS pixels (orthographic camera, zoom 1, origin at the canvas centre).
+ * Coordinates are CSS pixels (orthographic camera, zoom 1, origin at the canvas center).
  */
 export const railVertex = /* glsl */ `
 uniform float uTime;

@@ -17,7 +17,7 @@ export default function Header() {
         </div>
         <nav aria-label="Site" className="flex items-center gap-4">
           <span className="hidden sm:inline">
-            <RepoLink label="Repo" pending="Repo coming soon" className="text-text-2 transition-colors duration-fast hover:text-text" />
+            <RepoLink label="Source" pending="Source coming soon" className="text-text-2 transition-colors duration-fast hover:text-text" />
           </span>
           <ThemeToggle />
         </nav>

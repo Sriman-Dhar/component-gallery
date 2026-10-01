@@ -1,3 +1,6 @@
+import { formatDate } from '../lib/date';
+import { WINDOW_END, WINDOW_START } from '../lib/ruler';
+import { PACE_LINE } from '../lib/site';
 import GrainLayer from './GrainLayer';
 import Header from './Header';
 import LightField from './LightField';
@@ -16,9 +19,11 @@ export default function Layout() {
           <RouteTransition />
         </main>
         <footer className="flex flex-wrap items-baseline justify-between gap-3 border-t border-line py-6 text-small text-text-2">
-          <span>Two components a week, 1 October to 30 December 2026.</span>
+          <span>
+            {PACE_LINE} {formatDate(WINDOW_START, { year: false })} to {formatDate(WINDOW_END)}.
+          </span>
           <RepoLink
-            label="Source on GitHub"
+            label="Source"
             pending="Source coming soon"
             className="text-text underline decoration-line underline-offset-4 hover:decoration-accent"
           />

@@ -66,7 +66,7 @@ export default function AskSection({ prompt }: { prompt: string }) {
           aria-expanded={open}
           aria-controls={bodyId}
           onClick={() => setOpen((v) => !v)}
-          className={`h-8 rounded-control border border-line px-3 font-mono text-meta text-text transition-colors duration-fast hover:border-text-2 ${FOCUS_RING}`}
+          className={`h-11 rounded-control border border-line px-3 sm:h-8 font-mono text-meta text-text transition-colors duration-fast hover:border-text-2 ${FOCUS_RING}`}
         >
           {open ? 'Show less' : 'Show full prompt'}
         </button>

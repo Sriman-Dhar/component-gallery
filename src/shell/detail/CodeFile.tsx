@@ -36,9 +36,10 @@ export default function CodeFile({ file, defaultOpen = false }: Props) {
   return (
     <figure ref={root} className="overflow-hidden rounded-tile bg-surface shadow-[0_0_0_1px_rgb(var(--color-line))]">
       <figcaption className={`flex items-center justify-between gap-3 bg-surface-2/60 px-4 py-2.5 ${open ? 'border-b border-line' : ''}`}>
-        <span className="min-w-0 truncate font-mono text-meta text-text">
-          {file.fileName}
-          <span className="ml-3 text-text-2">{lines.length} lines</span>
+        {/* Never truncated: a long name wraps, and below sm the line count takes its own line. */}
+        <span className="flex min-w-0 flex-col font-mono text-meta sm:flex-row sm:items-baseline sm:gap-3">
+          <span className="text-text [overflow-wrap:anywhere]">{file.fileName}</span>
+          <span className="text-text-2">{lines.length} lines</span>
         </span>
         <span className="flex shrink-0 items-center gap-2">
           <button
@@ -47,7 +48,7 @@ export default function CodeFile({ file, defaultOpen = false }: Props) {
             aria-controls={bodyId}
             aria-label={`${open ? 'Hide' : 'Show'} ${file.fileName}`}
             onClick={() => setOpen((v) => !v)}
-            className={`h-8 rounded-control px-3 font-mono text-meta text-text-2 transition-colors duration-fast hover:text-text ${FOCUS_RING}`}
+            className={`h-11 rounded-control px-3 font-mono text-meta text-text-2 sm:h-8 transition-colors duration-fast hover:text-text ${FOCUS_RING}`}
           >
             {open ? 'Hide file' : 'Show file'}
           </button>

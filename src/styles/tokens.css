@@ -100,6 +100,7 @@
   --stage-bg: var(--p-stage-light);
   --stage-fg: var(--p-ink-990);
   --stage-grid: var(--p-stage-light-grid);
+  --stage-wash: radial-gradient(ellipse 60% 55% at 50% 50%, rgb(var(--p-amber-500) / 0.08), transparent 75%);
 }
 
 [data-stage-theme='dark'] {
@@ -107,6 +108,8 @@
   --stage-bg: var(--p-stage-dark);
   --stage-fg: var(--p-mist-50);
   --stage-grid: var(--p-stage-dark-grid);
+  --stage-wash: radial-gradient(ellipse 60% 55% at 50% 50%, rgb(var(--p-amber-500) / 0.06), transparent 75%),
+    radial-gradient(ellipse 80% 80% at 50% 50%, transparent 55%, rgb(0 0 0 / 0.3));
 }
 
 @media (prefers-reduced-motion: reduce) {

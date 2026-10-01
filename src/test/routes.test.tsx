@@ -17,14 +17,14 @@ describe('routes', () => {
   it('shows the hero, the count, the light rail and equal tiles in № order on the index', async () => {
     renderAt('/');
     expect(screen.getByRole('heading', { level: 1, name: 'Sriman Gallery' })).toBeInTheDocument();
-    expect(screen.getByText('Thirty components in ninety days.')).toBeInTheDocument();
+    expect(screen.getByText('Thirty components in thirteen weeks.')).toBeInTheDocument();
     expect(screen.getByLabelText(`${shipped.length} of 30 components shipped`)).toBeInTheDocument();
     expect(screen.getByTestId('light-rail')).toHaveAttribute('data-variant', 'hero');
     const grid = screen.getByRole('list', { name: 'Components' });
     const names = within(grid).getAllByRole('link').map((link) => link.textContent);
     expect(names).toEqual(shipped.map(({ meta }) => meta.name));
     expect(names.slice(0, 2)).toEqual(['Magnetic Button', 'OTP Input']);
-    expect(within(grid).getByText('Next: week 2')).toBeInTheDocument();
+    expect(within(grid).getByText('Next: Week 2')).toBeInTheDocument();
     expect(within(grid).getAllByText('Type: button').length).toBeGreaterThan(0);
     expect(within(grid).getAllByText(formatDate(shipped[0].meta.date)).length).toBeGreaterThan(0);
     expect(await within(grid).findByText('Join the waitlist')).toBeInTheDocument();
@@ -65,6 +65,20 @@ describe('routes', () => {
     expect(screen.getByRole('button', { name: 'Hide demo.tsx' })).toHaveAttribute('aria-expanded', 'true');
   });
 
+  it('names every route in the document title', () => {
+    const cases: [string, string][] = [
+      ['/', 'Sriman Gallery'],
+      ['/components/magnetic-button', 'Magnetic Button · Sriman Gallery'],
+      ['/components/otp-input', 'OTP Input · Sriman Gallery'],
+      ['/components/does-not-exist', 'Not found · Sriman Gallery'],
+    ];
+    for (const [path, title] of cases) {
+      const view = renderAt(path);
+      expect(document.title).toBe(title);
+      view.unmount();
+    }
+  });
+
   it('shows the 404 view with the unlit rail for an unknown slug', () => {
     renderAt('/components/does-not-exist');
     expect(screen.getByRole('heading', { name: 'Nothing shipped here.' })).toBeInTheDocument();
@@ -74,8 +88,10 @@ describe('routes', () => {
 
   it('has no dead repo links while the repo URL is unset', () => {
     renderAt('/');
-    expect(screen.queryByRole('link', { name: /repo|github/i })).toBeNull();
-    expect(screen.getByText('Source coming soon')).toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: /repo|github|source/i })).toBeNull();
+    // One term in the header and the footer.
+    expect(screen.getAllByText('Source coming soon')).toHaveLength(2);
+    expect(screen.queryByText(/repo coming soon/i)).toBeNull();
   });
 
   it('flips the frame theme on <html> and its label names the current theme (reduced motion path)', () => {

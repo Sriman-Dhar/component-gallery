@@ -5,3 +5,6 @@
 export const REPO_URL: string | null = null;
 
 export const SITE_NAME = 'Sriman Gallery';
+
+/** The one pace line: hero, footer and the meta description in index.html all say exactly this. */
+export const PACE_LINE = 'Thirty components in thirteen weeks.';

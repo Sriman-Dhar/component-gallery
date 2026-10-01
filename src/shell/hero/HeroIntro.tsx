@@ -1,4 +1,5 @@
 import { shipped } from '../../lib/catalogue';
+import { PACE_LINE } from '../../lib/site';
 import CountUp from './CountUp';
 import SiteName from './SiteName';
 
@@ -8,7 +9,7 @@ export default function HeroIntro() {
     <div className="flex flex-wrap items-end justify-between gap-x-10 gap-y-6">
       <div className="space-y-3">
         <SiteName name="Sriman Gallery" />
-        <p className="text-lead text-text-2">Thirty components in ninety days.</p>
+        <p className="text-lead text-text-2">{PACE_LINE}</p>
       </div>
       <CountUp count={shipped.length} />
     </div>

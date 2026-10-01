@@ -1,4 +1,4 @@
-import { WEEK_COUNT, pct, positionOf, weekCentre } from '../../lib/ruler';
+import { WEEK_COUNT, pct, positionOf, weekCenter } from '../../lib/ruler';
 import { RAIL_BOX, type RailVariant } from './railLayout';
 
 interface Props {
@@ -36,7 +36,7 @@ export default function RailPoster({ variant, litWeeks, bloomWeek, today, label 
             data-node={week}
             data-lit={lit || bloom ? 'true' : 'false'}
             className={`rail-node ${bloom ? 'rail-bloom' : ''} ${lit || bloom ? 'rail-lit fill-glow' : 'fill-bg stroke-text-2/60'}`}
-            cx={pct(weekCentre(week))}
+            cx={pct(weekCenter(week))}
             cy={base}
             r={lit || bloom ? 4 : 3}
             strokeWidth={lit || bloom ? 0 : 1}
@@ -46,7 +46,7 @@ export default function RailPoster({ variant, litWeeks, bloomWeek, today, label 
       {WEEKS.map((week) => (
         <text
           key={week}
-          x={pct(weekCentre(week))}
+          x={pct(weekCenter(week))}
           y={labelY}
           textAnchor="middle"
           className={`font-mono text-meta ${week === bloomWeek ? 'fill-accent' : 'fill-text-2'}`}

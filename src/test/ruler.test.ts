@@ -1,4 +1,4 @@
-import { positionOf, todayCaption, weekCentre, weekOf, weekStart, WINDOW_DAYS } from '../lib/ruler';
+import { positionOf, todayCaption, weekCenter, weekOf, weekStart, WINDOW_DAYS } from '../lib/ruler';
 
 describe('ruler math', () => {
   it('maps dates to challenge weeks', () => {
@@ -30,15 +30,15 @@ describe('ruler math', () => {
   it('lays week segments left to right inside the window', () => {
     expect(weekStart(1)).toBe(0);
     expect(weekStart(2)).toBeCloseTo(7 / 90);
-    expect(weekCentre(13)).toBeGreaterThan(weekStart(13));
-    expect(weekCentre(13)).toBeLessThan(1);
+    expect(weekCenter(13)).toBeGreaterThan(weekStart(13));
+    expect(weekCenter(13)).toBeLessThan(1);
   });
 
   it('captions today before, during and after the window', () => {
     expect(todayCaption(new Date(2026, 8, 25))).toBe('Starts 1 Oct, in 6 days');
-    expect(todayCaption(new Date(2026, 9, 1))).toBe('Day 1, week 1');
-    expect(todayCaption(new Date(2026, 9, 8))).toBe('Day 8, week 2');
-    expect(todayCaption(new Date(2026, 11, 30))).toBe('Day 91, week 13');
+    expect(todayCaption(new Date(2026, 9, 1))).toBe('Day 1 · Week 1');
+    expect(todayCaption(new Date(2026, 9, 8))).toBe('Day 8 · Week 2');
+    expect(todayCaption(new Date(2026, 11, 30))).toBe('Day 91 · Week 13');
     expect(todayCaption(new Date(2027, 0, 5))).toBe('Challenge complete');
   });
 });

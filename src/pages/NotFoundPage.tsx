@@ -1,9 +1,13 @@
 import { Link } from 'react-router-dom';
+import { pageTitle, useDocumentTitle } from '../lib/useDocumentTitle';
 import { FOCUS_RING } from '../shell/focus';
 import LightRail from '../shell/rail/LightRail';
 
+export const NOT_FOUND_TITLE = pageTitle('Not found');
+
 /** 404: the rail with no power, one line, one way back. */
 export default function NotFoundPage() {
+  useDocumentTitle(NOT_FOUND_TITLE);
   return (
     <section aria-labelledby="not-found" className="space-y-12 pb-12 pt-6">
       <LightRail variant="unlit" />

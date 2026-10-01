@@ -1,5 +1,5 @@
 import { BufferAttribute, BufferGeometry } from 'three';
-import { WEEK_COUNT, weekCentre } from '../../lib/ruler';
+import { WEEK_COUNT, weekCenter } from '../../lib/ruler';
 
 /** Hard ceiling from the brief's WebGL budget. */
 export const MAX_POINTS = 4000;
@@ -43,7 +43,7 @@ export function buildRailGeometry(count: number, litWeeks: number[]): BufferGeom
     let week = 1;
     while (pick > weights[week - 1]) pick -= weights[week++ - 1];
     const isLit = lit.has(week);
-    u[i] = weekCentre(week) + gaussian() * (isLit ? 0.012 : 0.006);
+    u[i] = weekCenter(week) + gaussian() * (isLit ? 0.012 : 0.006);
     off[i] = gaussian() * (isLit ? 14 : 7);
     bright[i] = isLit ? 1 : 0.4;
   }

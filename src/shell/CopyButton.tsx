@@ -45,7 +45,7 @@ export default function CopyButton({ text, label, ariaLabel }: Props) {
         type="button"
         onClick={copy}
         aria-label={ariaLabel}
-        className={`h-8 min-w-[5.5rem] rounded-control border px-3 font-mono text-meta transition-colors duration-fast ${
+        className={`h-11 min-w-[5.5rem] sm:h-8 rounded-control border px-3 font-mono text-meta transition-colors duration-fast ${
           copied ? 'border-accent/60 text-accent' : 'border-line text-text hover:border-text-2'
         } ${FOCUS_RING}`}
       >

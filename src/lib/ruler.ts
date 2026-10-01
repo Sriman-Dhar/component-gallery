@@ -1,5 +1,5 @@
 /**
- * The challenge window the ruler spans, 1 Oct to 30 Dec 2026 (the "90 days" of the challenge).
+ * The challenge window the ruler spans, 1 Oct to 30 Dec 2026 (the thirteen weeks of the challenge).
  * Pure date math, no DOM, so it is unit-tested directly.
  */
 import { formatDate } from './date';
@@ -47,8 +47,8 @@ export function weekStart(week: number): number {
   return clamp(((week - 1) * 7) / WINDOW_DAYS, 0, 1);
 }
 
-/** Centre of a week's segment, 0 to 1 (week 13 is the short last segment). */
-export function weekCentre(week: number): number {
+/** Center of a week's segment, 0 to 1 (week 13 is the short last segment). */
+export function weekCenter(week: number): number {
   const end = week >= WEEK_COUNT ? 1 : weekStart(week + 1);
   return (weekStart(week) + end) / 2;
 }
@@ -58,7 +58,7 @@ export function todayCaption(today: Date): string {
   const days = daysSinceStart(today);
   if (days < 0) return `Starts 1 Oct, in ${-days} ${days === -1 ? 'day' : 'days'}`;
   if (days > WINDOW_DAYS) return 'Challenge complete';
-  return `Day ${days + 1}, week ${weekOf(today)}`;
+  return `Day ${days + 1} · Week ${weekOf(today)}`;
 }
 
 /** SVG percentage string for a 0..1 position. */

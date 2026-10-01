@@ -57,6 +57,17 @@
     background-position: -1px -1px;
     color: rgb(var(--stage-fg));
     transition: background-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+    position: relative;
+    isolation: isolate;
+  }
+  /* Tonal depth under the grid: a faint accent wash behind the demo, plus edge falloff on dark. */
+  .stage-surface::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: var(--stage-wash);
   }
 
   /* Tiles: hairline, tinted shadow, border glow on hover or keyboard focus, sheen follows the pointer. */

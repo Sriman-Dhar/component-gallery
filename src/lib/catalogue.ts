@@ -1,7 +1,7 @@
 import { registry } from './registry';
 import type { GalleryEntry } from './types';
 
-/** The challenge target: 30 components over 90 days. */
+/** The challenge target: 30 components over 13 weeks. */
 export const TARGET = 30;
 
 /** Week 0 is the scaffold placeholder: registered (it is the test fixture) but never published. */
