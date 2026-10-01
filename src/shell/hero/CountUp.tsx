@@ -47,12 +47,12 @@ export default function CountUp({ count }: { count: number }) {
           <span className="numeral-bloom pointer-events-none absolute -inset-x-16 -inset-y-12" />
           <span
             ref={number}
-            className="numeral-lit relative block pr-[0.06em] font-display text-[96px] font-bold leading-[84px] tracking-[-0.03em] tabular-nums sm:text-[136px] sm:leading-[112px]"
+            className="numeral-lit relative block pr-[0.06em] font-display text-[96px] font-semibold leading-[84px] tracking-[-0.03em] sm:text-[136px] sm:leading-[112px]"
           >
             {count}
           </span>
         </span>
-        <span className="numeral-ghost pb-1 font-display text-[48px] font-bold leading-none tracking-[-0.03em] sm:pb-2 sm:text-[64px]">
+        <span className="numeral-ghost pb-1 font-display text-[48px] font-medium leading-none tracking-[-0.02em] sm:pb-2 sm:text-[64px]">
           /{TARGET}
         </span>
       </span>

@@ -20,7 +20,7 @@ export default function SiteName({ name }: { name: string }) {
   );
 
   return (
-    <h1 ref={root} aria-label={name} className="font-display text-h1 font-bold text-text sm:text-[60px] sm:leading-[64px] tracking-[-0.02em] sm:tracking-[-0.025em]">
+    <h1 ref={root} aria-label={name} className="font-display text-h1 font-semibold text-text tracking-[-0.015em] sm:text-[64px] sm:leading-[68px] sm:tracking-[-0.02em]">
       <RiseText text={name} letterClass="lit-letter" />
     </h1>
   );

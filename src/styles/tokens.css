@@ -43,9 +43,9 @@
   --p-stage-dark: 18 18 22; /* #121216 */
   --p-stage-dark-grid: 36 36 44; /* #24242C */
 
-  /* type: one display face for the big moments, Geist for UI, Geist Mono for metadata and code.
-     'Bricolage Fallback' is Arial resized to Bricolage's metrics (src/index.css), so the swap barely moves. */
-  --font-display: 'Bricolage Grotesque', 'Bricolage Fallback', ui-sans-serif, system-ui, sans-serif;
+  /* type: one display face for the big moments (Clash Display 500/600), Geist for UI, Geist Mono for metadata
+     and code. 'Clash Fallback' is Arial resized to Clash's metrics (src/index.css), so the swap barely moves. */
+  --font-display: 'Clash Display', 'Clash Fallback', ui-sans-serif, system-ui, sans-serif;
   --font-sans: 'Geist', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 
