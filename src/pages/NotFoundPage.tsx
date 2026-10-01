@@ -12,8 +12,8 @@ export default function NotFoundPage() {
     <section aria-labelledby="not-found" className="space-y-12 pb-12 pt-6">
       <LightRail variant="unlit" />
       <div className="space-y-5">
-        <h1 id="not-found" className="font-display text-[40px] font-semibold leading-[44px] tracking-[-0.015em] text-text sm:text-[56px] sm:leading-[60px]">
-          Nothing shipped here.
+        <h1 id="not-found" className="font-display text-[40px] font-medium leading-[46px] tracking-[-0.02em] text-text sm:text-[60px] sm:leading-[68px] sm:tracking-[-0.025em]">
+          Nothing shipped <span className="accent-ink font-medium italic">here.</span>
         </h1>
         <p className="max-w-[52ch] text-text-2">No component lives at this address. The index lists every one that does.</p>
         <Link
