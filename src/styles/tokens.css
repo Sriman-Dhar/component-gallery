@@ -43,7 +43,9 @@
   --p-stage-dark: 18 18 22; /* #121216 */
   --p-stage-dark-grid: 36 36 44; /* #24242C */
 
-  /* type */
+  /* type: one display face for the big moments, Geist for UI, Geist Mono for metadata and code.
+     'Bricolage Fallback' is Arial resized to Bricolage's metrics (src/index.css), so the swap barely moves. */
+  --font-display: 'Bricolage Grotesque', 'Bricolage Fallback', ui-sans-serif, system-ui, sans-serif;
   --font-sans: 'Geist', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 
@@ -73,6 +75,7 @@
   --pointer-alpha: 0.06;
   --shadow-alpha: 0.25;
   --grain-opacity: 0.05;
+  --bloom-alpha: 0.28;
 }
 
 [data-theme='light'] {
@@ -92,6 +95,7 @@
   --pointer-alpha: 0.05;
   --shadow-alpha: 0.14;
   --grain-opacity: 0.04;
+  --bloom-alpha: 0.1;
 }
 
 /* The stage keeps its own theme, independent of the frame. */

@@ -10,7 +10,7 @@ export default function Header() {
     <header className="glass sticky top-0 z-40">
       <div className="mx-auto flex h-16 max-w-frame items-center justify-between gap-4 px-4 sm:px-8 lg:px-12">
         <div className="flex min-w-0 items-baseline gap-3">
-          <Link to="/" className={`whitespace-nowrap rounded-control text-lead font-semibold tracking-[-0.02em] text-text ${FOCUS_RING}`}>
+          <Link to="/" className={`inline-flex min-h-11 items-center whitespace-nowrap rounded-control font-display text-lead font-bold tracking-[-0.02em] text-text sm:min-h-0 [@media(pointer:coarse)]:min-h-11 ${FOCUS_RING}`}>
             {SITE_NAME}
           </Link>
           <span className="hidden text-small text-text-2 sm:inline">component gallery</span>

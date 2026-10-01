@@ -1,7 +1,8 @@
 import { useRef } from 'react';
 import { gsap, useGSAP, withMotion } from '../../lib/motion';
+import RiseText from '../RiseText';
 
-/** The site name, 600 weight, letters rising in 20ms apart. Screen readers get the plain name. */
+/** The site name in the display face, 700 weight, letters rising in 20ms apart. Screen readers get the plain name. */
 export default function SiteName({ name }: { name: string }) {
   const root = useRef<HTMLHeadingElement>(null);
 
@@ -14,14 +15,8 @@ export default function SiteName({ name }: { name: string }) {
   );
 
   return (
-    <h1 ref={root} aria-label={name} className="text-h1 font-semibold text-text sm:text-[56px] sm:leading-[60px] sm:tracking-[-0.045em]">
-      <span aria-hidden="true" className="inline-block overflow-hidden pb-1 align-bottom">
-        {[...name].map((char, i) => (
-          <span key={i} className="letter inline-block whitespace-pre">
-            {char}
-          </span>
-        ))}
-      </span>
+    <h1 ref={root} aria-label={name} className="font-display text-h1 font-bold text-text sm:text-[60px] sm:leading-[64px] tracking-[-0.02em] sm:tracking-[-0.025em]">
+      <RiseText text={name} />
     </h1>
   );
 }

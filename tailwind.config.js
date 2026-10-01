@@ -19,6 +19,7 @@ export default {
         rim: token('rim'),
       },
       fontFamily: {
+        display: ['var(--font-display)'],
         sans: ['var(--font-sans)'],
         mono: ['var(--font-mono)'],
       },
@@ -29,8 +30,8 @@ export default {
         lead: ['20px', { lineHeight: '28px' }],
         h2: ['28px', { lineHeight: '32px', letterSpacing: '-0.02em' }],
         h1: ['44px', { lineHeight: '48px', letterSpacing: '-0.035em' }],
-        numeral: ['72px', { lineHeight: '72px', letterSpacing: '-0.045em' }],
-        count: ['112px', { lineHeight: '100px', letterSpacing: '-0.055em' }],
+        numeral: ['72px', { lineHeight: '72px', letterSpacing: '-0.03em' }],
+        count: ['112px', { lineHeight: '100px', letterSpacing: '-0.03em' }],
       },
       borderRadius: { control: '8px', tile: '12px' },
       maxWidth: { frame: '1280px', column: '68ch' },

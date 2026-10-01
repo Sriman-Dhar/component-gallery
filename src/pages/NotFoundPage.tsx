@@ -12,13 +12,13 @@ export default function NotFoundPage() {
     <section aria-labelledby="not-found" className="space-y-12 pb-12 pt-6">
       <LightRail variant="unlit" />
       <div className="space-y-5">
-        <h1 id="not-found" className="text-[36px] font-semibold leading-[40px] tracking-[-0.035em] text-text sm:text-h1">
+        <h1 id="not-found" className="font-display text-[40px] font-bold leading-[44px] tracking-[-0.02em] text-text sm:text-[56px] sm:leading-[60px]">
           Nothing shipped here.
         </h1>
         <p className="max-w-[52ch] text-text-2">No component lives at this address. The index lists every one that does.</p>
         <Link
           to="/"
-          className={`inline-flex h-10 items-center rounded-control border border-line bg-surface px-4 font-mono text-small text-text transition-colors duration-fast hover:border-accent/60 ${FOCUS_RING}`}
+          className={`inline-flex h-11 items-center rounded-control border border-line bg-surface px-4 font-mono text-small text-text transition-colors duration-fast hover:border-accent/60 ${FOCUS_RING}`}
         >
           Back to the index
         </Link>

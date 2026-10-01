@@ -2,7 +2,7 @@ import { useRef } from 'react';
 import { TARGET } from '../../lib/catalogue';
 import { gsap, useGSAP, withMotion } from '../../lib/motion';
 
-/** The index's oversized moment: shipped count at 112px, counting up once (0.9s, expo.out). */
+/** The index's oversized moment: shipped count in the display face at 136px (96 on phones), counting up once (0.9s, expo.out). */
 export default function CountUp({ count }: { count: number }) {
   const root = useRef<HTMLParagraphElement>(null);
   const number = useRef<HTMLSpanElement>(null);
@@ -31,7 +31,7 @@ export default function CountUp({ count }: { count: number }) {
       <span
         ref={number}
         aria-hidden="true"
-        className="bg-gradient-to-b from-text to-text/60 bg-clip-text pr-[0.06em] text-[88px] font-semibold leading-[80px] tracking-[-0.055em] text-transparent tabular-nums sm:text-count"
+        className="bg-gradient-to-b from-text to-text/60 bg-clip-text pr-[0.06em] font-display text-[96px] font-bold leading-[84px] tracking-[-0.03em] text-transparent tabular-nums sm:text-[136px] sm:leading-[112px]"
       >
         {count}
       </span>
