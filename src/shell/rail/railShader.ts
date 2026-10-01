@@ -57,22 +57,32 @@ void main() {
   vAlpha = ((0.22 + aBright * 0.78) * (0.3 + 0.7 * t) + heat * 0.9 + pull * 0.4) * layer;
   vAlpha *= mix(1.0, 0.55 + 0.45 * sin(uTime * 0.7 + aSeed * 30.0), isDust);
   float size = 1.8 + aSeed * 2.4 + aBright * 3.2 + heat * 4.0;
-  gl_PointSize = mix(size, 1.2 + aSeed * 1.6, isDust) * uPixel;
+  // 0.62: the crisp sprite fills more of its square than the old soft one, so the footprint stays the same.
+  gl_PointSize = mix(size, 1.2 + aSeed * 1.6, isDust) * 0.62 * uPixel;
   gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 0.0, 1.0);
 }
 `;
 
-/** A soft round sprite computed per fragment (no texture to load or dispose). */
+/** The soft round sprite every particle in the hero shares, rail and orrery (no texture to load or dispose). */
+export const spriteGlsl = /* glsl */ `
+float sprite() {
+  // A crisp disc with a clean edge (under a pixel wide at retina sizes) and a faint tight halo: points read
+  // as rendered light, not soft dust.
+  float d = length(gl_PointCoord - 0.5) * 2.0;
+  float core = 1.0 - smoothstep(0.3, 0.52, d);
+  float halo = pow(max(0.0, 1.0 - d), 3.0) * 0.35;
+  return max(core, halo);
+}
+`;
+
 export const railFragment = /* glsl */ `
 uniform vec3 uCore;
 uniform vec3 uBody;
 varying float vAlpha;
 varying float vHeat;
-
+${spriteGlsl}
 void main() {
-  float d = length(gl_PointCoord - 0.5);
-  float a = smoothstep(0.5, 0.0, d);
-  a *= a;
+  float a = sprite();
   if (a < 0.01) discard;
   vec3 color = mix(uBody, uCore, clamp(vHeat + a * 0.45, 0.0, 1.0));
   gl_FragColor = vec4(color, a * min(vAlpha, 1.0));

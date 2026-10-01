@@ -1,8 +1,9 @@
 import { BufferAttribute, BufferGeometry } from 'three';
 import { WEEK_COUNT, weekCenter } from '../../lib/ruler';
 
-/** Hard ceiling from the brief's WebGL budget. */
-export const MAX_POINTS = 4000;
+/** Hard ceiling from the brief's WebGL budget: with the orrery's 3400 the hero stays at 7000. In practice the
+ * rail tops out near 3100 (the 1184px frame at 2.6 points per pixel), so this ceiling never bites. */
+export const MAX_POINTS = 3600;
 
 function gaussian(): number {
   return (Math.random() + Math.random() + Math.random() - 1.5) / 1.5;

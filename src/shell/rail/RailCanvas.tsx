@@ -1,5 +1,6 @@
 import { Canvas } from '@react-three/fiber';
 import type { MutableRefObject } from 'react';
+import AdaptiveDpr, { startDpr } from './AdaptiveDpr';
 import RailParticles, { type RailPointer } from './RailParticles';
 
 interface Props {
@@ -12,15 +13,15 @@ interface Props {
 }
 
 /**
- * The WebGL layer of the hero rail. Lazy-loaded (three lives in its own chunk), DPR capped, frames on
- * demand. A lost context unmounts the canvas and leaves the SVG poster.
+ * The WebGL layer of the hero rail. Lazy-loaded (three lives in its own chunk), DPR up to 2 and adaptive
+ * (AdaptiveDpr), frames on demand. A lost context unmounts the canvas and leaves the SVG poster.
  */
 export default function RailCanvas({ litWeeks, active, pointer, onReady, onLost, onPulse }: Props) {
   return (
     <Canvas
       aria-hidden="true"
       style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}
-      dpr={[1, 1.5]}
+      dpr={startDpr()}
       frameloop="demand"
       orthographic
       camera={{ zoom: 1, position: [0, 0, 10] }}
@@ -33,6 +34,7 @@ export default function RailCanvas({ litWeeks, active, pointer, onReady, onLost,
         onReady();
       }}
     >
+      <AdaptiveDpr />
       <RailParticles litWeeks={litWeeks} active={active} pointer={pointer} onPulse={onPulse} />
     </Canvas>
   );

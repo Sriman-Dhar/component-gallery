@@ -1,6 +1,7 @@
 import { lazy, Suspense, useMemo, useRef, useState, type PointerEvent } from 'react';
 import { gsap, motionAllowed, useGSAP, withMotion } from '../../lib/motion';
 import { todayCaption, weekCenter, weekOf } from '../../lib/ruler';
+import { railPulse } from '../../lib/railPulse';
 import { useInView } from '../../lib/useInView';
 import { canUseWebGL } from '../../lib/webgl';
 import RailPoster from './RailPoster';
@@ -46,6 +47,7 @@ export default function LightRail({ variant, marks = [], litWeek, today = new Da
 
   // The week numbers brighten as the particle pulse passes them (style writes only, no React state).
   function onPulse(head: number) {
+    railPulse.head = head;
     labels.current ??= [...(root.current?.querySelectorAll<SVGTextElement>('[data-week-label]') ?? [])];
     for (const el of labels.current) {
       el.style.setProperty('--heat', pulseHeat(head, weekCenter(Number(el.dataset.weekLabel))).toFixed(3));
