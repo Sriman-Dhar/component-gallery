@@ -16,8 +16,8 @@ function renderAt(path: string) {
 describe('routes', () => {
   it('shows the hero, the count, the light rail and equal tiles in № order on the index', async () => {
     renderAt('/');
-    expect(screen.getByRole('heading', { level: 1, name: 'Sriman Gallery' })).toBeInTheDocument();
-    expect(screen.getByText('Thirty components in thirteen weeks.')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 1, name: "Sriman's Gallery" })).toBeInTheDocument();
+    expect(screen.getByText('thirty components in thirteen weeks.')).toBeInTheDocument();
     expect(screen.getByLabelText(`${shipped.length} of 30 components shipped`)).toBeInTheDocument();
     expect(screen.getByTestId('light-rail')).toHaveAttribute('data-variant', 'hero');
     const grid = screen.getByRole('list', { name: 'Components' });
@@ -76,10 +76,10 @@ describe('routes', () => {
 
   it('names every route in the document title', () => {
     const cases: [string, string][] = [
-      ['/', 'Sriman Gallery'],
-      ['/components/magnetic-button', 'Magnetic Button · Sriman Gallery'],
-      ['/components/otp-input', 'OTP Input · Sriman Gallery'],
-      ['/components/does-not-exist', 'Not found · Sriman Gallery'],
+      ['/', "Sriman's Gallery"],
+      ['/components/magnetic-button', "Magnetic Button · Sriman's Gallery"],
+      ['/components/otp-input', "OTP Input · Sriman's Gallery"],
+      ['/components/does-not-exist', "Not found · Sriman's Gallery"],
     ];
     for (const [path, title] of cases) {
       const view = renderAt(path);

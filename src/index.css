@@ -5,16 +5,25 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Metric fallback for the display face: Arial scaled to Clash Display's advance (measured 1.12x Arial's
-   over the hero strings) and its vertical metrics (unitsPerEm 1000, ascent 890, descent 250, gap 90),
-   each override divided by the size-adjust, so font-display: swap shifts almost nothing. */
+/* Metric fallback for the display serif: Georgia scaled to Zodiak's advance (measured 1.19x Georgia's over the
+   hero strings at the weights they ship in) and its vertical metrics (unitsPerEm 1000, ascent 990, descent 280,
+   gap 90), each override divided by the size-adjust, so font-display: swap shifts almost nothing. */
 @font-face {
-  font-family: 'Clash Fallback';
-  src: local('Arial'), local('ArialMT'), local('Helvetica');
-  size-adjust: 112%;
-  ascent-override: 79.5%;
-  descent-override: 22.3%;
-  line-gap-override: 8%;
+  font-family: 'Zodiak Fallback';
+  src: local('Georgia');
+  size-adjust: 119%;
+  ascent-override: 83.2%;
+  descent-override: 23.5%;
+  line-gap-override: 7.6%;
+}
+@font-face {
+  font-family: 'Zodiak Fallback';
+  font-style: italic;
+  src: local('Georgia Italic'), local('Georgia-Italic');
+  size-adjust: 119%;
+  ascent-override: 83.2%;
+  descent-override: 23.5%;
+  line-gap-override: 7.6%;
 }
 
 @layer base {

@@ -1,11 +1,13 @@
 import { useRef } from 'react';
 import { gsap, useGSAP, withMotion } from '../../lib/motion';
+import { typeset } from '../../lib/site';
 import RiseText from '../RiseText';
 import { useLetterLight } from './useLetterLight';
 
 /**
- * The site name in the display face, 700 weight, letters rising in 20ms apart; then a light sweeps
- * across it once and the letters keep catching the pointer light. Screen readers get the plain name.
+ * The site name, the quiet half of the two tone hero: the roman serif at 500 in text colour, letters
+ * rising 20ms apart; then a light sweeps across it once and the letters keep catching the pointer light.
+ * Set with the typographic apostrophe; screen readers get the plain name.
  */
 export default function SiteName({ name }: { name: string }) {
   const root = useRef<HTMLHeadingElement>(null);
@@ -20,8 +22,8 @@ export default function SiteName({ name }: { name: string }) {
   );
 
   return (
-    <h1 ref={root} aria-label={name} className="font-display text-h1 font-semibold text-text tracking-[-0.015em] sm:text-[64px] sm:leading-[68px] sm:tracking-[-0.02em]">
-      <RiseText text={name} letterClass="lit-letter" />
+    <h1 ref={root} aria-label={name} className="hero-name font-display font-medium text-text">
+      <RiseText text={typeset(name)} letterClass="lit-letter" />
     </h1>
   );
 }

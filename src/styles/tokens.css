@@ -21,6 +21,7 @@
   --p-ink-990: 18 18 22; /* #121216 */
   --p-ink-600: 93 93 107; /* #5D5D6B */
   /* primitives: the amber ramp and the cool rim */
+  --p-amber-50: 255 236 214; /* #FFECD6 sheen highlight */
   --p-amber-200: 255 195 138; /* #FFC38A glow core */
   --p-amber-500: 255 138 42; /* #FF8A2A body */
   --p-amber-700: 173 74 5; /* #AD4A05 light accent (brief #D9600A, darkened for AA) */
@@ -43,9 +44,9 @@
   --p-stage-dark: 18 18 22; /* #121216 */
   --p-stage-dark-grid: 36 36 44; /* #24242C */
 
-  /* type: one display face for the big moments (Clash Display 500/600), Geist for UI, Geist Mono for metadata
-     and code. 'Clash Fallback' is Arial resized to Clash's metrics (src/index.css), so the swap barely moves. */
-  --font-display: 'Clash Display', 'Clash Fallback', ui-sans-serif, system-ui, sans-serif;
+  /* type: one display serif for the big moments (Zodiak, variable roman + italic), Geist for UI, Geist Mono for
+     metadata and code. 'Zodiak Fallback' is Georgia resized to Zodiak's metrics (src/index.css). */
+  --font-display: 'Zodiak', 'Zodiak Fallback', ui-serif, Georgia, serif;
   --font-sans: 'Geist', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 
@@ -84,6 +85,10 @@
   --vignette-alpha: 0.55;
   --spot-alpha: 0.16;
   --spot-blend: screen;
+  /* the hero's italic accent line: a glow-to-body ramp in the serif, with a sheen that sweeps it once */
+  --accent-line-top: var(--p-amber-200);
+  --accent-line-bottom: var(--p-amber-500);
+  --accent-sheen: var(--p-amber-50);
 }
 
 [data-theme='light'] {
@@ -111,6 +116,11 @@
   --vignette-alpha: 0.04;
   --spot-alpha: 0.1;
   --spot-blend: multiply;
+  /* light frame: the ramp runs accent to deep (5.09:1 and up on bg); the sheen darkens instead of glowing,
+     since amber-500 on the light bg (2.1:1) would drop below large-text AA mid sweep */
+  --accent-line-top: var(--p-amber-700);
+  --accent-line-bottom: var(--p-amber-950);
+  --accent-sheen: var(--p-amber-900);
 }
 
 /* The stage keeps its own theme, independent of the frame. */
