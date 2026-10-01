@@ -129,7 +129,9 @@ export default function OtpInput({
       clear();
       setRejected(false);
       setMessage('');
-      focusCell(0);
+      // Take focus back only if it is still ours (or nowhere): never pull it from a control the user moved to.
+      const active = document.activeElement;
+      if (!active || active === document.body || root.current?.contains(active)) focusCell(0);
       onErrorReset?.();
     }, ERROR_HOLD_MS);
     // Keyed on the error alone: the other values are handlers whose behavior never changes.

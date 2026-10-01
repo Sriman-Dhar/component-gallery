@@ -36,9 +36,9 @@ export default function CodeFile({ file, defaultOpen = false }: Props) {
   return (
     <figure ref={root} className="overflow-hidden rounded-tile bg-surface shadow-[0_0_0_1px_rgb(var(--color-line))]">
       <figcaption className={`flex items-center justify-between gap-3 bg-surface-2/60 px-4 py-2.5 ${open ? 'border-b border-line' : ''}`}>
-        {/* Never truncated: a long name wraps, and below sm the line count takes its own line. */}
+        {/* Never truncated and never broken inside the name; below sm the line count takes its own line. */}
         <span className="flex min-w-0 flex-col font-mono text-meta sm:flex-row sm:items-baseline sm:gap-3">
-          <span className="text-text [overflow-wrap:anywhere]">{file.fileName}</span>
+          <span className="whitespace-nowrap text-text">{file.fileName}</span>
           <span className="text-text-2">{lines.length} lines</span>
         </span>
         <span className="flex shrink-0 items-center gap-2">
@@ -48,9 +48,22 @@ export default function CodeFile({ file, defaultOpen = false }: Props) {
             aria-controls={bodyId}
             aria-label={`${open ? 'Hide' : 'Show'} ${file.fileName}`}
             onClick={() => setOpen((v) => !v)}
-            className={`h-11 rounded-control px-3 font-mono text-meta text-text-2 sm:h-8 transition-colors duration-fast hover:text-text ${FOCUS_RING}`}
+            className={`inline-flex h-11 min-w-11 items-center justify-center rounded-control px-3 font-mono text-meta text-text-2 transition-colors duration-fast hover:text-text max-[399px]:px-0 sm:h-8 ${FOCUS_RING}`}
           >
-            {open ? 'Hide file' : 'Show file'}
+            {/* Below 400px the toggle is a chevron alone, so the file name keeps the line. */}
+            <span className="max-[399px]:hidden">{open ? 'Hide file' : 'Show file'}</span>
+            <svg
+              aria-hidden="true"
+              viewBox="0 0 12 12"
+              className={`hidden h-3.5 w-3.5 transition-transform duration-fast max-[399px]:block motion-reduce:transition-none ${open ? 'rotate-180' : ''}`}
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M3 4.5 6 7.5l3-3" />
+            </svg>
           </button>
           <CopyButton text={file.code} label="Copy" ariaLabel={`Copy ${file.fileName}`} />
         </span>

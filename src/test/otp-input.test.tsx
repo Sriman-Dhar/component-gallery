@@ -109,6 +109,31 @@ describe('otp input', () => {
     vi.useRealTimers();
   });
 
+  it('takes focus back after the error hold only if focus is still in the field or nowhere', () => {
+    vi.useFakeTimers();
+    const outside = document.createElement('button');
+    document.body.appendChild(outside);
+    const { rerender } = render(<OtpInput />);
+    paste(cell(1), '111111');
+    rerender(<OtpInput error="Wrong code" />);
+    outside.focus();
+    act(() => {
+      vi.advanceTimersByTime(ERROR_HOLD_MS + 50);
+    });
+    expect(document.activeElement).toBe(outside);
+
+    rerender(<OtpInput error={null} />);
+    paste(cell(1), '222222');
+    rerender(<OtpInput error="Wrong again" />);
+    cell(3).focus();
+    act(() => {
+      vi.advanceTimersByTime(ERROR_HOLD_MS + 50);
+    });
+    expect(document.activeElement).toBe(cell(1));
+    outside.remove();
+    vi.useRealTimers();
+  });
+
   it('locks the row during the error hold: no edit, paste or second completion', () => {
     vi.useFakeTimers();
     const onComplete = vi.fn();

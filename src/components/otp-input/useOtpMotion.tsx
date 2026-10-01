@@ -7,6 +7,9 @@ gsap.registerPlugin(useGSAP);
 const MOTION_OK = '(prefers-reduced-motion: no-preference)';
 /** Delay between cells in the paste cascade. */
 const CASCADE_STAGGER = 0.025;
+/** The rejected-code shake, in px, and the field width under which it swings half as far. */
+const SHAKE_X = [0, -10, 9, -7, 5, -2, 0];
+const NARROW_PX = 340;
 
 /**
  * The component's motion, all of it GSAP and all of it skipped under reduced motion:
@@ -43,11 +46,10 @@ export function useOtpMotion(root: RefObject<HTMLElement>, row: RefObject<HTMLEl
 
   const shake = contextSafe(() => {
     if (!motionOk.current || !row.current) return;
-    gsap.fromTo(
-      row.current,
-      { x: 0 },
-      { keyframes: { x: [0, -10, 9, -7, 5, -2, 0], easeEach: 'sine.inOut' }, duration: 0.42, overwrite: true },
-    );
+    // A narrow field (a phone) has no slack around the row: a smaller swing keeps it inside its stage.
+    const narrow = (row.current.parentElement?.clientWidth ?? NARROW_PX) < NARROW_PX;
+    const swing = SHAKE_X.map((x) => (narrow ? Math.round(x * 0.5) : x));
+    gsap.fromTo(row.current, { x: 0 }, { keyframes: { x: swing, easeEach: 'sine.inOut' }, duration: 0.42, overwrite: true });
   });
 
   /** Cells start..start+count pop in one after another (scale 0.9 to 1, opacity) under a faint ring flash. */

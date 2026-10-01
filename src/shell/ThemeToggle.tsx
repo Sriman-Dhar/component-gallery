@@ -20,7 +20,7 @@ export default function ThemeToggle() {
       type="button"
       onClick={onClick}
       title={`Switch to the ${dark ? 'light' : 'dark'} frame`}
-      className={`group inline-flex h-9 items-center gap-2.5 rounded-full border border-line bg-surface/60 pl-1.5 pr-3.5 font-mono text-meta text-text transition-colors duration-fast hover:border-text-2 ${FOCUS_RING}`}
+      className={`group inline-flex h-11 items-center sm:h-9 [@media(pointer:coarse)]:h-11 gap-2.5 rounded-full border border-line bg-surface/60 pl-1.5 pr-3.5 font-mono text-meta text-text transition-colors duration-fast hover:border-text-2 ${FOCUS_RING}`}
     >
       <span aria-hidden="true" className="relative inline-block h-6 w-10 rounded-full bg-surface-2 shadow-[inset_0_0_0_1px_rgb(var(--color-line))]">
         <span

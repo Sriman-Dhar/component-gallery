@@ -5,6 +5,8 @@ import MagneticButton from './MagneticButton';
 
 const HINT = 'Bring the pointer close, or press Tab to reach it.';
 const JOINED = 'You are on the list.';
+const HELD_NOTE = 'Loading is held: the spinner stays and clicks are ignored until you turn it off.';
+const FREE_NOTE = 'Loading holds the spinner on so you can inspect it. Disabled blocks the pull and the click.';
 /** Demo only: a beat before loading starts, so Enter shows the press the way Space does. */
 const PRESS_BEAT_MS = 120;
 /** How long the joined caption stays before the hint returns. */
@@ -48,11 +50,7 @@ export default function MagneticButtonDemo() {
         <>
           <StateSwitch label="Loading" on={holdLoading} onToggle={() => setHoldLoading((v) => !v)} />
           <StateSwitch label="Disabled" on={disabled} onToggle={() => setDisabled((v) => !v)} />
-          <p className="basis-full text-[14px] leading-5 text-[rgb(var(--demo-fg)/0.72)]">
-            {holdLoading
-              ? 'Loading is held: the spinner stays and clicks are ignored until you turn it off.'
-              : 'Loading holds the spinner on so you can inspect it. Disabled blocks the pull and the click.'}
-          </p>
+          <Settled className="basis-full" lines={[HELD_NOTE, FREE_NOTE]} shown={holdLoading ? 0 : 1} />
         </>
       }
     >
@@ -65,7 +63,23 @@ export default function MagneticButtonDemo() {
       >
         Join the waitlist
       </MagneticButton>
-      <p className="min-h-5 text-[14px] leading-5 text-[rgb(var(--demo-fg)/0.72)]">{joined ? JOINED : HINT}</p>
+      <Settled className="min-h-10 w-full" lines={[JOINED, HINT]} shown={joined ? 0 : 1} />
     </DemoShell>
+  );
+}
+
+/**
+ * Every line it can show, stacked in one grid cell; only `shown` is visible. The box is always as tall
+ * as the longest line at the current width, so swapping lines never moves the button.
+ */
+function Settled({ lines, shown, className = '' }: { lines: string[]; shown: number; className?: string }) {
+  return (
+    <p className={`grid text-[14px] leading-5 text-[rgb(var(--demo-fg)/0.72)] ${className}`}>
+      {lines.map((line, i) => (
+        <span key={line} aria-hidden={i !== shown || undefined} className={`[grid-area:1/1] ${i === shown ? '' : 'invisible'}`}>
+          {line}
+        </span>
+      ))}
+    </p>
   );
 }

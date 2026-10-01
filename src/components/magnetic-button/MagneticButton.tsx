@@ -200,10 +200,10 @@ function useAnnouncement(loading: boolean, busyText: string, doneText: string): 
   return message;
 }
 
-/** A small inline spinner. It shares the label's grid cell, so the button width never changes. */
+/** A small inline spinner in the button's ink. It shares the label's grid cell, so the button width never changes. */
 function Spinner() {
   return (
-    <svg viewBox="0 0 24 24" className="h-5 w-5 animate-spin motion-reduce:animate-[spin_1.6s_linear_infinite]">
+    <svg viewBox="0 0 24 24" className="h-5 w-5 animate-spin text-[rgb(var(--mb-ink))] motion-reduce:animate-[spin_1.6s_linear_infinite]">
       <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" strokeOpacity="0.25" strokeWidth="2.5" />
       <path d="M21 12a9 9 0 0 0-9-9" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
     </svg>

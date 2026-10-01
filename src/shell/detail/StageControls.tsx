@@ -11,7 +11,7 @@ export const PRESETS: { id: WidthPreset; label: string }[] = [
 
 interface Props {
   width: WidthPreset;
-  /** Presets at least as wide as the stage itself: shown disabled, since they would change nothing. */
+  /** Presets at least as wide as the stage itself: hidden, since they would change nothing. */
   unavailable: WidthPreset[];
   onWidth: (next: WidthPreset) => void;
   theme: StageTheme;
@@ -21,31 +21,33 @@ interface Props {
 /** 44px tall on touch widths, 32px from sm up. */
 const BUTTON = `h-11 sm:h-8 rounded-control px-3 font-mono text-meta transition-colors duration-fast ${FOCUS_RING}`;
 const ON = 'bg-surface-2 text-text shadow-[inset_0_0_0_1px_rgb(var(--color-accent)/0.5)]';
-const OFF = 'text-text-2 hover:text-text disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:text-text-2';
+const OFF = 'text-text-2 hover:text-text';
 
 /**
- * Stage width presets and the stage theme button. The theme button names the stage's current theme
+ * Stage width presets (only those narrower than the stage) and the stage theme button. The theme button names the stage's current theme
  * ("Light stage" / "Dark stage") and flips it on click, with the same track and thumb as the frame button.
  */
 export default function StageControls({ width, unavailable, onWidth, theme, onTheme }: Props) {
   const dark = theme === 'dark';
+  const presets = PRESETS.filter((preset) => !unavailable.includes(preset.id));
   return (
     <div className="flex flex-wrap items-center justify-between gap-3">
-      <div role="group" aria-label="Stage width" className="flex items-center gap-1 rounded-control border border-line bg-surface p-1">
-        {PRESETS.map((preset) => (
-          <button
-            key={preset.id}
-            type="button"
-            aria-pressed={width === preset.id}
-            disabled={unavailable.includes(preset.id)}
-            title={unavailable.includes(preset.id) ? `The stage is already narrower than ${preset.label} px` : undefined}
-            onClick={() => onWidth(preset.id)}
-            className={`${BUTTON} ${width === preset.id ? ON : OFF}`}
-          >
-            {preset.label}
-          </button>
-        ))}
-      </div>
+      {/* Full alone would change nothing (a phone): the whole width group steps aside. */}
+      {presets.length > 1 ? (
+        <div role="group" aria-label="Stage width" className="flex items-center gap-1 rounded-control border border-line bg-surface p-1">
+          {presets.map((preset) => (
+            <button
+              key={preset.id}
+              type="button"
+              aria-pressed={width === preset.id}
+              onClick={() => onWidth(preset.id)}
+              className={`${BUTTON} ${width === preset.id ? ON : OFF}`}
+            >
+              {preset.label}
+            </button>
+          ))}
+        </div>
+      ) : null}
       <button
         type="button"
         onClick={onTheme}
