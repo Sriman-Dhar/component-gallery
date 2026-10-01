@@ -2,7 +2,7 @@
  * Text split for the letter rise: each word is its own clipping box (so lines still wrap between words),
  * each letter a `.letter` span that GSAP lifts in. Hidden from screen readers; the parent carries the
  * plain text as its accessible name. The box reserves room past the advance on every side but the top
- * (0.12em under the baseline for descenders, 0.06em at the ends for serif tails such as the y's), with a
+ * (0.12em under the baseline for descenders, 0.06em at the ends for the overhang of tails such as the y's), with a
  * matching negative margin at the ends so the reserve never moves the text.
  */
 export default function RiseText({ text, letterClass = '' }: { text: string; letterClass?: string }) {

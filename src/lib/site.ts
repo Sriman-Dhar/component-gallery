@@ -14,7 +14,7 @@ export const PACE_LINE = 'Thirty components in thirteen weeks.';
 export const PACE_ACCENT = PACE_LINE.charAt(0).toLowerCase() + PACE_LINE.slice(1);
 
 /**
- * Display typesetting: the straight apostrophe becomes the typographic one (U+2019) wherever the serif
+ * Display typesetting: the straight apostrophe becomes the typographic one (U+2019) wherever the display face
  * sets it on screen. Titles, meta and accessible names keep the plain string, so search and tests match.
  */
 export function typeset(text: string): string {

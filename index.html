@@ -18,14 +18,14 @@
         document.documentElement.setAttribute('data-theme', theme);
       })();
     </script>
-    <link rel="preconnect" href="https://api.fontshare.com" />
-    <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <!-- Zodiak (display serif, Fontshare, free license): the variable roman and italic files (codes 1 and 2),
-         so every weight 100 to 900 comes from two requests. The trailing comma in the list is deliberate:
-         without it the API appends an unasked pairing family to the stylesheet. -->
-    <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=zodiak@1,2,&display=swap" />
+    <!-- Shantell Sans (display, hand drawn and built for reading; OFL): roman and italic at 500 to 700. Google
+         serves one variable file per style and subset, so the five weights cost two latin requests. -->
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Shantell+Sans:ital,wght@0,500;0,600;0,700;1,500;1,600;1,700&display=swap"
+    />
     <!-- Geist (UI) + Geist Mono (metadata, prompt, code). -->
     <link
       rel="stylesheet"

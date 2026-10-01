@@ -10,7 +10,7 @@ interface Props {
 }
 
 /**
- * A station on the rail: a lit node, the heading in the italic of the display serif, and a hairline that runs to the
+ * A station on the rail: a lit node, the heading in the italic of the display face, and a hairline that runs to the
  * edge. As the section first scrolls in, the node blooms and the hairline draws out from it, once.
  */
 export default function SectionHeading({ id, children, action }: Props) {
@@ -34,7 +34,7 @@ export default function SectionHeading({ id, children, action }: Props) {
         <span className="sh-halo absolute -inset-2 rounded-full bg-[radial-gradient(closest-side,rgb(var(--color-accent)/0.45),transparent)]" />
         <span className="sh-node rail-lit relative h-2.5 w-2.5 rounded-full bg-glow" />
       </span>
-      <h2 id={id} className="shrink-0 pr-[0.06em] font-display text-[30px] font-normal italic leading-[36px] tracking-[-0.01em] text-text">
+      <h2 id={id} className="shrink-0 pr-[0.06em] font-display text-[30px] font-medium italic leading-[36px] tracking-[-0.01em] text-text">
         {children}
       </h2>
       <span

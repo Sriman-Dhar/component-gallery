@@ -5,25 +5,47 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Metric fallback for the display serif: Georgia scaled to Zodiak's advance (measured 1.19x Georgia's over the
-   hero strings at the weights they ship in) and its vertical metrics (unitsPerEm 1000, ascent 990, descent 280,
-   gap 90), each override divided by the size-adjust, so font-display: swap shifts almost nothing. */
+/* Metric fallback for the display face: Arial scaled to Shantell Sans's advance (measured over the site's display
+   strings: 115% of Arial at 500, 109.5% of Arial Bold at 600) and its vertical metrics (unitsPerEm 1000, ascent
+   1020, descent 320, gap 0), each override divided by the size-adjust, so font-display: swap shifts almost nothing.
+   Arial, not a comic face: the fallback should read plain, and it exists on every desktop and phone. */
 @font-face {
-  font-family: 'Zodiak Fallback';
-  src: local('Georgia');
-  size-adjust: 119%;
-  ascent-override: 83.2%;
-  descent-override: 23.5%;
-  line-gap-override: 7.6%;
+  font-family: 'Shantell Fallback';
+  src: local('Arial'), local('ArialMT');
+  font-weight: 100 549;
+  size-adjust: 115%;
+  ascent-override: 88.7%;
+  descent-override: 27.8%;
+  line-gap-override: 0%;
 }
 @font-face {
-  font-family: 'Zodiak Fallback';
+  font-family: 'Shantell Fallback';
   font-style: italic;
-  src: local('Georgia Italic'), local('Georgia-Italic');
-  size-adjust: 119%;
-  ascent-override: 83.2%;
-  descent-override: 23.5%;
-  line-gap-override: 7.6%;
+  src: local('Arial Italic'), local('Arial-ItalicMT');
+  font-weight: 100 549;
+  size-adjust: 115%;
+  ascent-override: 88.7%;
+  descent-override: 27.8%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'Shantell Fallback';
+  src: local('Arial Bold'), local('Arial-BoldMT');
+  font-weight: 550 900;
+  size-adjust: 109.5%;
+  ascent-override: 93.2%;
+  descent-override: 29.2%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'Shantell Fallback';
+  font-style: italic;
+  src: local('Arial Bold Italic'), local('Arial-BoldItalicMT');
+  font-weight: 550 900;
+  size-adjust: 109.5%;
+  ascent-override: 93.2%;
+  descent-override: 29.2%;
+  line-gap-override: 0%;
 }
 
 @layer base {

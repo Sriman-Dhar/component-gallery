@@ -6,7 +6,7 @@ const TICKS = Array.from({ length: TARGET }, (_, i) => i);
 
 /**
  * The index's oversized moment, a designed fraction: the shipped count as a lit numeral in the display
- * serif (136px, 96 on phones) with a bloom behind it, the total ghosted as an italic outline, and a micro rail
+ * face (136px, 96 on phones) with a bloom behind it, the total ghosted as an italic outline, and a micro rail
  * of one tick per component with the shipped ones lit. Load: the ticks draw in, the count runs up
  * (0.9s, expo.out) with the lamp dim, then it ignites (flicker, settle) and the bloom swells once.
  * Reduced motion: the settled, lit state.
@@ -52,7 +52,7 @@ export default function CountUp({ count }: { count: number }) {
             {count}
           </span>
         </span>
-        <span className="numeral-ghost pb-1 pr-[0.08em] font-display text-[48px] font-normal italic leading-none tracking-[-0.01em] sm:pb-2 sm:text-[64px]">
+        <span className="numeral-ghost pb-1 pr-[0.08em] font-display text-[48px] font-medium italic leading-none tracking-[-0.01em] sm:pb-2 sm:text-[64px]">
           /{TARGET}
         </span>
       </span>

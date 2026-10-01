@@ -124,18 +124,18 @@
   fill: color-mix(in srgb, rgb(var(--color-glow)) 40%, rgb(var(--color-text)));
 }
 
-/* The editorial hero, two tone like a magazine cover: the name in the roman serif, quiet, in text colour;
-   then the pace line in the italic of the same serif, loud, in the amber ramp. Sizes follow the hero column
+/* The editorial hero, two tone like a magazine cover: the name in the roman of the display face, quiet, in text colour;
+   then the pace line in the italic of the same face, loud, in the amber ramp. Sizes follow the hero column
    (full width below lg, 7 of 12 columns above), so the name holds one line on desktop and two on phones. */
 .hero-name {
   font-size: clamp(46px, 13vw, 76px);
-  line-height: 1.02;
-  letter-spacing: -0.025em;
+  line-height: 1.04;
+  letter-spacing: -0.02em;
 }
 .hero-accent {
   font-size: clamp(28px, 9vw, 54px);
   line-height: 1.12;
-  letter-spacing: -0.015em;
+  letter-spacing: -0.01em;
   text-wrap: balance;
 }
 @media (min-width: 1024px) {
@@ -149,7 +149,8 @@
 
 /* Each line fragment carries the full ramp (box-decoration-break: clone), and its padding is the clip
    reserve: background-clip: text paints only inside the box, so the inline padding covers the italic
-   overhang at line ends and the bottom padding covers the y, p and g descenders (0.21em below baseline). */
+   overhang at line ends and the bottom padding covers the y, p and g descenders (0.26em below the
+   baseline in Shantell Sans, inside its 0.32em descent, so the content box already holds them). */
 .accent-ink {
   --sheen-x: 0%; /* rest: the sheen band parked past the right edge; 100% parks it past the left */
   padding: 0 0.1em 0.16em;

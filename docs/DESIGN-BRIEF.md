@@ -1,7 +1,8 @@
 # CREATIVE BRIEF v2 — Sriman's Gallery (component gallery for the 90 day build challenge)
 
 Updated 2026-10-01 (index showcase pass: lit type, lit fraction, rail scene, lit stages, atmosphere; then the live
-orrery; then the editorial serif pass: Zodiak replaces Clash Display, the two tone hero, the rename to "Sriman's Gallery").
+orrery; then the editorial pass: the two tone hero and the rename to "Sriman's Gallery"; then the owner's final face
+ruling: Shantell Sans replaces Zodiak and the dev font lab is gone).
 
 v1 ("specimen sheet", warm paper, quiet motion) was rejected on 2026-09-25: the gallery itself must be UI/UX rich and
 animated, a showcase piece, not a catalogue. v2 replaces it entirely. Nothing from v1's palette or type survives.
@@ -44,36 +45,39 @@ pointer but never fights the text).
   the fill meets that section, lighting as it is reached and jumping there on click; below lg a 2px amber progress
   line under the header. 404: unlit rail with a flicker →
   "Nothing shipped here." → link home. No tabs hide Code or Prompt.
-- Typography (updated 2026-10-01, third pass). The owner sent a reference: a big editorial display serif, quiet
-  roman lines in near-black, then an accent line in the italic of the same serif in a saturated colour ("style
-  font... see how eye catching it is"). That reference explicitly sanctions a serif, overriding the earlier
-  no-serif rule. The DISPLAY face is Zodiak (Fontshare, free license), a sharp high-contrast modern serif whose
-  italic is a true cursive italic, not a slanted roman. Chosen over Gambetta and Sentient (the brief's
-  alternatives) because its italic has the most character at display sizes and it ships a variable wght axis for
-  both roman and italic, so every weight comes from two files. Loaded as `zodiak@1,2,` (the variable roman and
-  italic; the trailing comma stops the API appending a pairing family).
-  THE TWO TONE HERO (the signature, modeled on the reference): line 1 "Sriman's Gallery" in the roman at 500, text
-  colour, tracking -0.025em, leading 1.02, 46 to 76px (13vw below lg, 5.8vw from lg, so one line on desktop and
-  two on phones); then the pace line reborn as the accent, "thirty components in thirteen weeks." (lower case: it
-  continues the name as one sentence in two voices), in the ITALIC at 500, 28 to 54px (9vw / 4.2vw), leading 1.12,
-  text-wrap balance so it breaks into two even lines, painted with the amber ramp (--accent-line-top to
-  --accent-line-bottom, background-clip text) and swept once by a sheen (--accent-sheen) that parks off the right
-  edge. The roman line keeps the letter light (heat follows the pointer). Italic descender rule (hard): leading
-  1.1 minimum plus a padding reserve on every clip box: the accent's ink box pads 0.16em under and 0.1em at the
-  ends (box-decoration-break: clone, so every line fragment gets it), RiseText's word masks pad 0.12em under and
-  0.06em at the ends. Measured: 12.3px clear under the deepest descender at 54px, 0 pixels lost with clipping on
-  versus off at 320, 375 and 1280.
-  Per surface: header brand roman 600 at 21px (-0.015em); lit numerator roman 600 at 96/136; ghost "/30" italic 400
-  outline; detail № roman 600 at 72/112; detail name roman 500 at 40/60 (-0.02 to -0.025em); section headings
-  italic 400 at 30px in text colour (the hero's italic voice, quieter); tile names roman 500 at 23px; "Next: Week N"
-  italic 400 in text-2; 404 "Nothing shipped" roman 500 with "here." in the amber italic ink. The apostrophe is set
+- Typography (updated 2026-10-01, fourth pass, the owner's final ruling). His words: "get rid of the font gallery
+  and select a font on your own; requirment is to have one that like handwritten style or something but readble
+  easily". The DISPLAY face is Shantell Sans (Google Fonts, OFL): drawn from handwriting, so every big moment reads
+  as made by a person, but engineered for reading (open counters, generous x-height, steady rhythm), and its italic
+  is a true italic with more lean and flow, which carries the hero's second voice. It replaces Zodiak (the serif of
+  the third pass). The dev-only font lab (FontLab.tsx, fontLabFaces.ts, its Clash and Fontshare loads and its
+  sessionStorage key) is deleted; nothing but Shantell Sans, Geist and Geist Mono loads. Loaded as
+  `Shantell+Sans:ital,wght@0,500;0,600;0,700;1,500;1,600;1,700`: Google serves one variable file per style and
+  subset, so that is two latin files.
+  Weights: big surfaces 600, quiet surfaces 500; nothing on the display face uses 400. Shantell is rounder and
+  wider than a serif and its spacing is already loose, so tracking is eased off from the serif values.
+  THE TWO TONE HERO (the signature): line 1 "Sriman's Gallery" in the roman at 600, text colour, tracking -0.02em,
+  leading 1.04, 46 to 76px (13vw below lg, 5.8vw from lg: one line on desktop, two on phones); then the pace line
+  as the accent, "thirty components in thirteen weeks." (lower case: one sentence in two voices), in the ITALIC at
+  500, 28 to 54px (9vw / 4.2vw), leading 1.12, tracking -0.01em, text-wrap balance, painted with the amber ramp
+  (--accent-line-top to --accent-line-bottom, background-clip text) and swept once by a sheen (--accent-sheen) that
+  parks off the right edge. The roman line keeps the letter light (heat follows the pointer). Descender rule
+  (hard): Shantell's descenders reach 0.26em under the baseline (its descent is 0.32em); the accent's ink box pads
+  0.16em under and 0.1em at the ends (box-decoration-break: clone), RiseText's word masks pad 0.12em under and 0.06em
+  at the ends. Measured: 25.8px clear under the deepest descender at 1280 (17.2px at 375), 0 pixels lost with
+  clipping on versus off for the name, the accent, the 404 line and the section headings at 320, 375 and 1280.
+  Per surface: header brand roman 600 at 21px (-0.015em); lit numerator roman 600 at 96/136; ghost "/30" italic 500
+  outline; detail № roman 600 at 72/112; detail name roman 600 at 40/60 (-0.015 to -0.02em); section headings italic
+  500 at 30px in text colour (the hero's italic voice, quieter); tile names roman 500 at 23px; "Next: Week N" italic
+  500 in text-2; 404 "Nothing shipped" roman 600 with "here." in the amber italic ink at 600. The apostrophe is set
   as U+2019 on screen (typeset() in src/lib/site.ts); titles, meta and accessible names keep the plain string.
   Geist stays for body and UI (400/500/600), Geist Mono for metadata, prompt and code. A metric fallback face
-  ('Zodiak Fallback', Georgia and Georgia Italic at size-adjust 119% with ascent 83.2%, descent 23.5%, gap 7.6%,
-  measured from the Zodiak files) sits in the stack so the swap barely shifts layout.
+  ('Shantell Fallback': Arial and its italic at size-adjust 115% for weights up to 549, Arial Bold and its italic at
+  109.5% from 550, ascent 102% / descent 32% / gap 0 of Shantell divided by each size-adjust, measured from the
+  Shantell files over the site's display strings) sits in the stack so the swap barely shifts layout. Arial, not a
+  comic face, so a failed load still reads plain.
   Tokens: --font-display / --font-sans / --font-mono in tokens.css, Tailwind font-display / font-sans / font-mono.
-  Never Inter, Fraunces or Instrument Serif. The dev-only font lab keeps Zodiak first (the default) with Clash and
-  five sans candidates to compare by eye.
+  Never Inter, Fraunces, Instrument Serif or Comic Sans.
 - Color (semantic tokens, both frame themes real, dark is the default and the flagship):
   Dark: bg #0B0B0E · surface #131318 · surface-2 #1A1A21 · line #26262E · text #F3F3F6 · text-2 #9C9CAB ·
   accent ramp: glow #FFC38A (core) · accent #FF8A2A (body) · accent-deep #8A3E0A (shadow) · rim #7C93C9 (cool,

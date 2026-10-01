@@ -6,7 +6,7 @@ import RiseText from '../RiseText';
 import MetaChips from './MetaChips';
 
 /**
- * Header rail: the running number in the display serif, oversized and lit from behind (a warm bloom that
+ * Header rail: the running number in the display face, oversized and lit from behind (a warm bloom that
  * swells once and settles), the name rising in letter by letter, then the stamp chips and the summary.
  * Everything settles and stays still; reduced motion shows the settled state.
  */
@@ -47,7 +47,7 @@ export default function DetailHeader({ meta }: { meta: ComponentMeta }) {
       <div className="lg:col-span-9 lg:pt-3">
         <h1
           aria-label={meta.name}
-          className="font-display text-[40px] font-medium leading-[44px] tracking-[-0.02em] text-text sm:text-[60px] sm:leading-[64px] sm:tracking-[-0.025em]"
+          className="font-display text-[40px] font-semibold leading-[44px] tracking-[-0.015em] text-text sm:text-[60px] sm:leading-[64px] sm:tracking-[-0.02em]"
         >
           <RiseText text={meta.name} />
         </h1>

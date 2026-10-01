@@ -5,7 +5,7 @@ import RiseText from '../RiseText';
 import { useLetterLight } from './useLetterLight';
 
 /**
- * The site name, the quiet half of the two tone hero: the roman serif at 500 in text colour, letters
+ * The site name, the quiet half of the two tone hero: the roman of the display face at 600 in text colour, letters
  * rising 20ms apart; then a light sweeps across it once and the letters keep catching the pointer light.
  * Set with the typographic apostrophe; screen readers get the plain name.
  */
@@ -22,7 +22,7 @@ export default function SiteName({ name }: { name: string }) {
   );
 
   return (
-    <h1 ref={root} aria-label={name} className="hero-name font-display font-medium text-text">
+    <h1 ref={root} aria-label={name} className="hero-name font-display font-semibold text-text">
       <RiseText text={typeset(name)} letterClass="lit-letter" />
     </h1>
   );

@@ -44,9 +44,10 @@
   --p-stage-dark: 18 18 22; /* #121216 */
   --p-stage-dark-grid: 36 36 44; /* #24242C */
 
-  /* type: one display serif for the big moments (Zodiak, variable roman + italic), Geist for UI, Geist Mono for
-     metadata and code. 'Zodiak Fallback' is Georgia resized to Zodiak's metrics (src/index.css). */
-  --font-display: 'Zodiak', 'Zodiak Fallback', ui-serif, Georgia, serif;
+  /* type: one display face for the big moments (Shantell Sans, hand drawn but built for reading, roman + italic),
+     Geist for UI, Geist Mono for metadata and code. 'Shantell Fallback' is Arial resized to Shantell's metrics
+     (src/index.css). */
+  --font-display: 'Shantell Sans', 'Shantell Fallback', ui-sans-serif, system-ui, sans-serif;
   --font-sans: 'Geist', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 
@@ -85,7 +86,7 @@
   --vignette-alpha: 0.55;
   --spot-alpha: 0.16;
   --spot-blend: screen;
-  /* the hero's italic accent line: a glow-to-body ramp in the serif, with a sheen that sweeps it once */
+  /* the hero's italic accent line: a glow-to-body ramp in the display italic, with a sheen that sweeps it once */
   --accent-line-top: var(--p-amber-200);
   --accent-line-bottom: var(--p-amber-500);
   --accent-sheen: var(--p-amber-50);
