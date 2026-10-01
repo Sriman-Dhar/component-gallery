@@ -57,6 +57,8 @@ export interface OtpInputProps {
   verifyingText?: string;
   /** The code was accepted: a success border sweeps across the cells. */
   success?: boolean;
+  /** Line shown with a check, and announced, while the success sweep plays. */
+  successText?: string;
   /** Fully unavailable: native disabled, out of the tab order. */
   disabled?: boolean;
   /** A rejected code: set a message, the row shakes once, then clears for a retry. */
@@ -75,6 +77,7 @@ export default function OtpInput({
   verifying = false,
   verifyingText = 'Checking the code',
   success = false,
+  successText = 'Code accepted',
   disabled = false,
   error = null,
   onErrorReset,
@@ -92,7 +95,8 @@ export default function OtpInput({
   const code = useOtpCode({
     length,
     initial: defaultValue,
-    locked: verifying || success,
+    // The error hold is locked too: no edit can complete a second code while the rejected one shows.
+    locked: verifying || success || rejected,
     onComplete,
     onEdit: () => setMessage(''),
     onFill: (start, count) => cascadeRef.current(start, count),
@@ -171,7 +175,12 @@ export default function OtpInput({
       {/* Two reserved lines: the hint (or the checking line), with the error fading in over it. */}
       <div id={`${id}-note`} className="grid min-h-10 text-[14px] leading-5">
         <span aria-hidden={showError || undefined} className={`${FADE} text-[rgb(var(--otp-muted))] ${showError ? 'opacity-0' : ''}`}>
-          {verifying ? (
+          {success ? (
+            <span className="inline-flex items-center gap-2 text-[rgb(var(--otp-success))]">
+              <Check />
+              {successText}
+            </span>
+          ) : verifying ? (
             <span className="inline-flex items-center gap-2">
               <Spinner />
               {verifyingText}
@@ -185,9 +194,18 @@ export default function OtpInput({
         </span>
       </div>
       <span role="status" aria-live="polite" className="sr-only">
-        {message}
+        {success ? successText : message}
       </span>
     </div>
+  );
+}
+
+/** A 14px check for the accepted line. */
+function Check() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className="h-3.5 w-3.5">
+      <path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
   );
 }
 

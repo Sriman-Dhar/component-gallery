@@ -35,6 +35,13 @@ function borderClass(row: RowState, digit: string): string {
   return digit ? 'border-[rgb(var(--otp-border-filled))]' : 'border-[rgb(var(--otp-border))]';
 }
 
+/** The focus ring takes the row's state color, so a red row or the green sweep stays one color. */
+function ringClass(row: RowState): string {
+  if (row.success) return 'focus-visible:outline-[rgb(var(--otp-success))]';
+  if (row.rejected) return 'focus-visible:outline-[rgb(var(--otp-error))]';
+  return 'focus-visible:outline-[rgb(var(--otp-ring))]';
+}
+
 /**
  * One digit cell. A label wrapper whose ::before reaches into the gaps keeps the tap target 44px+
  * even when a narrow stage shrinks the visible box toward 36px. Layers over the input, none of them
@@ -42,7 +49,7 @@ function borderClass(row: RowState, digit: string): string {
  * dash, and a 2px blinking caret while the cell is focused and empty.
  */
 export default function OtpCell({ id, index, length, digit, focused, row, inputRef, onKeyDown, onChange, onFocus, onBlur, onPick }: Props) {
-  const live = !row.busy && !row.disabled && !row.success;
+  const live = !row.busy && !row.disabled && !row.success && !row.rejected;
   const showCaret = focused && !digit && live;
   const overwriteCue = focused && Boolean(digit) && live && !row.endLocked;
   const tint = row.rejected
@@ -67,7 +74,7 @@ export default function OtpCell({ id, index, length, digit, focused, row, inputR
         aria-label={`Digit ${index + 1} of ${length}`}
         aria-invalid={row.rejected || undefined}
         aria-disabled={row.busy || undefined}
-        readOnly={row.busy || row.success}
+        readOnly={row.busy || row.success || row.rejected}
         value={digit}
         disabled={row.disabled}
         onKeyDown={(event) => onKeyDown(index, event)}
@@ -79,13 +86,17 @@ export default function OtpCell({ id, index, length, digit, focused, row, inputR
         }}
         onBlur={() => onBlur(index)}
         style={row.success ? { transitionDelay: `${index * SWEEP_MS}ms` } : undefined}
-        className={`relative block h-14 w-full rounded-control border-[1.5px] bg-[rgb(var(--otp-cell))] text-center text-[26px] font-semibold leading-none text-[rgb(var(--otp-ink))] caret-transparent outline-none transition-[border-color] duration-[120ms] ease-out [font-variant-numeric:tabular-nums] selection:bg-transparent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[rgb(var(--otp-ring))] disabled:cursor-not-allowed motion-reduce:transition-none sm:text-[28px] ${borderClass(row, digit)}`}
+        className={`relative block h-14 w-full rounded-control border-[1.5px] bg-[rgb(var(--otp-cell))] text-center text-[32px] font-semibold leading-none text-[rgb(var(--otp-ink))] caret-transparent outline-none transition-[border-color] duration-[120ms] ease-out [font-variant-numeric:tabular-nums] selection:bg-[rgb(var(--otp-ring)/0.12)] selection:text-[rgb(var(--otp-ink))] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed motion-reduce:transition-none ${ringClass(row)} ${borderClass(row, digit)}`}
       />
       <span
         aria-hidden="true"
         className={`pointer-events-none absolute inset-0 rounded-control transition-opacity duration-[120ms] ease-out motion-reduce:transition-none ${tint}`}
       />
-      <span aria-hidden="true" className="otp-flash pointer-events-none absolute inset-0 rounded-control border-[1.5px] border-[rgb(var(--otp-ring))] opacity-0" />
+      {/* The fill peaks near 6% under the flash tween, so the flash also reads on a white cell. */}
+      <span
+        aria-hidden="true"
+        className="otp-flash pointer-events-none absolute inset-0 rounded-control border-[1.5px] border-[rgb(var(--otp-ring))] bg-[rgb(var(--otp-ring)/0.09)] opacity-0"
+      />
       <span
         aria-hidden="true"
         className={`pointer-events-none absolute left-1/2 top-1/2 h-[2px] w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[rgb(var(--otp-dash))] ${

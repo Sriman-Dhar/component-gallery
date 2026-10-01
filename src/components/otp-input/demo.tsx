@@ -21,29 +21,34 @@ export default function OtpInputDemo() {
   const [error, setError] = useState<string | null>(null);
   const [round, setRound] = useState(0);
   const [copied, setCopied] = useState(false);
-  const timer = useRef<number>();
   const copyTimer = useRef<number>();
+  const submitted = useRef('');
+  const startOver = useRef<HTMLButtonElement>(null);
 
-  useEffect(
-    () => () => {
-      window.clearTimeout(timer.current);
-      window.clearTimeout(copyTimer.current);
-    },
-    [],
-  );
+  useEffect(() => () => window.clearTimeout(copyTimer.current), []);
 
+  // Each phase owns its own timer and the effect cleanup cancels it, so no edit, remount or second
+  // completion can drop the step from success to accepted.
+  useEffect(() => {
+    if (phase === 'accepted') {
+      startOver.current?.focus({ preventScroll: true });
+      return;
+    }
+    if (phase === 'entry') return;
+    const timer = window.setTimeout(() => {
+      if (phase === 'success') return setPhase('accepted');
+      if (submitted.current === DEMO_CODE) return setPhase('success');
+      setPhase('entry');
+      setError(REJECTED);
+    }, phase === 'verifying' ? CHECK_MS : SWEEP_MS);
+    return () => window.clearTimeout(timer);
+  }, [phase]);
+
+  /** One check at a time: a completion outside the entry phase is ignored. */
   const verify = (code: string) => {
+    if (phase !== 'entry' || error) return;
+    submitted.current = code;
     setPhase('verifying');
-    window.clearTimeout(timer.current);
-    timer.current = window.setTimeout(() => {
-      if (code !== DEMO_CODE) {
-        setPhase('entry');
-        setError(REJECTED);
-        return;
-      }
-      setPhase('success');
-      timer.current = window.setTimeout(() => setPhase('accepted'), SWEEP_MS);
-    }, CHECK_MS);
   };
 
   const copyCode = async () => {
@@ -58,6 +63,7 @@ export default function OtpInputDemo() {
   };
 
   const restart = () => {
+    setError(null);
     setPhase('entry');
     setRound((n) => n + 1);
   };
@@ -83,7 +89,7 @@ export default function OtpInputDemo() {
       {phase === 'accepted' ? (
         <div role="status" className="flex min-h-[144px] w-full flex-col items-start justify-center gap-3">
           <p className="text-[20px] font-semibold leading-7">Code accepted. You are signed in.</p>
-          <button type="button" onClick={restart} className={DEMO_CHIP}>
+          <button ref={startOver} type="button" onClick={restart} className={DEMO_CHIP}>
             Start over
           </button>
         </div>

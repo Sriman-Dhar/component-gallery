@@ -4,7 +4,7 @@ import OtpInput from './OtpInput';
 export default function OtpInputPreview() {
   return (
     <div className="w-[340px] max-w-full translate-y-3">
-      <OtpInput defaultValue="2" hint="Paste the code into any box." />
+      <OtpInput defaultValue="2" />
     </div>
   );
 }

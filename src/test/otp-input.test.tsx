@@ -108,4 +108,31 @@ describe('otp input', () => {
     expect(onErrorReset).toHaveBeenCalledTimes(1);
     vi.useRealTimers();
   });
+
+  it('locks the row during the error hold: no edit, paste or second completion', () => {
+    vi.useFakeTimers();
+    const onComplete = vi.fn();
+    const { rerender } = render(<OtpInput onComplete={onComplete} />);
+    paste(cell(1), '111111');
+    rerender(<OtpInput error="Wrong code" onComplete={onComplete} />);
+    fireEvent.pointerDown(cell(6));
+    fireEvent.keyDown(cell(6), { key: '9' });
+    fireEvent.keyDown(cell(6), { key: 'Backspace' });
+    paste(cell(1), '246810');
+    expect(values()).toBe('111111');
+    expect(cell(6)).toHaveAttribute('readonly');
+    expect(onComplete).toHaveBeenCalledTimes(1);
+    expect(screen.getByRole('status')).toHaveTextContent('Wrong code');
+    act(() => {
+      vi.advanceTimersByTime(ERROR_HOLD_MS + 50);
+    });
+    expect(cell(6)).not.toHaveAttribute('readonly');
+    vi.useRealTimers();
+  });
+
+  it('announces success and swaps the hint for the accepted line while the sweep plays', () => {
+    render(<OtpInput defaultValue="246810" success />);
+    expect(screen.getByRole('status')).toHaveTextContent('Code accepted');
+    expect(screen.getByText('Code accepted', { selector: 'span:not([role])' })).toBeInTheDocument();
+  });
 });
