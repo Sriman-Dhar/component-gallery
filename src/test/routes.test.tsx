@@ -95,12 +95,14 @@ describe('routes', () => {
     expect(screen.getByRole('link', { name: 'Back to the index' })).toHaveAttribute('href', '/');
   });
 
-  it('has no dead repo links while the repo URL is unset', () => {
+  it('links the public repo from the header and the footer', () => {
     renderAt('/');
-    expect(screen.queryByRole('link', { name: /repo|github|source/i })).toBeNull();
-    // One term in the header and the footer.
-    expect(screen.getAllByText('Source coming soon')).toHaveLength(2);
-    expect(screen.queryByText(/repo coming soon/i)).toBeNull();
+    const links = screen.getAllByRole('link', { name: /source/i });
+    expect(links).toHaveLength(2);
+    for (const link of links) {
+      expect(link).toHaveAttribute('href', 'https://github.com/Sriman-Dhar/component-gallery');
+    }
+    expect(screen.queryByText(/coming soon/i)).toBeNull();
   });
 
   it('flips the frame theme on <html> and its label names the current theme (reduced motion path)', () => {
