@@ -1,0 +1,10 @@
+// Cloudflare Workers static assets config. SPA fallback lives here, not in a
+// _redirects file: a catch-all redirect rule loops on Workers (code 100324).
+{
+  "name": "90daychallange",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application"
+  }
+}
