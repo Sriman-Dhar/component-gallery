@@ -1,11 +1,11 @@
 import { useLayoutEffect, useState } from 'react';
-import { DEFAULT_FACE, LAB_FACES, LAB_FONTS_HREF, labCss, type LabFace } from './fontLabFaces';
+import { DEFAULT_FACE, LAB_FACES, LAB_FONTS_HREFS, labCss, type LabFace } from './fontLabFaces';
 import { FOCUS_RING } from './focus';
 
 /**
  * Font lab (temporary, dev only): a floating picker that swaps the display face on every display surface,
  * so the owner picks by eye on the live page. Mounted from Layout only when import.meta.env.DEV is true.
- * The choice lives in sessionStorage; the committed default (Clash) is untouched until one is picked for real.
+ * The choice lives in sessionStorage; the committed default (Zodiak) is untouched until one is picked for real.
  */
 const STORE_KEY = 'gallery-font-lab';
 const LINK_ID = 'font-lab-fonts';
@@ -22,12 +22,15 @@ function readStored(): string {
 }
 
 function ensureFontsLoaded() {
-  if (document.getElementById(LINK_ID)) return;
-  const link = document.createElement('link');
-  link.id = LINK_ID;
-  link.rel = 'stylesheet';
-  link.href = LAB_FONTS_HREF;
-  document.head.appendChild(link);
+  LAB_FONTS_HREFS.forEach((href, i) => {
+    const id = `${LINK_ID}-${i}`;
+    if (document.getElementById(id)) return;
+    const link = document.createElement('link');
+    link.id = id;
+    link.rel = 'stylesheet';
+    link.href = href;
+    document.head.appendChild(link);
+  });
 }
 
 function applyFace(face: LabFace) {
