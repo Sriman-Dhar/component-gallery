@@ -1,6 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import App from '../App';
+import { shipped } from '../lib/catalogue';
 import { routerFuture } from '../lib/router';
 
 function renderAt(path: string) {
@@ -16,7 +17,7 @@ describe('routes', () => {
     renderAt('/');
     expect(screen.getByRole('heading', { level: 1, name: 'Sriman Gallery' })).toBeInTheDocument();
     expect(screen.getByText('Thirty components in ninety days.')).toBeInTheDocument();
-    expect(screen.getByLabelText('0 of 30 components shipped')).toBeInTheDocument();
+    expect(screen.getByLabelText(`${shipped.length} of 30 components shipped`)).toBeInTheDocument();
     expect(screen.getByTestId('light-rail')).toHaveAttribute('data-variant', 'hero');
     expect(screen.getByRole('link', { name: 'Example Button' })).toHaveAttribute('href', '/components/example-button');
     expect(screen.getAllByText('Type: button').length).toBeGreaterThan(0);

@@ -1,0 +1,12 @@
+import type { ComponentMeta } from '../../lib/types';
+
+export const meta: ComponentMeta = {
+  slug: 'magnetic-button',
+  name: 'Magnetic Button',
+  type: 'button',
+  week: 1,
+  date: '2026-10-01',
+  summary:
+    'A primary call to action whose fill and label drift toward the exact cursor point, with keyboard, touch, loading and reduced motion states built in.',
+  prompt: `A magnetic button is a primary call to action for the one click a page most wants taken: a hero signup, a checkout submit, a waitlist join. Inside roughly an 80 pixel radius of the pointer, the button's label and fill drift toward the cursor by a fraction of the offset, capped near 10 pixels of travel, so it reads as attraction rather than a drag. The instant the pointer leaves that radius the button eases back to rest with a soft overshoot, never a snap. Default is a solid fill with a short, clear label. Hover adds the magnetic pull plus a light scale increase. Focus shows a 2px ring that appears from keyboard navigation alone, never only on hover. Active, whether from a click or a held Enter or Space, compresses the button slightly so the press feels physical. Disabled removes the pull, drops opacity, and blocks both pointer and keyboard activation while carrying aria-disabled. Loading swaps the label for a small inline spinner inside a fixed width so nothing around it shifts. Keyboard users reach the button by tab, see the same ring, and fire it with Enter or Space with no pointer-only path required, since the pull is purely decorative. Screen readers hear the label and, while loading, a polite live region announcing the busy state and its end. Touch has no pointer position to chase, so the pull is skipped entirely and replaced by a firm press-down scale on touch start that releases on touch end. Reduced motion strips the pull and the spring, keeping only the instant press. On a light stage it is a solid dark fill with light text; on a dark stage it inverts to a solid light fill with dark text; both driven by the component's own custom properties, never inherited page tokens. Motion runs through quickTo tweens so the pull tracks fast mouse movement without lag. The detail that makes it memorable: the pull always points at the exact cursor position, never the nearest edge or corner, so it feels alive rather than gridded. No purple gradients, no emoji, no hover-only function, no layout shift between any state. Keep the component file under 300 lines and split the pointer-tracking logic into its own hook file if it grows past that.`,
+};
