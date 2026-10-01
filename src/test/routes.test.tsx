@@ -48,6 +48,15 @@ describe('routes', () => {
   it('shows the detail page with its Type stamp, compact rail, stage, ask and collapsible code', async () => {
     renderAt('/components/magnetic-button');
     expect(screen.getByRole('heading', { level: 1, name: 'Magnetic Button' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'All components' })).toHaveAttribute('href', '/');
+    const rail = screen.getByRole('navigation', { name: 'On this page' });
+    expect(within(rail).getAllByRole('link').map((link) => [link.textContent, link.getAttribute('href')])).toEqual([
+      ['Stage', '#stage'],
+      ['The ask', '#ask'],
+      ['The code', '#code'],
+      ['Previous and next', '#more'],
+    ]);
+    for (const id of ['stage', 'ask', 'code', 'more']) expect(document.getElementById(id)).not.toBeNull();
     expect(screen.getAllByText('Type: button').length).toBeGreaterThan(0);
     expect(screen.getByTestId('light-rail')).toHaveAttribute('data-variant', 'compact');
     expect(screen.getByRole('heading', { name: 'The ask' })).toBeInTheDocument();

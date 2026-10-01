@@ -27,14 +27,28 @@ pointer but never fights the text).
 - Structure: max-w 1280, 12-col grid. Index: HERO (left: name + count moment; full width below: the particle
   light rail) → TILE GRID (asymmetric: the newest component is a 2x wide feature tile, the rest 3-up on desktop,
   2-up tablet, 1-up phone; each tile is a live mini stage of the component, not a screenshot) → FOOTER (repo link,
-  challenge line). Detail: HEADER RAIL (№ oversized, name, type stamp, week, date; compressed light rail with the
-  node blooming) → STAGE (full width, min 520px, light/dark stage switch, width presets 375 / 768 / full, the
-  component slides in) → THE ASK (prompt, mono, lines revealed in a stagger, copy) → THE CODE (source with a
-  scanning highlight line on reveal, copy) → PREV / NEXT (tiles, tilt on hover). 404: unlit rail with a flicker →
+  challenge line). Detail: BACK ("All components", arrow + hairline, 44px, first focusable thing on the page) → HEADER
+  RAIL (№ oversized in the display face with a warm bloom behind it, name, stamp chips: Type, a lit Week chip whose
+  node is the rail node, date; compressed light rail with the node blooming) → STAGE (full width, min 520px, lit
+  corner marks, light/dark stage switch, width presets 375 / 768 / full showing only presets narrower than the
+  stage, the whole group hidden when only Full fits) → THE ASK (rail-station heading, prompt, copy) → THE CODE
+  (rail-station heading, source with a scanning highlight line on reveal, copy) → PREV / NEXT (tiles, tilt on
+  hover). Alongside, the page's own SCROLL RAIL: from lg a slim vertical line fixed in the left gutter that fills
+  with amber as the page scrolls, one node per section (Stage, The ask, The code, Previous and next) placed where
+  the fill meets that section, lighting as it is reached and jumping there on click; below lg a 2px amber progress
+  line under the header. 404: unlit rail with a flicker →
   "Nothing shipped here." → link home. No tabs hide Code or Prompt.
-- Typography: Geist (display 600 tight, body 400/500) + Geist Mono (metadata, prompt, code). Scale 12 / 14 / 16 /
-  20 / 28 / 44 / 72 / 112. Oversized moments: the count on the index at 112 (counts up on load), the № on detail at
-  72. Google Fonts <link> with display=swap; Inter is not used.
+- Typography (updated 2026-10-01, the owner found Geist-only headings "too basic"): a DISPLAY face with character,
+  Bricolage Grotesque 600/700 (optical size axis on, so big sizes get the tighter display cut), carries every big
+  moment: the hero count, the site name, the detail № and component name, section headings, tile names, the 404
+  line. Tracking -0.01em at 22, -0.02 to -0.025em at 40 to 60, -0.03em at 72 to 136 (Bricolage is already tight at
+  high opsz; Geist's -0.045 to -0.055 crushed it). Geist stays for body and UI (400/500/600), Geist Mono for
+  metadata, prompt and code. Scale 12 / 14 / 16 / 20 / 22 / 28 / 40 / 56 / 60 / 72 / 112 / 136. Oversized moments:
+  the index count at 136 (96 on phones, counts up on load), the detail № at 112 from lg (72 below). One Google
+  Fonts <link> with display=swap (Bricolage 600..700 only); a metric fallback face ('Bricolage Fallback', Arial
+  size-adjusted to Bricolage's advance and vertical metrics) sits in the stack so the swap barely shifts layout.
+  Tokens: --font-display / --font-sans / --font-mono in tokens.css, Tailwind font-display / font-sans / font-mono.
+  Never Inter, Fraunces or Instrument Serif; no serif.
 - Color (semantic tokens, both frame themes real, dark is the default and the flagship):
   Dark: bg #0B0B0E · surface #131318 · surface-2 #1A1A21 · line #26262E · text #F3F3F6 · text-2 #9C9CAB ·
   accent ramp: glow #FFC38A (core) · accent #FF8A2A (body) · accent-deep #8A3E0A (shadow) · rim #7C93C9 (cool,
@@ -59,8 +73,13 @@ reduced motion = instant final states, particles frozen as a composed still)**
 - Tiles: ScrollTrigger batch reveal (y 24, opacity, 40ms stagger, once); hover tilt (max 6deg, quickTo, damped) +
   sheen + border glow in accent at 40%; press scale 0.98. WHY: the work is the content; hover says "alive".
 - Route change: the leaving view fades and slides 12px, the entering view rises; 320ms total. WHY: continuity.
-- Detail: the node blooms on the rail (scale + glow), the stage slides up 24px into place, prompt lines stagger
-  in (18ms each), the code block reveals with a scanning highlight that runs top to bottom once. Width preset
+- Detail: the № rises and its bloom swells once and settles; the name letters rise in 20ms apart (the hero's
+  language); the stamp chips and summary follow; the node blooms on the rail (scale + glow); the stage slides up
+  24px into place and the light traces its four corner marks once (top left, top right, bottom right, bottom left),
+  flares and settles dim; each section heading's node blooms and its hairline draws out from it once on scroll-in;
+  the code block reveals with a scanning highlight that runs top to bottom once. The scroll rail is driven by
+  scroll position only (ScrollTrigger, no per-frame React state), never by time. WHY: the rail stops being a header
+  ornament and becomes the page's spine; every section is a station on it. Width preset
   change tweens the inner frame width (280ms, power3.inOut); stage theme switch crossfades (200ms).
 - Theme toggle: circular clip-path wipe from the toggle's position (450ms). WHY: state change with spatial cause.
 - Copy: label morphs to "Copied" (scale pop). 404: the rail flickers twice then stays dim.
@@ -78,8 +97,11 @@ node lit and the pulse passing through it, and understands the 90 days without r
 **Section choreography**
 - Index: hero (name, count moment, particle rail) → tile grid (asymmetric, live tiles, batch reveal) → footer
   (still). The rail is the hero; the tiles are the work; nothing else competes.
-- Detail: header rail (№ + name + stamp + compressed rail, node bloom) → stage (slide in) → the ask (stagger) →
-  the code (scan reveal) → prev/next tiles. Code and prompt are still after their reveal.
+- Detail: back link (still) → header rail (№ bloom + letter rise + lit chips + compressed rail, node bloom) →
+  stage (slide in, corner trace) → the ask (station heading, fade) → the code (station heading, scan reveal) →
+  prev/next tiles; the scroll rail runs beside all of it. Code, prompt, headings, corners and bloom are still after
+  their one reveal. Reduced motion: every one of them renders in its settled state; the scroll rail still tracks
+  position (it is a reading of scroll, not an animation).
 - 404: unlit flickering rail → message → link.
 
 **Non-negotiables**

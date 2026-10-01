@@ -2,13 +2,14 @@ import { lazy, Suspense, useMemo, useRef, useState } from 'react';
 import { gsap, useGSAP, withMotion } from '../../lib/motion';
 import type { GalleryEntry } from '../../lib/types';
 import DemoBoundary from '../DemoBoundary';
+import StageCorners from './StageCorners';
 import StageControls, { type StageTheme, type WidthPreset } from './StageControls';
 import { useStageWidth } from './useStageWidth';
 
 const WIDTH_NOTE: Record<WidthPreset, string> = { '375': '375 px viewport', '768': '768 px viewport', full: 'Full width' };
 const THEME_NAME: Record<StageTheme, string> = { light: 'Light', dark: 'Dark' };
 
-/** The stage: 1px grid, its own light/dark theme, a frame that narrows to three widths. Slides up into place. */
+/** The stage: 1px grid, its own light/dark theme, a frame that narrows to three widths, lit corner marks. Slides up into place. */
 export default function Stage({ entry }: { entry: GalleryEntry }) {
   const Demo = useMemo(() => lazy(entry.loadDemo), [entry]);
   const root = useRef<HTMLElement>(null);
@@ -27,7 +28,7 @@ export default function Stage({ entry }: { entry: GalleryEntry }) {
   );
 
   return (
-    <section ref={root} aria-label="Live demo" className="space-y-3">
+    <section ref={root} id="stage" tabIndex={-1} aria-label="Live demo" className="scroll-mt-24 space-y-3 outline-none">
       <StageControls
         width={width}
         unavailable={unavailable}
@@ -42,6 +43,7 @@ export default function Stage({ entry }: { entry: GalleryEntry }) {
           data-width={width}
           className="stage-frame stage-surface mx-auto w-full overflow-hidden rounded-tile shadow-[0_0_0_1px_rgb(var(--color-line)),0_40px_80px_-40px_rgb(var(--color-accent-deep)/var(--shadow-alpha))]"
         >
+          <StageCorners />
           <div className="flex min-h-[520px] w-full items-center justify-center overflow-auto p-3 sm:p-8">
             <DemoBoundary
               fallback={(message) => (

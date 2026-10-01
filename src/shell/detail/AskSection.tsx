@@ -2,6 +2,7 @@ import { useId, useLayoutEffect, useRef, useState } from 'react';
 import { gsap, useGSAP, withMotion } from '../../lib/motion';
 import CopyButton from '../CopyButton';
 import { FOCUS_RING } from '../focus';
+import SectionHeading from './SectionHeading';
 
 /** Collapsed, the prompt shows this many 24px lines and fades out under the last one. */
 const PREVIEW_LINES = 8;
@@ -40,13 +41,10 @@ export default function AskSection({ prompt }: { prompt: string }) {
 
   const collapsed = overflows && !open;
   return (
-    <section ref={root} aria-labelledby="the-ask" className="space-y-5 border-t border-line pt-10">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 id="the-ask" className="text-h2 font-semibold text-text">
-          The ask
-        </h2>
-        <CopyButton text={prompt} label="Copy prompt" />
-      </div>
+    <section ref={root} id="ask" tabIndex={-1} aria-labelledby="the-ask" className="scroll-mt-24 space-y-5 pt-4 outline-none">
+      <SectionHeading id="the-ask" action={<CopyButton text={prompt} label="Copy prompt" />}>
+        The ask
+      </SectionHeading>
       <div className="ask-body relative">
         <pre
           ref={body}
