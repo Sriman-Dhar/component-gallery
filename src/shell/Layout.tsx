@@ -1,7 +1,6 @@
 import { formatDate } from '../lib/date';
 import { WINDOW_END, WINDOW_START } from '../lib/ruler';
 import { PACE_LINE } from '../lib/site';
-import FontLab from './FontLab';
 import GrainLayer from './GrainLayer';
 import Header from './Header';
 import LightField from './LightField';
@@ -15,7 +14,6 @@ export default function Layout() {
       <LightField />
       <GrainLayer />
       <Header />
-      {import.meta.env.DEV && <FontLab />}
       <div className="relative z-10 mx-auto max-w-frame px-4 sm:px-8 lg:px-12">
         <main className="pb-20 pt-8 sm:pt-12">
           <RouteTransition />
