@@ -17,10 +17,15 @@ interface Props {
   /** False when the hero is offscreen or the tab is hidden: no ticker, no frames. */
   active: boolean;
   pointer: MutableRefObject<RailPointer>;
+  /** Called with the pulse head position (0..1 along the rail) on every pulse frame. */
+  onPulse?: (head: number) => void;
 }
 
-/** The particle light rail: assembles from scatter (1.2s), breathes, bends to the pointer, pulses every 4s. */
-export default function RailParticles({ litWeeks, active, pointer }: Props) {
+/**
+ * The particle light rail scene: assembles from scatter (1.2s), breathes, bends to the pointer, a pulse with
+ * an afterglow runs it every 4s, its reflection shimmers below, dust drifts behind.
+ */
+export default function RailParticles({ litWeeks, active, pointer, onPulse }: Props) {
   const { size, invalidate, viewport } = useThree();
   const theme = useFrameTheme();
   const count = pointCount(size.width);
@@ -60,12 +65,19 @@ export default function RailParticles({ litWeeks, active, pointer }: Props) {
     invalidate();
   }, [theme, material, u, invalidate]);
 
-  // Assemble once (1.2s), then the pulse loop: 1.6s travel + 2.4s rest = every 4s.
+  // Assemble once (1.2s), then the pulse loop: 2s travel (past the end, so the afterglow clears) + 2s rest = every 4s.
   const pulse = useRef<gsap.core.Timeline>();
+  const report = useRef(onPulse);
+  report.current = onPulse;
   useEffect(() => {
     const assemble = gsap.to(u.uAssemble, { value: 1, duration: 1.2, ease: 'power3.out' });
-    const tl = gsap.timeline({ paused: true, repeat: -1, repeatDelay: 2.4, delay: 1.2 });
-    tl.fromTo(u.uPulse, { value: -0.1 }, { value: 1.1, duration: 1.6, ease: 'power1.inOut' });
+    const tl = gsap.timeline({ paused: true, repeat: -1, repeatDelay: 2, delay: 1.2 });
+    tl.fromTo(u.uPulse, { value: -0.1 }, {
+      value: 1.4,
+      duration: 2,
+      ease: 'power1.inOut',
+      onUpdate: () => report.current?.(u.uPulse.value as number),
+    });
     pulse.current = tl;
     return () => {
       assemble.kill();

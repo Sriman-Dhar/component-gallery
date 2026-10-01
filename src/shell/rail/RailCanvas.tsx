@@ -8,13 +8,14 @@ interface Props {
   pointer: MutableRefObject<RailPointer>;
   onReady: () => void;
   onLost: () => void;
+  onPulse?: (head: number) => void;
 }
 
 /**
  * The WebGL layer of the hero rail. Lazy-loaded (three lives in its own chunk), DPR capped, frames on
  * demand. A lost context unmounts the canvas and leaves the SVG poster.
  */
-export default function RailCanvas({ litWeeks, active, pointer, onReady, onLost }: Props) {
+export default function RailCanvas({ litWeeks, active, pointer, onReady, onLost, onPulse }: Props) {
   return (
     <Canvas
       aria-hidden="true"
@@ -32,7 +33,7 @@ export default function RailCanvas({ litWeeks, active, pointer, onReady, onLost 
         onReady();
       }}
     >
-      <RailParticles litWeeks={litWeeks} active={active} pointer={pointer} />
+      <RailParticles litWeeks={litWeeks} active={active} pointer={pointer} onPulse={onPulse} />
     </Canvas>
   );
 }

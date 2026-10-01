@@ -1,11 +1,11 @@
 import { lazy, Suspense, useMemo, useRef, useState, type PointerEvent } from 'react';
 import { gsap, motionAllowed, useGSAP, withMotion } from '../../lib/motion';
-import { todayCaption, weekOf } from '../../lib/ruler';
+import { todayCaption, weekCenter, weekOf } from '../../lib/ruler';
 import { useInView } from '../../lib/useInView';
 import { canUseWebGL } from '../../lib/webgl';
 import RailPoster from './RailPoster';
 import RailPulse from './RailPulse';
-import { RAIL_BOX, type RailVariant } from './railLayout';
+import { pulseHeat, RAIL_BOX, type RailVariant } from './railLayout';
 import type { RailPointer } from './RailParticles';
 
 const RailCanvas = lazy(() => import('./RailCanvas'));
@@ -42,6 +42,15 @@ export default function LightRail({ variant, marks = [], litWeek, today = new Da
   const litWeeks = useMemo(() => [...new Set(marks.map((m) => weekOf(m.date)))], [marks]);
   const litSet = useMemo(() => new Set(litWeeks), [litWeeks]);
   const showCanvas = canvasOk && !lost && near;
+  const labels = useRef<SVGTextElement[]>();
+
+  // The week numbers brighten as the particle pulse passes them (style writes only, no React state).
+  function onPulse(head: number) {
+    labels.current ??= [...(root.current?.querySelectorAll<SVGTextElement>('[data-week-label]') ?? [])];
+    for (const el of labels.current) {
+      el.style.setProperty('--heat', pulseHeat(head, weekCenter(Number(el.dataset.weekLabel))).toFixed(3));
+    }
+  }
 
   useGSAP(
     () =>
@@ -100,9 +109,7 @@ export default function LightRail({ variant, marks = [], litWeek, today = new Da
         onPointerMove={showCanvas ? onPointerMove : undefined}
         onPointerLeave={() => (pointer.current.on = 0)}
       >
-        <div className="absolute inset-0 transition-opacity duration-slow" style={{ opacity: ready ? 0.4 : 1 }}>
-          <RailPoster variant={variant} litWeeks={litSet} bloomWeek={litWeek} today={today} label={label} />
-        </div>
+        <RailPoster variant={variant} litWeeks={litSet} bloomWeek={litWeek} today={today} label={label} dim={ready} />
         {variant !== 'unlit' && !ready ? <RailPulse base={base} /> : null}
         {showCanvas ? (
           <Suspense fallback={null}>
@@ -110,6 +117,7 @@ export default function LightRail({ variant, marks = [], litWeek, today = new Da
               litWeeks={litWeeks}
               active={active}
               pointer={pointer}
+              onPulse={onPulse}
               onReady={() => setReady(true)}
               onLost={() => {
                 setLost(true);
