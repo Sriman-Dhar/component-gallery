@@ -43,6 +43,8 @@ export interface GalleryEntry {
   meta: ComponentMeta;
   /** Lazy loader for what the detail page renders: demo.tsx if present, else the component. */
   loadDemo: () => Promise<{ default: ComponentType }>;
+  /** Optional gallery-only close crop for index and prev/next tiles: `preview.tsx` in the folder. */
+  loadPreview?: () => Promise<{ default: ComponentType }>;
   /** Lazy loaders for the raw source of every .tsx file in the folder. */
   loadSources: () => Promise<SourceFile[]>;
 }

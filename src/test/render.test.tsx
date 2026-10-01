@@ -16,10 +16,19 @@ describe('render smoke', () => {
     expect(failures, failures.join('\n')).toEqual([]);
   });
 
-  it('loads the source of every registered component', async () => {
+  it('renders every tile preview without throwing', async () => {
+    for (const entry of registry) {
+      if (!entry.loadPreview) continue;
+      const { default: Preview } = await entry.loadPreview();
+      render(<Preview />).unmount();
+    }
+  });
+
+  it('loads the source of every registered component, never the gallery-only preview', async () => {
     for (const entry of registry) {
       const files = await entry.loadSources();
       expect(files.length, entry.meta.slug).toBeGreaterThan(0);
+      expect(files.map((f) => f.fileName)).not.toContain('preview.tsx');
     }
   });
 });

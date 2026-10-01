@@ -1,41 +1,76 @@
-import { useRef } from 'react';
+import { useId, useRef, useState } from 'react';
 import { gsap, useGSAP, withMotion } from '../../lib/motion';
 import type { SourceFile } from '../../lib/types';
 import CopyButton from '../CopyButton';
+import { FOCUS_RING } from '../focus';
 
-/** One source file. On first reveal a 2px accent line scans top to bottom once (600ms), then it is still. */
-export default function CodeFile({ file }: { file: SourceFile }) {
+interface Props {
+  file: SourceFile;
+  /** The first file opens expanded; the rest wait behind "Show file". */
+  defaultOpen?: boolean;
+}
+
+/**
+ * One source file, collapsible. The header always shows the name, line count, the toggle and Copy
+ * (copy works while collapsed). Each time the body opens, a 2px accent line scans it top to bottom once.
+ */
+export default function CodeFile({ file, defaultOpen = false }: Props) {
   const root = useRef<HTMLElement>(null);
+  const bodyId = useId();
+  const [open, setOpen] = useState(defaultOpen);
   const lines = file.code.replace(/\n$/, '').split('\n');
 
   useGSAP(
     () =>
       withMotion(() => {
+        if (!open) return;
         gsap
-          .timeline({ scrollTrigger: { trigger: root.current, start: 'top 80%', once: true } })
-          .from('.code-body', { autoAlpha: 0.25, duration: 0.6, ease: 'power1.out' })
+          .timeline(defaultOpen ? { scrollTrigger: { trigger: root.current, start: 'top 80%', once: true } } : {})
+          .from('.code-body', { opacity: 0.25, duration: 0.6, ease: 'power1.out' })
           .fromTo('.code-scan', { top: '0%', autoAlpha: 1 }, { top: '100%', duration: 0.6, ease: 'power1.inOut' }, 0)
           .to('.code-scan', { autoAlpha: 0, duration: 0.15 });
       }),
-    { scope: root },
+    { scope: root, dependencies: [open], revertOnUpdate: true },
   );
 
   return (
     <figure ref={root} className="overflow-hidden rounded-tile bg-surface shadow-[0_0_0_1px_rgb(var(--color-line))]">
-      <figcaption className="flex items-center justify-between gap-4 border-b border-line bg-surface-2/60 px-4 py-2.5">
-        <span className="truncate font-mono text-meta text-text">{file.fileName}</span>
-        <CopyButton text={file.code} label="Copy" ariaLabel={`Copy ${file.fileName}`} />
+      <figcaption className={`flex items-center justify-between gap-3 bg-surface-2/60 px-4 py-2.5 ${open ? 'border-b border-line' : ''}`}>
+        <span className="min-w-0 truncate font-mono text-meta text-text">
+          {file.fileName}
+          <span className="ml-3 text-text-2">{lines.length} lines</span>
+        </span>
+        <span className="flex shrink-0 items-center gap-2">
+          <button
+            type="button"
+            aria-expanded={open}
+            aria-controls={bodyId}
+            aria-label={`${open ? 'Hide' : 'Show'} ${file.fileName}`}
+            onClick={() => setOpen((v) => !v)}
+            className={`h-8 rounded-control px-3 font-mono text-meta text-text-2 transition-colors duration-fast hover:text-text ${FOCUS_RING}`}
+          >
+            {open ? 'Hide file' : 'Show file'}
+          </button>
+          <CopyButton text={file.code} label="Copy" ariaLabel={`Copy ${file.fileName}`} />
+        </span>
       </figcaption>
-      <div className="relative">
-        <pre className="code-body overflow-x-auto p-5 font-mono text-[13px] leading-[20px] text-text">
-          <code>
-            {lines.map((line, i) => (
-              <span key={i} className="block min-h-[20px]">
-                {line}
-              </span>
-            ))}
-          </code>
-        </pre>
+      <div id={bodyId} hidden={!open} className="relative">
+        {open ? (
+          // Capped height with its own scroll, so a long file never stretches the page; focusable to scroll by keyboard.
+          <pre
+            tabIndex={0}
+            aria-label={`${file.fileName} source`}
+            className={`code-body max-h-[min(70vh,720px)] overflow-auto p-5 font-mono text-[13px] leading-[20px] text-text outline-none focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent`}
+          >
+            <code>
+              {lines.map((line, i) => (
+                <span key={i} className="block min-h-[20px]">
+                  {line}
+                </span>
+              ))}
+            </code>
+          </pre>
+        ) : null}
         <div aria-hidden="true" className="code-scan pointer-events-none invisible absolute inset-x-0 top-0" />
       </div>
     </figure>

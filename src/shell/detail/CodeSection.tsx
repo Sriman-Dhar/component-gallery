@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import type { GalleryEntry, SourceFile } from '../../lib/types';
 import CodeFile from './CodeFile';
 
-/** "The code": every source file of the component, stacked, never behind a tab. */
+/** "The code": every source file of the component, stacked; the first opens, the rest are one click away. */
 export default function CodeSection({ entry }: { entry: GalleryEntry }) {
   const [files, setFiles] = useState<SourceFile[] | null>(null);
   const [failed, setFailed] = useState(false);
@@ -19,14 +19,14 @@ export default function CodeSection({ entry }: { entry: GalleryEntry }) {
   }, [entry]);
 
   return (
-    <section aria-labelledby="the-code" className="grid grid-cols-1 gap-y-4 border-t border-line pt-10 lg:grid-cols-12 lg:gap-x-8">
-      <h2 id="the-code" className="text-h2 font-semibold text-text lg:col-span-3">
+    <section aria-labelledby="the-code" className="space-y-5 border-t border-line pt-10">
+      <h2 id="the-code" className="text-h2 font-semibold text-text">
         The code
       </h2>
-      <div className="min-w-0 space-y-6 lg:col-span-9">
+      <div className="min-w-0 space-y-3">
         {failed ? <p className="text-text-2">The source could not be loaded. Reload the page to try again.</p> : null}
         {!files && !failed ? <p className="font-mono text-small text-text-2">Loading code</p> : null}
-        {files?.map((file) => <CodeFile key={file.fileName} file={file} />)}
+        {files?.map((file, i) => <CodeFile key={file.fileName} file={file} defaultOpen={i === 0} />)}
       </div>
     </section>
   );

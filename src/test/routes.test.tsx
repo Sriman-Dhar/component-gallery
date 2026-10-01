@@ -1,7 +1,8 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import App from '../App';
-import { shipped } from '../lib/catalogue';
+import { neighbours, shipped } from '../lib/catalogue';
+import { formatDate } from '../lib/date';
 import { routerFuture } from '../lib/router';
 
 function renderAt(path: string) {
@@ -13,29 +14,55 @@ function renderAt(path: string) {
 }
 
 describe('routes', () => {
-  it('shows the hero, the count, the light rail and a live tile on the index', async () => {
+  it('shows the hero, the count, the light rail and equal tiles in № order on the index', async () => {
     renderAt('/');
     expect(screen.getByRole('heading', { level: 1, name: 'Sriman Gallery' })).toBeInTheDocument();
     expect(screen.getByText('Thirty components in ninety days.')).toBeInTheDocument();
     expect(screen.getByLabelText(`${shipped.length} of 30 components shipped`)).toBeInTheDocument();
     expect(screen.getByTestId('light-rail')).toHaveAttribute('data-variant', 'hero');
-    expect(screen.getByRole('link', { name: 'Example Button' })).toHaveAttribute('href', '/components/example-button');
-    expect(screen.getAllByText('Type: button').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('Week 1').length).toBeGreaterThan(0);
-    expect(await screen.findByText('Example button')).toBeInTheDocument();
+    const grid = screen.getByRole('list', { name: 'Components' });
+    const names = within(grid).getAllByRole('link').map((link) => link.textContent);
+    expect(names).toEqual(shipped.map(({ meta }) => meta.name));
+    expect(names.slice(0, 2)).toEqual(['Magnetic Button', 'OTP Input']);
+    expect(within(grid).getByText('Next: week 2')).toBeInTheDocument();
+    expect(within(grid).getAllByText('Type: button').length).toBeGreaterThan(0);
+    expect(within(grid).getAllByText(formatDate(shipped[0].meta.date)).length).toBeGreaterThan(0);
+    expect(await within(grid).findByText('Join the waitlist')).toBeInTheDocument();
   });
 
-  it('shows the detail page with its Type stamp, compact rail, stage, ask and code', async () => {
+  it('never publishes the week 0 placeholder: no tile, no neighbour, and its route is a 404', () => {
+    renderAt('/');
+    expect(screen.queryByRole('link', { name: 'Example Button' })).toBeNull();
+    for (const { meta } of shipped) {
+      const { prev, next } = neighbours(meta.slug);
+      expect(prev?.meta.week ?? 1).toBeGreaterThan(0);
+      expect(next?.meta.week ?? 1).toBeGreaterThan(0);
+    }
+  });
+
+  it('renders the example-button route as the 404 view', () => {
     renderAt('/components/example-button');
-    expect(screen.getByRole('heading', { level: 1, name: 'Example Button' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Nothing shipped here.' })).toBeInTheDocument();
+  });
+
+  it('shows the detail page with its Type stamp, compact rail, stage, ask and collapsible code', async () => {
+    renderAt('/components/magnetic-button');
+    expect(screen.getByRole('heading', { level: 1, name: 'Magnetic Button' })).toBeInTheDocument();
     expect(screen.getAllByText('Type: button').length).toBeGreaterThan(0);
     expect(screen.getByTestId('light-rail')).toHaveAttribute('data-variant', 'compact');
     expect(screen.getByRole('heading', { name: 'The ask' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Copy prompt' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'The code' })).toBeInTheDocument();
     expect(screen.getByRole('group', { name: 'Stage width' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Dark stage' })).toHaveAttribute('aria-pressed', 'false');
-    expect(await screen.findByRole('button', { name: 'Example button' })).toBeInTheDocument();
-    expect(await screen.findByRole('button', { name: 'Copy ExampleButton.tsx' })).toBeInTheDocument();
+    const stageTheme = screen.getByRole('button', { name: 'Light stage' });
+    fireEvent.click(stageTheme);
+    expect(stageTheme).toHaveTextContent('Dark stage');
+    expect(await screen.findByRole('button', { name: 'Copy MagneticButton.tsx' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Hide MagneticButton.tsx' })).toHaveAttribute('aria-expanded', 'true');
+    const demoToggle = screen.getByRole('button', { name: 'Show demo.tsx' });
+    expect(demoToggle).toHaveAttribute('aria-expanded', 'false');
+    fireEvent.click(demoToggle);
+    expect(screen.getByRole('button', { name: 'Hide demo.tsx' })).toHaveAttribute('aria-expanded', 'true');
   });
 
   it('shows the 404 view with the unlit rail for an unknown slug', () => {
@@ -45,17 +72,22 @@ describe('routes', () => {
     expect(screen.getByRole('link', { name: 'Back to the index' })).toHaveAttribute('href', '/');
   });
 
-  it('flips the frame theme on <html> without leaving a wipe overlay (reduced motion path)', async () => {
+  it('has no dead repo links while the repo URL is unset', () => {
+    renderAt('/');
+    expect(screen.queryByRole('link', { name: /repo|github/i })).toBeNull();
+    expect(screen.getByText('Source coming soon')).toBeInTheDocument();
+  });
+
+  it('flips the frame theme on <html> and its label names the current theme (reduced motion path)', () => {
     document.documentElement.setAttribute('data-theme', 'dark');
     renderAt('/');
     const toggle = screen.getByRole('button', { name: 'Dark frame' });
-    expect(toggle).toHaveAttribute('aria-pressed', 'true');
     fireEvent.click(toggle);
     expect(document.documentElement.getAttribute('data-theme')).toBe('light');
-    expect(toggle).toHaveAttribute('aria-pressed', 'false');
+    expect(toggle).toHaveTextContent('Light frame');
     expect(document.querySelector('.theme-wipe')).toBeNull();
     fireEvent.click(toggle);
     expect(document.documentElement.getAttribute('data-theme')).toBe('dark');
-    expect(await screen.findByText('Example button')).toBeInTheDocument();
+    expect(toggle).toHaveTextContent('Dark frame');
   });
 });

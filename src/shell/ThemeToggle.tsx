@@ -3,10 +3,12 @@ import { useFrameTheme } from '../lib/theme';
 import { wipeTheme } from '../lib/themeWipe';
 import { FOCUS_RING } from './focus';
 
-/** Frame theme switch, a pill. The new theme wipes in as a circle from the button's centre. */
+/**
+ * Frame theme button, a pill. It names the frame's current theme ("Dark frame" / "Light frame") and
+ * flips it on click; the new theme wipes in as a circle from the button's center.
+ */
 export default function ThemeToggle() {
-  const theme = useFrameTheme();
-  const dark = theme === 'dark';
+  const dark = useFrameTheme() === 'dark';
 
   function onClick(event: MouseEvent<HTMLButtonElement>) {
     const rect = event.currentTarget.getBoundingClientRect();
@@ -17,7 +19,7 @@ export default function ThemeToggle() {
     <button
       type="button"
       onClick={onClick}
-      aria-pressed={dark}
+      title={`Switch to the ${dark ? 'light' : 'dark'} frame`}
       className={`group inline-flex h-9 items-center gap-2.5 rounded-full border border-line bg-surface/60 pl-1.5 pr-3.5 font-mono text-meta text-text transition-colors duration-fast hover:border-text-2 ${FOCUS_RING}`}
     >
       <span aria-hidden="true" className="relative inline-block h-6 w-10 rounded-full bg-surface-2 shadow-[inset_0_0_0_1px_rgb(var(--color-line))]">
@@ -27,7 +29,7 @@ export default function ThemeToggle() {
           }`}
         />
       </span>
-      Dark frame
+      {dark ? 'Dark frame' : 'Light frame'}
     </button>
   );
 }

@@ -1,15 +1,9 @@
 import { useRef } from 'react';
 import { runningLabel } from '../../lib/catalogue';
+import { formatDate } from '../../lib/date';
 import { gsap, useGSAP, withMotion } from '../../lib/motion';
 import type { ComponentMeta } from '../../lib/types';
 import TypeStamp from '../TypeStamp';
-
-const dateFormat = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
-
-function shipDate(iso: string): string {
-  const [y, m, d] = iso.split('-').map(Number);
-  return dateFormat.format(new Date(Date.UTC(y, m - 1, d)));
-}
 
 /** Header rail: the running number at 72 rises in, then name, type stamp, week, date, summary. */
 export default function DetailHeader({ meta }: { meta: ComponentMeta }) {
@@ -39,7 +33,7 @@ export default function DetailHeader({ meta }: { meta: ComponentMeta }) {
         <div className="dh-rise mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 font-mono text-small text-text-2">
           <TypeStamp type={meta.type} />
           <span>Week {meta.week}</span>
-          <time dateTime={meta.date}>{shipDate(meta.date)}</time>
+          <time dateTime={meta.date}>{formatDate(meta.date)}</time>
         </div>
         <p className="dh-rise mt-4 max-w-column text-lead text-text-2">{meta.summary}</p>
       </div>

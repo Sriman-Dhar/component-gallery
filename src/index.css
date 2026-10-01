@@ -19,12 +19,12 @@
 }
 
 @layer components {
-  /* Lighting: the key light top-left, the cool rim bottom-right, the pointer light. Frame only. */
+  /* Lighting: the key light at the top-left of the page, the cool rim at its foot, the pointer light. Frame only. */
   .light-key {
     background: radial-gradient(60% 55% at 12% 0%, rgb(var(--color-accent-deep) / var(--key-alpha)), transparent 70%);
   }
   .light-rim {
-    background: radial-gradient(50% 45% at 100% 100%, rgb(var(--color-rim) / var(--rim-alpha)), transparent 70%);
+    background: radial-gradient(35% 50% at 74% 100%, rgb(var(--color-rim) / var(--rim-alpha)), transparent 70%);
   }
   .light-pointer {
     width: 600px;

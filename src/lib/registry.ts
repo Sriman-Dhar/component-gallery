@@ -5,8 +5,10 @@ type MetaModule = { meta: ComponentMeta };
 type ViewModule = { default: ComponentType };
 
 const metaModules = import.meta.glob<MetaModule>('../components/*/meta.ts', { eager: true });
-const viewModules = import.meta.glob<ViewModule>('../components/*/*.tsx');
-const rawModules = import.meta.glob<string>('../components/*/*.tsx', {
+const viewModules = import.meta.glob<ViewModule>(['../components/*/*.tsx', '!../components/*/preview.tsx']);
+const previewModules = import.meta.glob<ViewModule>('../components/*/preview.tsx');
+/** The source shown on the detail page: every .tsx except the gallery-only preview. */
+const rawModules = import.meta.glob<string>(['../components/*/*.tsx', '!../components/*/preview.tsx'], {
   query: '?raw',
   import: 'default',
 });
@@ -43,20 +45,26 @@ function demoLoader(folder: string): GalleryEntry['loadDemo'] {
 }
 
 function sourcesLoader(folder: string): GalleryEntry['loadSources'] {
-  const paths = pathsIn(rawModules, folder).sort((a, b) =>
-    fileOf(a) === 'demo.tsx' ? 1 : fileOf(b) === 'demo.tsx' ? -1 : a.localeCompare(b),
-  );
+  // The component file first (it opens expanded), helpers alphabetically, the demo last.
+  const rank = (p: string) => (fileOf(p) === `${pascal(folder)}.tsx` ? 0 : fileOf(p) === 'demo.tsx' ? 2 : 1);
+  const paths = pathsIn(rawModules, folder).sort((a, b) => rank(a) - rank(b) || a.localeCompare(b));
   return async () =>
     Promise.all(
       paths.map(async (p): Promise<SourceFile> => ({ fileName: fileOf(p), code: await rawModules[p]() })),
     );
 }
 
-/** Every folder under src/components that has a meta.ts, newest week first. */
+/** Every folder under src/components that has a meta.ts, newest week first (week 0 included). */
 export const registry: GalleryEntry[] = Object.entries(metaModules)
   .map(([path, mod]) => {
     const folder = folderOf(path);
-    return { meta: mod.meta, loadDemo: demoLoader(folder), loadSources: sourcesLoader(folder) };
+    const preview = pathsIn(previewModules, folder)[0];
+    return {
+      meta: mod.meta,
+      loadDemo: demoLoader(folder),
+      loadPreview: preview ? previewModules[preview] : undefined,
+      loadSources: sourcesLoader(folder),
+    };
   })
   .sort((a, b) => b.meta.week - a.meta.week || a.meta.name.localeCompare(b.meta.name));
 

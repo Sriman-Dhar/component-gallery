@@ -7,33 +7,31 @@ import NextSlot from './NextSlot';
 import Tile from './Tile';
 
 interface Props {
-  /** Newest first; the first is the feature tile. */
+  /** Published components in № order. */
   entries: GalleryEntry[];
-  shippedCount: number;
 }
 
 function nextWeek(entries: GalleryEntry[]): number | undefined {
-  const weeks = entries.filter((e) => e.meta.week > 0).map((e) => weekOf(e.meta.date));
+  const weeks = entries.map((e) => weekOf(e.meta.date));
   const next = weeks.length ? Math.max(...weeks) + 1 : 1;
   return next <= WEEK_COUNT ? next : undefined;
 }
 
-/** Asymmetric live grid: 3 columns desktop, 2 tablet, 1 phone. Tiles reveal in batches as they scroll in. */
-export default function TileGrid({ entries, shippedCount }: Props) {
+/** Equal tiles in № order: 3 columns desktop, 2 tablet, 1 phone, closed by the next week's slot. */
+export default function TileGrid({ entries }: Props) {
   const root = useRef<HTMLUListElement>(null);
-  const upcoming = shippedCount < TARGET ? nextWeek(entries) : undefined;
-  const total = entries.length + (upcoming ? 1 : 0);
+  const upcoming = entries.length < TARGET ? nextWeek(entries) : undefined;
 
   useGSAP(
     () =>
       withMotion(() => {
         const tiles = gsap.utils.toArray<HTMLElement>('.tile', root.current);
-        gsap.set(tiles, { autoAlpha: 0, y: 24 });
+        gsap.set(tiles, { opacity: 0, y: 24 });
         ScrollTrigger.batch(tiles, {
           start: 'top 85%',
           once: true,
           onEnter: (batch) =>
-            gsap.to(batch, { autoAlpha: 1, y: 0, duration: 0.6, ease: 'power3.out', stagger: 0.04, overwrite: true, clearProps: 'transform' }),
+            gsap.to(batch, { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out', stagger: 0.04, overwrite: true, clearProps: 'transform' }),
         });
       }),
     { scope: root },
@@ -41,8 +39,8 @@ export default function TileGrid({ entries, shippedCount }: Props) {
 
   return (
     <ul ref={root} aria-label="Components" className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3 lg:gap-6">
-      {entries.map((entry, i) => (
-        <Tile key={entry.meta.slug} entry={entry} feature={i === 0 && total > 1} tall={total > 2} />
+      {entries.map((entry) => (
+        <Tile key={entry.meta.slug} entry={entry} />
       ))}
       {upcoming ? <NextSlot week={upcoming} /> : null}
     </ul>

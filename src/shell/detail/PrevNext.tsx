@@ -1,7 +1,7 @@
 import { neighbours } from '../../lib/catalogue';
 import Tile from '../tiles/Tile';
 
-/** Previous / next in catalogue order, as live tiles; each side hides at its end. */
+/** Previous / next published component in № order, as tiles; each side hides at its end. */
 export default function PrevNext({ slug }: { slug: string }) {
   const { prev, next } = neighbours(slug);
   if (!prev && !next) return null;

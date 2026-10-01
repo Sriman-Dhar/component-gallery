@@ -1,4 +1,9 @@
-/** The 90-day window the ruler spans. Pure date math, no DOM, so it is unit-tested directly. */
+/**
+ * The challenge window the ruler spans, 1 Oct to 30 Dec 2026 (the "90 days" of the challenge).
+ * Pure date math, no DOM, so it is unit-tested directly.
+ */
+import { formatDate } from './date';
+
 export const WINDOW_START = '2026-10-01';
 export const WINDOW_END = '2026-12-30';
 export const WEEK_COUNT = 13;
@@ -48,12 +53,12 @@ export function weekCentre(week: number): number {
   return (weekStart(week) + end) / 2;
 }
 
-/** Plain caption for the today cursor. */
+/** Plain caption for the today cursor. Day 1 is 1 Oct; no "of N", so the count never argues with the copy. */
 export function todayCaption(today: Date): string {
   const days = daysSinceStart(today);
   if (days < 0) return `Starts 1 Oct, in ${-days} ${days === -1 ? 'day' : 'days'}`;
   if (days > WINDOW_DAYS) return 'Challenge complete';
-  return `Day ${days + 1} of ${WINDOW_DAYS + 1}, week ${weekOf(today)}`;
+  return `Day ${days + 1}, week ${weekOf(today)}`;
 }
 
 /** SVG percentage string for a 0..1 position. */
@@ -61,9 +66,8 @@ export function pct(position: number): string {
   return `${(position * 100).toFixed(3)}%`;
 }
 
-/** "1 Oct" style label for the first day of a challenge week. */
+/** "8 Oct 2026" style label for the first day of a challenge week. */
 export function weekOpens(week: number): string {
   const [y, m, d] = WINDOW_START.split('-').map(Number);
-  const date = new Date(Date.UTC(y, m - 1, d + (week - 1) * 7));
-  return new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', timeZone: 'UTC' }).format(date);
+  return formatDate(new Date(Date.UTC(y, m - 1, d + (week - 1) * 7)).toISOString().slice(0, 10));
 }

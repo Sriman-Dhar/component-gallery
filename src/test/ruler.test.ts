@@ -36,7 +36,19 @@ describe('ruler math', () => {
 
   it('captions today before, during and after the window', () => {
     expect(todayCaption(new Date(2026, 8, 25))).toBe('Starts 1 Oct, in 6 days');
-    expect(todayCaption(new Date(2026, 9, 8))).toBe('Day 8 of 91, week 2');
+    expect(todayCaption(new Date(2026, 9, 1))).toBe('Day 1, week 1');
+    expect(todayCaption(new Date(2026, 9, 8))).toBe('Day 8, week 2');
+    expect(todayCaption(new Date(2026, 11, 30))).toBe('Day 91, week 13');
     expect(todayCaption(new Date(2027, 0, 5))).toBe('Challenge complete');
+  });
+});
+
+describe('date format', () => {
+  it('uses one style everywhere: "25 Sep 2026", or without the year', async () => {
+    const { formatDate } = await import('../lib/date');
+    const { weekOpens } = await import('../lib/ruler');
+    expect(formatDate('2026-09-25')).toBe('25 Sep 2026');
+    expect(formatDate('2026-10-01', { year: false })).toBe('1 Oct');
+    expect(weekOpens(2)).toBe('8 Oct 2026');
   });
 });

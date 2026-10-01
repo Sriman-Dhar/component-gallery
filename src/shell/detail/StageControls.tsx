@@ -20,8 +20,12 @@ const BUTTON = `h-8 rounded-control px-3 font-mono text-meta transition-colors d
 const ON = 'bg-surface-2 text-text shadow-[inset_0_0_0_1px_rgb(var(--color-accent)/0.5)]';
 const OFF = 'text-text-2 hover:text-text';
 
-/** Stage width presets and the stage theme switch. Text labels, aria-pressed, no icon-only controls. */
+/**
+ * Stage width presets and the stage theme button. The theme button names the stage's current theme
+ * ("Light stage" / "Dark stage") and flips it on click, the same pattern as the frame button.
+ */
 export default function StageControls({ width, onWidth, theme, onTheme }: Props) {
+  const dark = theme === 'dark';
   return (
     <div className="flex flex-wrap items-center justify-between gap-3">
       <div role="group" aria-label="Stage width" className="flex items-center gap-1 rounded-control border border-line bg-surface p-1">
@@ -39,11 +43,15 @@ export default function StageControls({ width, onWidth, theme, onTheme }: Props)
       </div>
       <button
         type="button"
-        aria-pressed={theme === 'dark'}
         onClick={onTheme}
-        className={`${BUTTON} border border-line ${theme === 'dark' ? ON : `${OFF} bg-surface`}`}
+        title={`Switch to the ${dark ? 'light' : 'dark'} stage`}
+        className={`${BUTTON} inline-flex items-center gap-2 border border-line bg-surface text-text hover:border-text-2`}
       >
-        Dark stage
+        <span
+          aria-hidden="true"
+          className={`h-3 w-3 rounded-full border border-text-2/70 ${dark ? 'bg-[rgb(var(--p-stage-dark))]' : 'bg-[rgb(var(--p-stage-light))]'}`}
+        />
+        {dark ? 'Dark stage' : 'Light stage'}
       </button>
     </div>
   );

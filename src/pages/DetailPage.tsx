@@ -1,6 +1,5 @@
 import { useParams } from 'react-router-dom';
-import { shipped } from '../lib/catalogue';
-import { findEntry } from '../lib/registry';
+import { findShipped, shipped } from '../lib/catalogue';
 import { weekOf } from '../lib/ruler';
 import AskSection from '../shell/detail/AskSection';
 import CodeSection from '../shell/detail/CodeSection';
@@ -12,14 +11,17 @@ import NotFoundPage from './NotFoundPage';
 
 const marks = shipped.map(({ meta }) => ({ slug: meta.slug, date: meta.date }));
 
-/** Detail: header rail, compact light rail with this week blooming, stage, the ask, the code, prev / next. */
+/**
+ * Detail: header rail, compact light rail with this week blooming, stage, the ask, the code, prev / next.
+ * Published components only: the week 0 placeholder and unknown slugs render the 404.
+ */
 export default function DetailPage() {
   const { slug = '' } = useParams();
-  const entry = findEntry(slug);
+  const entry = findShipped(slug);
   if (!entry) return <NotFoundPage />;
 
   const { meta } = entry;
-  const litWeek = meta.week > 0 ? weekOf(meta.date) : undefined;
+  const litWeek = weekOf(meta.date);
   return (
     <article key={meta.slug} className="space-y-14">
       <div>
