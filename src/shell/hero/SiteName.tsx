@@ -1,10 +1,15 @@
 import { useRef } from 'react';
 import { gsap, useGSAP, withMotion } from '../../lib/motion';
 import RiseText from '../RiseText';
+import { useLetterLight } from './useLetterLight';
 
-/** The site name in the display face, 700 weight, letters rising in 20ms apart. Screen readers get the plain name. */
+/**
+ * The site name in the display face, 700 weight, letters rising in 20ms apart; then a light sweeps
+ * across it once and the letters keep catching the pointer light. Screen readers get the plain name.
+ */
 export default function SiteName({ name }: { name: string }) {
   const root = useRef<HTMLHeadingElement>(null);
+  useLetterLight(root, 0.75);
 
   useGSAP(
     () =>
@@ -16,7 +21,7 @@ export default function SiteName({ name }: { name: string }) {
 
   return (
     <h1 ref={root} aria-label={name} className="font-display text-h1 font-bold text-text sm:text-[60px] sm:leading-[64px] tracking-[-0.02em] sm:tracking-[-0.025em]">
-      <RiseText text={name} />
+      <RiseText text={name} letterClass="lit-letter" />
     </h1>
   );
 }

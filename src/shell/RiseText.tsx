@@ -3,7 +3,7 @@
  * each letter a `.letter` span that GSAP lifts in. Hidden from screen readers; the parent carries the
  * plain text as its accessible name.
  */
-export default function RiseText({ text }: { text: string }) {
+export default function RiseText({ text, letterClass = '' }: { text: string; letterClass?: string }) {
   const words = text.split(' ');
   return (
     <span aria-hidden="true">
@@ -11,7 +11,7 @@ export default function RiseText({ text }: { text: string }) {
         <span key={w}>
           <span className="inline-block overflow-hidden pb-[0.12em] align-bottom">
             {[...word].map((char, i) => (
-              <span key={i} className="letter inline-block">
+              <span key={i} className={`letter inline-block ${letterClass}`}>
                 {char}
               </span>
             ))}

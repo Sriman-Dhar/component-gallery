@@ -17,6 +17,7 @@ export default {
         glow: token('glow'),
         'accent-deep': token('accent-deep'),
         rim: token('rim'),
+        heat: token('heat'),
       },
       fontFamily: {
         display: ['var(--font-display)'],

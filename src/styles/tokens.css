@@ -76,6 +76,14 @@
   --shadow-alpha: 0.25;
   --grain-opacity: 0.05;
   --bloom-alpha: 0.28;
+  /* showcase light: heat colour for lit type, the lit numeral ramp, beams, vignette, tile spotlights */
+  --color-heat: var(--p-amber-200);
+  --numeral-top: var(--p-amber-200);
+  --numeral-bottom: var(--p-amber-500);
+  --shaft-alpha: 0.05;
+  --vignette-alpha: 0.55;
+  --spot-alpha: 0.16;
+  --spot-blend: screen;
 }
 
 [data-theme='light'] {
@@ -96,6 +104,13 @@
   --shadow-alpha: 0.14;
   --grain-opacity: 0.04;
   --bloom-alpha: 0.1;
+  --color-heat: var(--p-amber-700);
+  --numeral-top: var(--p-amber-700);
+  --numeral-bottom: var(--p-amber-950);
+  --shaft-alpha: 0.05;
+  --vignette-alpha: 0.04;
+  --spot-alpha: 0.1;
+  --spot-blend: multiply;
 }
 
 /* The stage keeps its own theme, independent of the frame. */
