@@ -1,26 +1,54 @@
 import { useRef } from 'react';
-import { gsap, POINTER_MOTION, useGSAP } from '../lib/motion';
+import { gsap, POINTER_MOTION, useGSAP, withMotion } from '../lib/motion';
+
+/** Three beams from the top of the page: left offset (vw-free, in %), lean and drift range. */
+const SHAFTS = [
+  { left: '14%', rotate: 16, drift: 24 },
+  { left: '46%', rotate: 9, drift: -18 },
+  { left: '78%', rotate: -6, drift: 14 },
+];
 
 /**
  * The studio lighting: a warm key light top-left and a cool rim at the bottom of the page, both on a
- * page-height layer so their falloff is never cut at the viewport edge (or at 900px in a full-page
- * capture), plus a soft light that follows the pointer (gsap.quickTo, no React state) on a fixed layer.
- * Below content, never takes input, clipped so nothing bleeds past either side.
+ * page-height layer so their falloff is never cut at the viewport edge; three ultra-soft beams falling
+ * from the top that drift slowly (still under reduced motion); a vignette that pulls the eye to the
+ * center; and a pointer light in two layers, a tight warm core that leads and a wide halo that trails
+ * behind it with inertia (gsap.quickTo, no React state). Below content, never takes input.
  */
 export default function LightField() {
-  const light = useRef<HTMLDivElement>(null);
+  const halo = useRef<HTMLDivElement>(null);
+  const core = useRef<HTMLDivElement>(null);
+  const beams = useRef<HTMLDivElement>(null);
+
+  useGSAP(
+    () =>
+      withMotion(() => {
+        gsap.utils.toArray<HTMLElement>('.shaft', beams.current).forEach((el, i) => {
+          gsap.to(el, { x: SHAFTS[i].drift, rotation: SHAFTS[i].rotate + 2, duration: 11 + i * 3, ease: 'sine.inOut', repeat: -1, yoyo: true });
+        });
+      }),
+    { scope: beams },
+  );
 
   useGSAP(() => {
     const mm = gsap.matchMedia();
     mm.add(POINTER_MOTION, () => {
-      const el = light.current;
-      if (!el) return;
-      gsap.set(el, { x: window.innerWidth * 0.3, y: window.innerHeight * 0.2, autoAlpha: 1 });
-      const toX = gsap.quickTo(el, 'x', { duration: 0.6, ease: 'power3.out' });
-      const toY = gsap.quickTo(el, 'y', { duration: 0.6, ease: 'power3.out' });
+      const wide = halo.current;
+      const tight = core.current;
+      if (!wide || !tight) return;
+      const start = { x: window.innerWidth * 0.3, y: window.innerHeight * 0.2, autoAlpha: 1 };
+      gsap.set([wide, tight], start);
+      const follow = (el: HTMLElement, duration: number) => ({
+        x: gsap.quickTo(el, 'x', { duration, ease: 'power3.out' }),
+        y: gsap.quickTo(el, 'y', { duration, ease: 'power3.out' }),
+      });
+      const lead = follow(tight, 0.25);
+      const trail = follow(wide, 0.9);
       const move = (event: PointerEvent) => {
-        toX(event.clientX);
-        toY(event.clientY);
+        lead.x(event.clientX);
+        lead.y(event.clientY);
+        trail.x(event.clientX);
+        trail.y(event.clientY);
       };
       window.addEventListener('pointermove', move, { passive: true });
       return () => window.removeEventListener('pointermove', move);
@@ -33,10 +61,17 @@ export default function LightField() {
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
         <div className="light-key absolute inset-x-0 top-0 h-[900px]" />
         <div className="light-rim absolute inset-x-0 bottom-0 h-[900px]" />
+        <div ref={beams} className="absolute inset-x-0 top-0 h-[900px]">
+          {SHAFTS.map((shaft) => (
+            <div key={shaft.left} className="shaft absolute -top-10" style={{ left: shaft.left, transform: `rotate(${shaft.rotate}deg)` }} />
+          ))}
+        </div>
       </div>
       <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
-        <div ref={light} className="light-pointer invisible absolute left-0 top-0 rounded-full" />
+        <div ref={halo} className="light-pointer invisible absolute left-0 top-0 rounded-full" />
+        <div ref={core} className="light-core invisible absolute left-0 top-0 rounded-full" />
       </div>
+      <div aria-hidden="true" className="vignette pointer-events-none fixed inset-0 z-[1]" />
     </>
   );
 }
