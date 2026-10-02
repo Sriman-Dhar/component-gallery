@@ -5,9 +5,9 @@ import { gsap, useGSAP, withMotion } from '../../lib/motion';
 const TICKS = Array.from({ length: TARGET }, (_, i) => i);
 
 /**
- * The index's oversized moment, a designed fraction: the shipped count as a lit numeral in the display
- * face (136px, 96 on phones) with a bloom behind it, the total ghosted as an italic outline, and a micro rail
- * of one tick per component with the shipped ones lit. Load: the ticks draw in, the count runs up
+ * The dive's oversized moment, a designed fraction: the shipped count as a lit numeral in the wide display
+ * face (136px, 96 on phones) with a bloom behind it, the total ghosted as an outline, and a micro rail
+ * of one tick per component with the shipped ones lit. When it scrolls into view: the ticks draw in, the count runs up
  * (0.9s, expo.out) with the lamp dim, then it ignites (flicker, settle) and the bloom swells once.
  * Reduced motion: the settled, lit state.
  */
@@ -22,7 +22,7 @@ export default function CountUp({ count }: { count: number }) {
         if (!el) return;
         const state = { value: 0 };
         gsap.set(el, { opacity: 0.3 });
-        const tl = gsap.timeline({ delay: 0.25 });
+        const tl = gsap.timeline({ delay: 0.1, scrollTrigger: { trigger: root.current, start: 'top 80%', once: true } });
         tl.from('.micro-tick', { scaleY: 0, transformOrigin: '50% 100%', duration: 0.4, ease: 'power3.out', stagger: 0.012 }, 0)
           .to(state, {
             value: count,
@@ -47,12 +47,12 @@ export default function CountUp({ count }: { count: number }) {
           <span className="numeral-bloom pointer-events-none absolute -inset-x-16 -inset-y-12" />
           <span
             ref={number}
-            className="numeral-lit relative block pr-[0.06em] font-display text-[96px] font-semibold leading-[84px] tracking-[-0.03em] sm:text-[136px] sm:leading-[112px]"
+            className="numeral-lit relative block font-display text-[96px] font-extrabold leading-[84px] tracking-[-0.035em] sm:text-[136px] sm:leading-[112px]"
           >
             {count}
           </span>
         </span>
-        <span className="numeral-ghost pb-1 pr-[0.08em] font-display text-[48px] font-medium italic leading-none tracking-[-0.01em] sm:pb-2 sm:text-[64px]">
+        <span className="numeral-ghost pb-1 font-display text-[44px] font-semibold leading-none tracking-[-0.03em] sm:pb-2 sm:text-[60px]">
           /{TARGET}
         </span>
       </span>

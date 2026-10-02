@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom/vitest';
 
-// jsdom has no WebGL: the rail canvas is replaced by nothing, the SVG poster carries the rail.
+// jsdom has no WebGL: the world canvas is replaced by nothing, the SVG posters carry the orrery and the rail.
 vi.mock('@react-three/fiber', () => ({
   Canvas: () => null,
   useFrame: () => undefined,

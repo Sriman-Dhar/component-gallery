@@ -1,14 +1,12 @@
 /**
- * The orrery's geometry, shared by the particle shader, the particle builder and the SVG poster so the
- * still and the live scene are the same object. Lengths are fractions of S, the box width; the box is
+ * The orrery's geometry, shared by the world's shaders (glsl/common.ts), its particle builder and the SVG
+ * poster, so the still and the live scene are the same object. Lengths are fractions of S, the box width; the box is
  * ORRERY_ASPECT wide to 1 tall, which fits the tilted rings with no dead band above or below them.
  *
  * Three nearly coplanar rings (an orrery, not an atom: small inclinations, one shared plane seen from
  * above). The 30 components ride them in ship order, ten per ring, inner ring first.
  */
 
-/** Points in the orrery. With the rail's 3600 ceiling the hero stays within the 7000 budget. */
-export const ORRERY_MAX_POINTS = 3400;
 export const SLOT_COUNT = 30;
 export const SLOTS_PER_RING = 10;
 
@@ -71,9 +69,4 @@ export function project(ring: number, u: number, t: number, yaw: number): Projec
   const z3 = ly * Math.sin(VIEW_TILT) + z * Math.cos(VIEW_TILT);
   const s = FOCAL / (FOCAL - z3);
   return { x: x * s, y: y3 * s, z: z3, s };
-}
-
-/** Particle count for a box width: sparser on phones, never past the budget. */
-export function orreryCount(width: number): number {
-  return Math.min(ORRERY_MAX_POINTS, Math.round(width * 7.5));
 }

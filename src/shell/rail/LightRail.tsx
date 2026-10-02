@@ -1,15 +1,10 @@
-import { lazy, Suspense, useMemo, useRef, useState, type PointerEvent } from 'react';
-import { gsap, motionAllowed, useGSAP, withMotion } from '../../lib/motion';
-import { todayCaption, weekCenter, weekOf } from '../../lib/ruler';
-import { railPulse } from '../../lib/railPulse';
-import { useInView } from '../../lib/useInView';
-import { canUseWebGL } from '../../lib/webgl';
+import { useMemo, useRef } from 'react';
+import { gsap, useGSAP, withMotion } from '../../lib/motion';
+import { todayCaption, weekOf } from '../../lib/ruler';
+import { useWorldStatus } from '../world/worldState';
 import RailPoster from './RailPoster';
 import RailPulse from './RailPulse';
-import { pulseHeat, RAIL_BOX, type RailVariant } from './railLayout';
-import type { RailPointer } from './RailParticles';
-
-const RailCanvas = lazy(() => import('./RailCanvas'));
+import { RAIL_BOX, type RailVariant } from './railLayout';
 
 export interface RailMark {
   slug: string;
@@ -27,32 +22,17 @@ interface Props {
 }
 
 /**
- * The light rail, the signature on every route. Hero: SVG poster plus a WebGL particle rail
- * mounted when near the viewport and paused when it leaves. Compact: poster with the week blooming.
- * Unlit: the 404's dead rail that flickers twice and rests dim.
+ * The light rail, the signature on every route. Hero: the anchor the Living Orrery's particles stream into
+ * and form (its box carries data-world-anchor); while the scene is live the drawn line steps back to a track
+ * and the scene warms the week labels; without the scene it is the SVG poster with its DOM pulse.
+ * Compact: poster with the week blooming. Unlit: the 404's dead rail that flickers twice and rests dim.
  */
 export default function LightRail({ variant, marks = [], litWeek, today = new Date() }: Props) {
   const root = useRef<HTMLElement>(null);
-  const box = useRef<HTMLDivElement>(null);
-  const pointer = useRef<RailPointer>({ x: 0, y: 0, on: 0 });
-  const [canvasOk] = useState(() => variant === 'hero' && motionAllowed() && canUseWebGL());
-  const [lost, setLost] = useState(false);
-  const [ready, setReady] = useState(false);
-  const { near, active } = useInView(box, canvasOk && !lost);
+  const status = useWorldStatus();
+  const formed = variant === 'hero' && status === 'live';
   const { height, base } = RAIL_BOX[variant];
-  const litWeeks = useMemo(() => [...new Set(marks.map((m) => weekOf(m.date)))], [marks]);
-  const litSet = useMemo(() => new Set(litWeeks), [litWeeks]);
-  const showCanvas = canvasOk && !lost && near;
-  const labels = useRef<SVGTextElement[]>();
-
-  // The week numbers brighten as the particle pulse passes them (style writes only, no React state).
-  function onPulse(head: number) {
-    railPulse.head = head;
-    labels.current ??= [...(root.current?.querySelectorAll<SVGTextElement>('[data-week-label]') ?? [])];
-    for (const el of labels.current) {
-      el.style.setProperty('--heat', pulseHeat(head, weekCenter(Number(el.dataset.weekLabel))).toFixed(3));
-    }
-  }
+  const litWeeks = useMemo(() => new Set(marks.map((m) => weekOf(m.date))), [marks]);
 
   useGSAP(
     () =>
@@ -87,13 +67,6 @@ export default function LightRail({ variant, marks = [], litWeek, today = new Da
     { scope: root },
   );
 
-  function onPointerMove(event: PointerEvent<HTMLDivElement>) {
-    const rect = event.currentTarget.getBoundingClientRect();
-    pointer.current.x = event.clientX - rect.left - rect.width / 2;
-    pointer.current.y = rect.height / 2 - (event.clientY - rect.top);
-    pointer.current.on = 1;
-  }
-
   const label = [
     'Light rail, 1 Oct to 30 Dec 2026',
     variant === 'unlit' ? 'nothing lit' : `${marks.length} ${marks.length === 1 ? 'component' : 'components'} shipped`,
@@ -105,29 +78,13 @@ export default function LightRail({ variant, marks = [], litWeek, today = new Da
   return (
     <figure ref={root} data-testid="light-rail" data-variant={variant} className="w-full">
       <div
-        ref={box}
         className="relative overflow-hidden"
         style={{ height }}
-        onPointerMove={showCanvas ? onPointerMove : undefined}
-        onPointerLeave={() => (pointer.current.on = 0)}
+        data-world-anchor={variant === 'hero' ? 'rail' : undefined}
+        data-base={base}
       >
-        <RailPoster variant={variant} litWeeks={litSet} bloomWeek={litWeek} today={today} label={label} dim={ready} />
-        {variant !== 'unlit' && !ready ? <RailPulse base={base} /> : null}
-        {showCanvas ? (
-          <Suspense fallback={null}>
-            <RailCanvas
-              litWeeks={litWeeks}
-              active={active}
-              pointer={pointer}
-              onPulse={onPulse}
-              onReady={() => setReady(true)}
-              onLost={() => {
-                setLost(true);
-                setReady(false);
-              }}
-            />
-          </Suspense>
-        ) : null}
+        <RailPoster variant={variant} litWeeks={litWeeks} bloomWeek={litWeek} today={today} label={label} dim={formed} />
+        {variant !== 'unlit' && !formed ? <RailPulse base={base} /> : null}
       </div>
       <figcaption className="mt-2 flex items-baseline justify-between gap-4 font-mono text-meta text-text-2">
         <span>1 Oct</span>
