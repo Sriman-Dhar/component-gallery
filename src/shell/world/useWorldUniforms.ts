@@ -3,6 +3,7 @@ import { Color, SRGBColorSpace, Vector2, Vector3, Vector4 } from 'three';
 import { useFrameTheme, type ThemeName } from '../../lib/theme';
 import { tokenRgb } from '../../lib/tokens';
 import { RINGS } from '../orrery/orreryModel';
+import { MAX_TILES } from './worldState';
 
 export type WorldUniforms = ReturnType<typeof createUniforms>;
 
@@ -35,6 +36,20 @@ function createUniforms() {
     /** Sun position in NDC and the nebula's parallax offset, written by the camera rig. */
     uSun: { value: new Vector2() },
     uParallax: { value: new Vector2() },
+    /** Tile boxes in viewport px (left, top, width, height), how many are live, and when the glyphs formed. */
+    uTiles: { value: Array.from({ length: MAX_TILES }, () => new Vector4(0, -9999, 1, 1)) },
+    uTileCount: { value: 0 },
+    uGlyphBeat: { value: 0 },
+    /** The coda's far orrery: center in viewport px and px per orrery unit. */
+    uFar: { value: new Vector3(0, -9999, 1) },
+    /** A viewport px box the particles flow around (left, top, width, height); width 0 = none. */
+    uKeep: { value: new Vector4(0, 0, 0, 0) },
+    /** The sun docked on the rail as today's marker: NDC position and how docked (0..1). */
+    uSunDock: { value: new Vector3(0, 0, 0) },
+    /** 404: the sun gutters and the whole system runs dim (0 normal .. 1 dark). */
+    uGutter: { value: 0 },
+    /** Close orbit: this component's slot (the only body drawn, points kept fine), or -1 in other modes. */
+    uSolo: { value: -1 },
   };
 }
 

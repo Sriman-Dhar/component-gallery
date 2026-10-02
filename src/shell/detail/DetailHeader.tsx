@@ -38,7 +38,7 @@ export default function DetailHeader({ meta }: { meta: ComponentMeta }) {
         />
         {/* Clipped at the foot only, so the number can rise from below while its glow spills freely. */}
         <span aria-hidden="true" className="relative -mb-5 block pb-6 [clip-path:inset(-48px_-64px_0_-48px)]">
-          <span className="dh-num inline-flex items-start font-display text-numeral font-semibold tracking-[-0.02em] text-text [text-shadow:0_0_28px_rgb(var(--color-accent)/calc(var(--bloom-alpha)*1.25)),0_0_2px_rgb(var(--color-glow)/calc(var(--bloom-alpha)*1.8))] lg:text-count">
+          <span data-world-anchor="close" className="dh-num inline-flex items-start font-display text-numeral font-semibold tracking-[-0.02em] text-text [text-shadow:0_0_28px_rgb(var(--color-accent)/calc(var(--bloom-alpha)*1.25)),0_0_2px_rgb(var(--color-glow)/calc(var(--bloom-alpha)*1.8))] lg:text-count">
             <span className="mr-1.5 mt-2 font-mono text-small font-normal tracking-normal text-accent lg:mt-4">№</span>
             {number}
           </span>

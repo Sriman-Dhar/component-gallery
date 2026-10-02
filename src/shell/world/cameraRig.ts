@@ -1,5 +1,6 @@
 import { MathUtils, Vector3, type PerspectiveCamera } from 'three';
-import { ELEVATION, FOV, heroFraming } from './worldLayout';
+import { BASE_SPIN, RINGS } from '../orrery/orreryModel';
+import { ELEVATION, FOV, heroFraming, WORLD_R } from './worldLayout';
 
 const target = new Vector3();
 const origin = new Vector3();
@@ -35,4 +36,48 @@ export function placeCamera(camera: PerspectiveCamera, width: number, height: nu
   camera.updateMatrixWorld();
   const sun = origin.set(0, 0, 0).project(camera);
   return { x: sun.x, y: sun.y, focus: camera.position.length() };
+}
+
+const body = new Vector3();
+const ahead = new Vector3();
+const tangent = new Vector3();
+const outward = new Vector3();
+
+/** A slot's body in world space at time t and yaw: the shader's ringPoint() in JS. */
+export function bodyAt(out: Vector3, ring: number, u: number, t: number, yaw: number): Vector3 {
+  const { radius, inc, node, speed } = RINGS[ring];
+  const th = Math.PI * 2 * u + speed * t;
+  const lx = radius * Math.cos(th);
+  const lz0 = radius * Math.sin(th);
+  const ly = -lz0 * Math.sin(inc);
+  const lz = lz0 * Math.cos(inc);
+  const a = node + yaw;
+  return out.set(lx * Math.cos(a) + lz * Math.sin(a), ly, -lx * Math.sin(a) + lz * Math.cos(a)).multiplyScalar(WORLD_R);
+}
+
+/**
+ * Close orbit (detail header): the camera rides just behind and above this component's body, looking along
+ * its orbit, so the body fills the frame lit from the side by the sun out of shot and its own ring runs off
+ * behind it. The lens shift puts the body on the № glyph (`anchor`, NDC). Returns the camera's distance to
+ * the body for the depth blur.
+ */
+export function placeClose(camera: PerspectiveCamera, width: number, height: number, ring: number, u: number, t: number, yaw: number, anchor: { x: number; y: number }) {
+  bodyAt(body, ring, u, t, yaw);
+  bodyAt(ahead, ring, u, t + 0.5, yaw + BASE_SPIN * 0.5);
+  tangent.subVectors(ahead, body).normalize();
+  outward.copy(body).setY(0).normalize();
+  const d = 0.6;
+  camera.position.copy(body).addScaledVector(tangent, d * 0.82).addScaledVector(outward, -d * 0.35);
+  camera.position.y += d * 0.42;
+  camera.lookAt(body);
+  camera.fov = FOV;
+  camera.aspect = width / Math.max(1, height);
+  camera.near = 0.02;
+  camera.far = 40;
+  camera.updateProjectionMatrix();
+  camera.projectionMatrix.elements[8] = -anchor.x;
+  camera.projectionMatrix.elements[9] = -anchor.y;
+  camera.projectionMatrixInverse.copy(camera.projectionMatrix).invert();
+  camera.updateMatrixWorld();
+  return camera.position.distanceTo(body);
 }

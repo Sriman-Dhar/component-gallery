@@ -1,5 +1,5 @@
 import { useLocation } from 'react-router-dom';
-import { shipped } from '../lib/catalogue';
+import { numberOf, runningLabel, shipped, upcomingWeek } from '../lib/catalogue';
 import { formatDate } from '../lib/date';
 import { WINDOW_END, WINDOW_START, weekOf } from '../lib/ruler';
 import { PACE_LINE } from '../lib/site';
@@ -12,17 +12,21 @@ import World from './world/World';
 import { sceneModeFor } from './world/worldModes';
 
 const litWeeks = [...new Set(shipped.map(({ meta }) => weekOf(meta.date)))];
+/** The grid the scene's halos and numerals form on: the shipped tiles' numbers and the next slot. */
+const grid = { labels: shipped.map(({ meta }) => runningLabel(meta.slug)), next: upcomingWeek(shipped) !== undefined };
 
 /**
- * Frame: the studio lights, the Living Orrery on routes that have a scene (Part A: the index), grain, glass
- * header, the routed view, one-line footer. Max 1280.
+ * Frame: the studio lights, the Living Orrery (the index story, a detail page's close orbit, the 404's dark
+ * system), grain, glass header, the routed view, one-line footer. Max 1280.
  */
 export default function Layout() {
-  const mode = sceneModeFor(useLocation().pathname);
+  const { pathname } = useLocation();
+  const mode = sceneModeFor(pathname);
+  const slot = Math.max(0, numberOf(pathname.split('/')[2] ?? '') - 1);
   return (
     <div className="relative min-h-[100dvh] overflow-x-clip bg-bg text-text">
       <LightField />
-      {mode ? <World shipped={shipped.length} litWeeks={litWeeks} /> : null}
+      <World key={mode === 'index' ? mode : pathname} mode={mode} shipped={shipped.length} litWeeks={litWeeks} grid={grid} slot={slot} />
       <GrainLayer />
       <Header />
       <div className="relative z-10 mx-auto max-w-frame px-4 sm:px-8 lg:px-12">

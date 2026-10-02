@@ -5,6 +5,7 @@ import { Bloom, EffectComposer, Vignette } from '@react-three/postprocessing';
 import { HalfFloatType } from 'three';
 import type { ThemeName } from '../../lib/theme';
 import FrameDriver from './FrameDriver';
+import type { GridPlan } from './gridGeometry';
 import { ignite, settle } from './ignition';
 import { useWorldUniforms } from './useWorldUniforms';
 import WorldBodies from './WorldBodies';
@@ -12,20 +13,26 @@ import WorldDirector from './WorldDirector';
 import WorldNebula from './WorldNebula';
 import WorldParticles from './WorldParticles';
 import { FOV, particleCount, startTier } from './worldLayout';
+import type { WorldMode } from './worldModes';
 
-/** Full-screen canvas DPR band (PERF.md rule 3: a full-viewport canvas caps at 1.5). */
+/** Full-screen canvas DPR band (PERF.md rule 3: a full-viewport canvas caps at 1.5); the close orbit is cheaper. */
 const DPR_MAX = 1.5;
+const DPR_CLOSE = 1.25;
 const DPR_MIN = 1;
 
 interface Props {
+  mode: WorldMode;
   still: boolean;
   shipped: number;
   litWeeks: number[];
+  grid: GridPlan;
+  /** Close mode: this component's slot. */
+  slot: number;
   onReady: () => void;
   onLost: () => void;
 }
 
-function Scene({ still, shipped, litWeeks, low }: Omit<Props, 'onReady' | 'onLost'> & { low: boolean }) {
+function Scene({ mode, still, shipped, litWeeks, grid, slot, low }: Omit<Props, 'onReady' | 'onLost'> & { low: boolean }) {
   const [theme, setTheme] = useState<ThemeName>('dark');
   const [redraw, setRedraw] = useState(0);
   const onTheme = useCallback((next: ThemeName) => {
@@ -33,32 +40,34 @@ function Scene({ still, shipped, litWeeks, low }: Omit<Props, 'onReady' | 'onLos
     setRedraw((n) => n + 1);
   }, []);
   const uniforms = useWorldUniforms(onTheme);
-  const [count] = useState(() => particleCount(window.innerWidth));
+  // The close orbit is compressed and cheap: a fraction of the swarm is enough at that range.
+  const [count] = useState(() => Math.round(particleCount(window.innerWidth) * (mode === 'close' ? 0.3 : 1)));
+  const lit = mode === 'dark' ? 0 : shipped;
 
   useEffect(() => {
     uniforms.uDof.value = low ? 0 : 1;
   }, [uniforms, low]);
 
   useEffect(() => {
-    if (still) {
+    if (still || mode === 'close') {
       settle(uniforms);
       return;
     }
     return ignite(uniforms);
-  }, [uniforms, still]);
+  }, [uniforms, still, mode]);
 
   const dark = theme === 'dark';
   return (
     <>
-      <WorldDirector uniforms={uniforms} still={still} />
+      <WorldDirector uniforms={uniforms} still={still} mode={mode} slot={slot} />
       <WorldNebula uniforms={uniforms} on={!low} />
-      <WorldBodies uniforms={uniforms} shipped={shipped} />
-      <WorldParticles uniforms={uniforms} count={count} low={low} shipped={shipped} litWeeks={litWeeks} />
+      <WorldBodies uniforms={uniforms} shipped={lit} />
+      <WorldParticles uniforms={uniforms} count={count} low={low} shipped={lit} litWeeks={mode === 'dark' ? [] : litWeeks} grid={grid} />
       <EffectComposer multisampling={0} frameBufferType={HalfFloatType} depthBuffer={false}>
-        <Bloom mipmapBlur levels={low ? 5 : 7} intensity={dark ? 1.05 : 0} luminanceThreshold={0.92} luminanceSmoothing={0.2} radius={0.74} />
+        <Bloom mipmapBlur levels={low || mode === 'close' ? 5 : 7} intensity={dark ? 1.05 : 0} luminanceThreshold={0.92} luminanceSmoothing={0.2} radius={0.74} />
         <Vignette offset={0.32} darkness={dark ? 0.62 : 0.18} />
       </EffectComposer>
-      <FrameDriver still={still} redraw={redraw} />
+      <FrameDriver still={still} redraw={redraw} fixed={mode === 'index'} />
     </>
   );
 }
@@ -68,9 +77,10 @@ function Scene({ still, shipped, litWeeks, low }: Omit<Props, 'onReady' | 'onLos
  * no antialias (a particle field), no own loop (FrameDriver). DPR 1 to 1.5, stepped by a 55 fps floor;
  * a fallback from the monitor drops to the low tier (half the particles, no depth blur, no nebula).
  */
-export default function WorldCanvas({ still, shipped, litWeeks, onReady, onLost }: Props) {
+export default function WorldCanvas({ onReady, onLost, ...scene }: Props) {
+  const max = scene.mode === 'close' ? DPR_CLOSE : DPR_MAX;
   const [low, setLow] = useState(() => startTier() === 'low');
-  const [dpr, setDpr] = useState(() => Math.min(window.devicePixelRatio || 1, DPR_MAX));
+  const [dpr, setDpr] = useState(() => Math.min(window.devicePixelRatio || 1, max));
   const current = useRef(dpr);
   current.current = dpr;
   // Already at the floor and still slow: the low tier is the next step down.
@@ -96,10 +106,10 @@ export default function WorldCanvas({ still, shipped, litWeeks, onReady, onLost 
         bounds={() => [55, 61]}
         flipflops={3}
         onFallback={() => setLow(true)}
-        onIncline={() => setDpr((d) => Math.min(DPR_MAX, d + 0.25))}
+        onIncline={() => setDpr((d) => Math.min(max, d + 0.25))}
         onDecline={decline}
       />
-      <Scene still={still} shipped={shipped} litWeeks={litWeeks} low={low} />
+      <Scene {...scene} low={low} />
     </Canvas>
   );
 }
