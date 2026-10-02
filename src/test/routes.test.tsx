@@ -63,9 +63,11 @@ describe('routes', () => {
     expect(screen.getByRole('button', { name: 'Copy prompt' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'The code' })).toBeInTheDocument();
     expect(screen.getByRole('group', { name: 'Stage width' })).toBeInTheDocument();
-    const stageTheme = screen.getByRole('button', { name: 'Light stage' });
-    fireEvent.click(stageTheme);
-    expect(stageTheme).toHaveTextContent('Dark stage');
+    // The stage opens dark (in the world); both themes are visible choices, the current one pressed.
+    expect(screen.getByRole('button', { name: 'Dark stage' })).toHaveAttribute('aria-pressed', 'true');
+    fireEvent.click(screen.getByRole('button', { name: 'Light stage' }));
+    expect(screen.getByRole('button', { name: 'Light stage' })).toHaveAttribute('aria-pressed', 'true');
+    expect(document.querySelector('[data-stage-theme="light"]')).not.toBeNull();
     expect(await screen.findByRole('button', { name: 'Copy MagneticButton.tsx' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Hide MagneticButton.tsx' })).toHaveAttribute('aria-expanded', 'true');
     const demoToggle = screen.getByRole('button', { name: 'Show demo.tsx' });
@@ -95,26 +97,30 @@ describe('routes', () => {
     expect(screen.getByRole('link', { name: 'Back to the index' })).toHaveAttribute('href', '/');
   });
 
-  it('links the public repo from the header and the footer', () => {
+  it('links the public repo from the header (text and phone icon), the footer and the coda', () => {
     renderAt('/');
-    const links = screen.getAllByRole('link', { name: /source/i });
-    expect(links).toHaveLength(2);
+    const links = [...screen.getAllByRole('link', { name: /source/i }), screen.getByRole('link', { name: 'Follow along on GitHub' })];
+    expect(links).toHaveLength(4);
     for (const link of links) {
       expect(link).toHaveAttribute('href', 'https://github.com/Sriman-Dhar/component-gallery');
     }
     expect(screen.queryByText(/coming soon/i)).toBeNull();
   });
 
-  it('flips the frame theme on <html> and its label names the current theme (reduced motion path)', () => {
+  it('flips the frame theme on <html> from two visible choices, the current one pressed (reduced motion path)', () => {
     document.documentElement.setAttribute('data-theme', 'dark');
     renderAt('/');
-    const toggle = screen.getByRole('button', { name: 'Dark frame' });
-    fireEvent.click(toggle);
+    const group = screen.getByRole('group', { name: 'Frame theme' });
+    const dark = within(group).getByRole('button', { name: 'Dark' });
+    const light = within(group).getByRole('button', { name: 'Light' });
+    expect(dark).toHaveAttribute('aria-pressed', 'true');
+    fireEvent.click(light);
     expect(document.documentElement.getAttribute('data-theme')).toBe('light');
-    expect(toggle).toHaveTextContent('Light frame');
+    expect(light).toHaveAttribute('aria-pressed', 'true');
     expect(document.querySelector('.theme-wipe')).toBeNull();
-    fireEvent.click(toggle);
+    fireEvent.click(light);
+    expect(document.documentElement.getAttribute('data-theme')).toBe('light');
+    fireEvent.click(dark);
     expect(document.documentElement.getAttribute('data-theme')).toBe('dark');
-    expect(toggle).toHaveTextContent('Dark frame');
   });
 });

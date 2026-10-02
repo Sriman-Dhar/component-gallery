@@ -19,10 +19,12 @@ export default function StageCorners() {
   useGSAP(
     () =>
       withMotion(() => {
+        // Settle to the theme's own rest opacity (the dark stage burns brighter), then hand back to CSS.
+        const rest = Number(getComputedStyle(root.current!.querySelector('.sc-corner')!).opacity);
         gsap
           .timeline({ delay: 0.45 })
           .from('.sc-arm', { scale: 0, duration: 0.32, ease: 'power3.out', stagger: 0.07 })
-          .fromTo('.sc-corner', { opacity: 1 }, { opacity: 0.55, duration: 0.6, ease: 'power2.inOut' }, '+=0.1');
+          .fromTo('.sc-corner', { opacity: 1 }, { opacity: rest, duration: 0.6, ease: 'power2.inOut', clearProps: 'opacity' }, '+=0.1');
       }),
     { scope: root },
   );

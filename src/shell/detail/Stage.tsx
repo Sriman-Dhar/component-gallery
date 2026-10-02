@@ -9,13 +9,13 @@ import { useStageWidth } from './useStageWidth';
 const WIDTH_NOTE: Record<WidthPreset, string> = { '375': '375 px viewport', '768': '768 px viewport', full: 'Full width' };
 const THEME_NAME: Record<StageTheme, string> = { light: 'Light', dark: 'Dark' };
 
-/** The stage: 1px grid, its own light/dark theme, a frame that narrows to three widths, lit corner marks. Slides up into place. */
+/** The stage: 1px grid, its own theme (dark by default, lit by the scene's sun along its top edge; light on demand), a frame that narrows to three widths, lit corner marks. Slides up into place. */
 export default function Stage({ entry }: { entry: GalleryEntry }) {
   const Demo = useMemo(() => lazy(entry.loadDemo), [entry]);
   const root = useRef<HTMLElement>(null);
   const room = useRef<HTMLDivElement>(null);
   const frame = useRef<HTMLDivElement>(null);
-  const [theme, setTheme] = useState<StageTheme>('light');
+  const [theme, setTheme] = useState<StageTheme>('dark');
   const { width, unavailable, resize } = useStageWidth(room, frame);
 
   useGSAP(
@@ -34,7 +34,7 @@ export default function Stage({ entry }: { entry: GalleryEntry }) {
         unavailable={unavailable}
         onWidth={resize}
         theme={theme}
-        onTheme={() => setTheme((t) => (t === 'dark' ? 'light' : 'dark'))}
+        onTheme={setTheme}
       />
       <div ref={room}>
         <div
