@@ -25,7 +25,7 @@ export default function NextSlot({ week }: { week: number }) {
 
   return (
     <li ref={root} className="tile flex flex-col overflow-hidden rounded-tile border border-dashed border-line">
-      <div aria-hidden="true" data-stage-theme={theme} className="relative h-[220px] border-b border-dashed border-line">
+      <div aria-hidden="true" data-stage-theme={theme} className="relative h-[140px] border-b border-dashed border-line sm:h-[220px]">
         <div className="stage-surface stage-unlit absolute inset-0" />
         <span className="absolute left-1/2 top-1/2 -ml-6 -mt-6 flex h-12 w-12 items-center justify-center">
           <span className="next-halo absolute inset-0 rounded-full opacity-50" />
