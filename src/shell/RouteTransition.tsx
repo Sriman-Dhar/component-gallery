@@ -51,6 +51,7 @@ export default function RouteTransition() {
     return () => {
       out.kill();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- pathname changes only with location.key, which is listed.
   }, [stale, location.key]);
 
   const lastShown = useRef(shown.key);

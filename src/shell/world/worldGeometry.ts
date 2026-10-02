@@ -53,7 +53,7 @@ export function buildWorldGeometry(count: number, shipped: number, litWeeks: num
   for (let i = 0; i < count; i++) {
     const roll = Math.random();
     a.aSeed[i] = Math.random();
-    let spread = 0;
+    let spread: number;
     if (roll < SHARE.filament) {
       a.aKind[i] = ORBIT_KIND.filament;
       a.aRing[i] = pick(ringWeights);

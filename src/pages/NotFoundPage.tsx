@@ -1,10 +1,9 @@
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { pageTitle, useDocumentTitle } from '../lib/useDocumentTitle';
+import { useDocumentTitle } from '../lib/useDocumentTitle';
 import { FOCUS_RING } from '../shell/focus';
 import LightRail from '../shell/rail/LightRail';
-
-export const NOT_FOUND_TITLE = pageTitle('Not found');
+import { NOT_FOUND_TITLE } from './notFoundTitle';
 
 /** Keeps a soft 404 out of search results while it is on screen (the static host answers every path 200). */
 function useNoIndex() {

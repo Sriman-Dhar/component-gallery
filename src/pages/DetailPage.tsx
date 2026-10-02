@@ -10,7 +10,8 @@ import PrevNext from '../shell/detail/PrevNext';
 import ScrollRail, { type RailStop } from '../shell/detail/ScrollRail';
 import Stage from '../shell/detail/Stage';
 import LightRail from '../shell/rail/LightRail';
-import NotFoundPage, { NOT_FOUND_TITLE } from './NotFoundPage';
+import NotFoundPage from './NotFoundPage';
+import { NOT_FOUND_TITLE } from './notFoundTitle';
 
 const marks = shipped.map(({ meta }) => ({ slug: meta.slug, date: meta.date }));
 /** The page's own rail stops, top to bottom; each id is the section it jumps to. */

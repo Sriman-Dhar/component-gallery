@@ -1,13 +1,8 @@
 import Segmented, { type Segment } from '../Segmented';
+import { PRESETS, type WidthPreset } from './stagePresets';
 
-export type WidthPreset = '375' | '768' | 'full';
+export type { WidthPreset } from './stagePresets';
 export type StageTheme = 'light' | 'dark';
-
-export const PRESETS: Segment<WidthPreset>[] = [
-  { id: '375', label: '375' },
-  { id: '768', label: '768' },
-  { id: 'full', label: 'Full' },
-];
 
 const THEMES: Segment<StageTheme>[] = [
   { id: 'dark', label: 'Dark stage' },

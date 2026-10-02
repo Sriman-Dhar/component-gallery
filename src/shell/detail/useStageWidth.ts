@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type RefObject } from 'react';
 import { gsap, motionAllowed } from '../../lib/motion';
-import { PRESETS, type WidthPreset } from './StageControls';
+import { PRESETS, type WidthPreset } from './stagePresets';
 
 const PX: Record<Exclude<WidthPreset, 'full'>, number> = { '375': 375, '768': 768 };
 
@@ -55,7 +55,7 @@ export function useStageWidth(room: RefObject<HTMLElement>, frame: RefObject<HTM
   const stale = width !== 'full' && unavailable.includes(width);
   useEffect(() => {
     if (stale) resize('full');
-    // resize is recreated every render; the flag alone decides.
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- resize is recreated every render; the flag alone decides.
   }, [stale]);
 
   return { width, unavailable: unavailable as WidthPreset[], resize };

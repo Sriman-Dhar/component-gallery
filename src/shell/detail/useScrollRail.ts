@@ -72,7 +72,7 @@ export function useScrollRail(ids: string[], { fill, head, bar }: Fills) {
       page.kill();
       marks.forEach((mark) => mark?.kill());
     };
-    // The ids are the identity; the refs are stable.
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- the ids (joined as key) are the identity; the refs are stable.
   }, [key]);
 
   return { stops, lit };

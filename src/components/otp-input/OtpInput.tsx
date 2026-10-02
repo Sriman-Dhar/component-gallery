@@ -110,7 +110,7 @@ export default function OtpInput({
 
   useEffect(() => {
     if (autoFocus) inputs.current[0]?.focus({ preventScroll: true });
-    // Mount only: autofocus is a first-render decision.
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- mount only: autofocus is a first-render decision.
   }, []);
 
   const handled = useRef<string | null>(null);
@@ -136,7 +136,7 @@ export default function OtpInput({
       if (!active || active === document.body || root.current?.contains(active)) focusCell(0);
       onErrorReset?.();
     }, ERROR_HOLD_MS);
-    // Keyed on the error alone: the other values are handlers whose behavior never changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- keyed on the error alone: the rest are handlers whose behavior never changes.
   }, [error]);
 
   const showError = rejected || Boolean(message);
