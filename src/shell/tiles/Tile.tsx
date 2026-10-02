@@ -49,7 +49,8 @@ export default function Tile({ entry, caption, rel }: Props) {
           <div className="min-w-0">
             <p className="mb-1 font-mono text-meta text-text-2">
               {caption ? `${caption} · ` : ''}
-              <span className="text-accent">No</span> {runningLabel(meta.slug)}
+              {/* 12px on paper: one step darker than the accent, so particles passing behind keep it at 4.5:1. */}
+              <span className="text-accent [[data-theme=light]_&]:text-[rgb(var(--p-amber-900))]">No</span> {runningLabel(meta.slug)}
             </p>
             <Link
               to={`/components/${meta.slug}`}
