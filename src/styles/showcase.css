@@ -37,12 +37,22 @@
 }
 
 /* Atmosphere: soft beams from the top of the page, a vignette pulling the eye in, a lively pointer core. */
+/* A beam is its own compositor layer (will-change) that GSAP only moves: its pixels raster once and every
+   drift frame is a transform. The soft sides are a 72px mask ramp (the falloff an 18px blur gave) painted
+   inside that layer; a live filter: blur here re-ran the blur on the GPU every frame (PERF.md). */
 .shaft {
-  width: 180px;
+  width: 252px;
   height: 900px;
+  margin-left: -36px;
   transform-origin: 50% 0;
+  will-change: transform;
+}
+.shaft-beam {
+  position: absolute;
+  inset: 0;
   background: linear-gradient(180deg, rgb(var(--color-glow) / var(--shaft-alpha)), rgb(var(--color-glow) / calc(var(--shaft-alpha) * 0.4)) 45%, transparent 85%);
-  filter: blur(18px);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 72px, #000 calc(100% - 72px), transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 72px, #000 calc(100% - 72px), transparent);
 }
 .vignette {
   background: radial-gradient(ellipse 120% 95% at 50% 38%, transparent 58%, rgb(0 0 0 / var(--vignette-alpha)));
@@ -90,7 +100,7 @@
 
 @media (max-width: 639px) {
   .shaft {
-    width: 110px;
+    width: 182px;
     opacity: 0.6;
   }
   .vignette {

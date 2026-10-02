@@ -1,5 +1,6 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { gsap, POINTER_MOTION, useGSAP, withMotion } from '../lib/motion';
+import { useInView } from '../lib/useInView';
 
 /** Three beams from the top of the page: left offset (vw-free, in %), lean and drift range. */
 const SHAFTS = [
@@ -19,16 +20,28 @@ export default function LightField() {
   const halo = useRef<HTMLDivElement>(null);
   const core = useRef<HTMLDivElement>(null);
   const beams = useRef<HTMLDivElement>(null);
+  const drift = useRef<gsap.core.Tween[]>([]);
+  // The beams live in the top 900px of the page; once scrolled past, their drift stops repainting the frame.
+  const { active } = useInView(beams, true);
+  const live = useRef(active);
+  live.current = active;
 
   useGSAP(
     () =>
       withMotion(() => {
-        gsap.utils.toArray<HTMLElement>('.shaft', beams.current).forEach((el, i) => {
-          gsap.to(el, { x: SHAFTS[i].drift, rotation: SHAFTS[i].rotate + 2, duration: 11 + i * 3, ease: 'sine.inOut', repeat: -1, yoyo: true });
-        });
+        drift.current = gsap.utils.toArray<HTMLElement>('.shaft', beams.current).map((el, i) =>
+          gsap.to(el, { x: SHAFTS[i].drift, rotation: SHAFTS[i].rotate + 2, duration: 11 + i * 3, ease: 'sine.inOut', repeat: -1, yoyo: true, paused: !live.current }),
+        );
+        return () => {
+          drift.current = [];
+        };
       }),
     { scope: beams },
   );
+
+  useEffect(() => {
+    drift.current.forEach((tween) => (active ? tween.resume() : tween.pause()));
+  }, [active]);
 
   useGSAP(() => {
     const mm = gsap.matchMedia();
@@ -63,7 +76,9 @@ export default function LightField() {
         <div className="light-rim absolute inset-x-0 bottom-0 h-[900px]" />
         <div ref={beams} className="absolute inset-x-0 top-0 h-[900px]">
           {SHAFTS.map((shaft) => (
-            <div key={shaft.left} className="shaft absolute -top-10" style={{ left: shaft.left, transform: `rotate(${shaft.rotate}deg)` }} />
+            <div key={shaft.left} className="shaft absolute -top-10" style={{ left: shaft.left, transform: `rotate(${shaft.rotate}deg)` }}>
+              <div className="shaft-beam" />
+            </div>
           ))}
         </div>
       </div>
