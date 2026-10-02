@@ -32,11 +32,12 @@ export default function DetailHeader({ meta }: { meta: ComponentMeta }) {
   return (
     <header ref={root} className="relative grid grid-cols-1 gap-y-5 pb-8 lg:grid-cols-12 lg:gap-x-8">
       {/* The close orbit's socket: an empty box beside the title where the scene puts this component's body,
-          clear of the numeral and the summary (phones: right of the numeral; wide: past the title's end). */}
+          clear of the numeral and the summary (phones: right of the numeral; wide: past the title's end, and on
+          desktop pulled in toward the title at its height, above the summary, so it reads as the title's own planet). */}
       <span
         aria-hidden="true"
         data-world-anchor="close"
-        className="pointer-events-none absolute -top-4 right-0 h-28 w-[34%] sm:h-32 lg:top-2 lg:h-40 lg:w-[16%]"
+        className="pointer-events-none absolute -top-4 right-0 h-28 w-[34%] sm:h-32 lg:top-2 lg:h-40 lg:w-[16%] xl:-top-4 xl:right-[4.5rem] xl:h-36"
       />
       <p className="relative lg:col-span-3" aria-label={`Number ${number}`}>
         <span
@@ -53,7 +54,7 @@ export default function DetailHeader({ meta }: { meta: ComponentMeta }) {
       </p>
       <div className="lg:col-span-9 lg:pr-[19%] lg:pt-3">
         {/* The veil is the words alone, not the column's padding, which is where the body lives. */}
-        <div data-world-veil className="copy-scrim">
+        <div data-world-veil className="copy-scrim xl:w-fit">
           <h1
             aria-label={meta.name}
             className="font-display text-[34px] font-extrabold leading-[40px] tracking-[-0.03em] text-text sm:text-[52px] sm:leading-[58px]"
@@ -63,7 +64,7 @@ export default function DetailHeader({ meta }: { meta: ComponentMeta }) {
           <div className="dh-rise mt-5">
             <MetaChips meta={meta} />
           </div>
-          <p className="dh-rise mt-5 max-w-column text-lead text-text-2">{meta.summary}</p>
+          <p className="dh-rise mt-5 max-w-column text-lead text-text-2 xl:max-w-[46ch]">{meta.summary}</p>
         </div>
       </div>
     </header>
