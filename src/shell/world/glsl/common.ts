@@ -1,6 +1,24 @@
 import { WORLD_R } from '../worldLayout';
 import { MAX_TILES } from '../worldState';
 
+/** Needs uViewport and uVeil[2] declared; the sun program declares its own, the rest get them from commonGlsl. */
+export const veilGlsl = /* glsl */ `
+// The type the scene must never sit on (hero words, detail header, 404 copy): 1 inside a veil box (viewport
+// px, width 0 = none), feathered over 40px, so bodies sink and points dim as they pass behind the words.
+float veil(vec2 ndc) {
+  vec2 px = vec2((ndc.x * 0.5 + 0.5) * uViewport.x, (0.5 - ndc.y * 0.5) * uViewport.y);
+  float v = 0.0;
+  for (int i = 0; i < 2; i++) {
+    vec4 b = uVeil[i];
+    if (b.z < 1.0) continue;
+    vec2 d = max(b.xy - px, px - (b.xy + b.zw));
+    v = max(v, 1.0 - smoothstep(-8.0, 40.0, max(d.x, d.y)));
+  }
+  return v;
+}
+
+`;
+
 /**
  * Uniforms and helpers every world program shares. One uniform object feeds the particles, the bodies, the
  * sun and the nebula, so time, yaw, ignition and stage can never drift apart between them.
@@ -35,11 +53,13 @@ uniform vec3 uFar;
 uniform vec4 uKeep;
 uniform float uGutter;
 uniform float uSolo;
+uniform vec4 uVeil[2];
 
 // Viewport px (y down) to NDC (y up) and back.
 vec2 pxToNdc(vec2 px) { return vec2(px.x / uViewport.x * 2.0 - 1.0, 1.0 - px.y / uViewport.y * 2.0); }
 vec2 ndcToPx(vec2 ndc) { return vec2((ndc.x * 0.5 + 0.5) * uViewport.x, (0.5 - ndc.y * 0.5) * uViewport.y); }
 
+${veilGlsl}
 // The type the particles flow around: a point inside the keep-out box (plus a margin) is carried to its
 // nearest edge, so a stream parts around the fraction instead of crossing it. Each particle keeps its own
 // margin (seed), so the parting edge is a soft falloff, never a drawn box.

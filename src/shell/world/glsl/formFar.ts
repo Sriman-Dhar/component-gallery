@@ -23,7 +23,8 @@ Form formFar() {
   float front = clamp(z / 0.41 * 0.5 + 0.5, 0.0, 1.0);
   float twinkle = 0.6 + 0.4 * sin(uTime * 0.5 + aSeed * 40.0);
   f.bright = onRing * (0.12 + aBright * 0.62) * (0.45 + 0.55 * front) + isCore * 1.3 + isDust * aBright * 0.5 * twinkle;
-  f.bright *= step(-9000.0, uFar.y);
+  // The light frame has no bloom to carry the far ring: it burns a third brighter there.
+  f.bright *= step(-9000.0, uFar.y) * mix(1.0, 1.35, uLight);
   f.warm = mix(1.0 - aTone, 1.0, isCore);
   f.heat = isCore * 0.7 + isNode * (1.0 - aTone) * 0.3;
   f.blur = 0.0;

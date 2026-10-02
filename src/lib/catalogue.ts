@@ -1,5 +1,5 @@
 import { registry } from './registry';
-import { WEEK_COUNT, weekOf } from './ruler';
+import { WEEK_COUNT, weekOf, weekOpens } from './ruler';
 import type { GalleryEntry } from './types';
 
 /** The challenge target: 30 components over 13 weeks. */
@@ -43,4 +43,17 @@ export function upcomingWeek(entries: GalleryEntry[]): number | undefined {
   const weeks = entries.map((e) => weekOf(e.meta.date));
   const next = weeks.length ? Math.max(...weeks) + 1 : 1;
   return next <= WEEK_COUNT ? next : undefined;
+}
+
+/**
+ * What a slot of the orrery holds, for the hero's hover label: a shipped component (its name and link) or
+ * the week its slot waits for, paced evenly over the window and never before the upcoming week.
+ */
+export function slotCaption(index: number): { number: string; title: string; slug?: string } {
+  const number = `No ${String(index + 1).padStart(2, '0')}`;
+  const entry = shipped[index];
+  if (entry) return { number, title: entry.meta.name, slug: entry.meta.slug };
+  const paced = Math.floor((index * WEEK_COUNT) / TARGET) + 1;
+  const week = Math.min(WEEK_COUNT, Math.max(upcomingWeek(shipped) ?? WEEK_COUNT, paced));
+  return { number, title: `Week ${week}, opens ${weekOpens(week).replace(/ \d{4}$/, '')}` };
 }

@@ -50,6 +50,8 @@ function createUniforms() {
     uGutter: { value: 0 },
     /** Close orbit: this component's slot (the only body drawn, points kept fine), or -1 in other modes. */
     uSolo: { value: -1 },
+    /** Boxes of type the scene keeps clear of (viewport px of the canvas); width 0 = none. */
+    uVeil: { value: [new Vector4(0, 0, 0, 0), new Vector4(0, 0, 0, 0)] },
   };
 }
 

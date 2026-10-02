@@ -1,4 +1,4 @@
-import { commonGlsl } from './common';
+import { commonGlsl, veilGlsl } from './common';
 
 /**
  * The 30 component bodies as lit spheres riding the rings (instanced, positions from the same ring math as
@@ -19,7 +19,9 @@ void main() {
   float arrive = smoothstep(aOrder * 0.6, aOrder * 0.6 + 0.4, uArrive);
   vec3 center = ringPoint(aSlotRing, aSlotU, vec3(0.0)) * mix(2.4, 1.0, arrive);
   float solo = uSolo < 0.0 ? 1.0 : 1.0 - step(0.5, abs(aOrder * 30.0 - uSolo));
-  float scale = mix(0.024, 0.042, aLit) * arrive * uBodies * solo;
+  vec4 at = projectionMatrix * viewMatrix * vec4(center, 1.0);
+  // Behind the words a body sinks away rather than sit on a letter.
+  float scale = mix(0.024, 0.042, aLit) * arrive * uBodies * solo * (1.0 - veil(at.xy / at.w));
   vec3 world = center + position * scale;
   vNormal = normalize(normal);
   vWorld = world;
@@ -65,7 +67,10 @@ uniform float uBodies;
 uniform vec3 uSunDock;
 uniform vec2 uViewport;
 uniform float uSolo;
+uniform vec4 uVeil[2];
 varying vec2 vUv;
+varying float vVeil;
+${veilGlsl}
 void main() {
   vUv = position.xy;
   vec4 view = viewMatrix * vec4(0.0, 0.0, 0.0, 1.0);
@@ -75,6 +80,8 @@ void main() {
   vec4 clip = projectionMatrix * view;
   vec2 docked = uSunDock.xy + position.xy * 92.0 * 2.0 / uViewport;
   gl_Position = vec4(mix(clip.xy / clip.w, docked, uSunDock.z), 0.0, 1.0);
+  vec4 c0 = projectionMatrix * viewMatrix * vec4(0.0, 0.0, 0.0, 1.0);
+  vVeil = veil(mix(c0.xy / c0.w, uSunDock.xy, uSunDock.z));
 }
 `;
 
@@ -90,6 +97,7 @@ uniform float uLight;
 uniform float uGutter;
 uniform float uSolo;
 varying vec2 vUv;
+varying float vVeil;
 void main() {
   float r = length(vUv);
   float a = atan(vUv.y, vUv.x);
@@ -104,6 +112,7 @@ void main() {
   float gutter = clamp(0.3 + 0.55 * k * k + 0.2 * sin(uTime * 1.7), 0.06, 1.0);
   color = mix(color, uDeep * 3.0 * (core + corona) + uBody * corona, uGutter * 0.6) * mix(1.0, gutter, uGutter);
   color *= (uSolo < 0.0 ? 1.0 : 0.3) * uIgnite * mix(1.0, 0.45, uLight) * mix(mix(0.3, 1.0, uBodies), 0.9, uSunDock.z);
-  gl_FragColor = vec4(color, alpha * uIgnite);
+  color *= 1.0 - vVeil * 0.85;
+  gl_FragColor = vec4(color, alpha * uIgnite * (1.0 - vVeil * 0.85));
 }
 `;

@@ -8,7 +8,7 @@ import SiteName from './SiteName';
  */
 export default function HeroIntro() {
   return (
-    <div className="hero-copy relative max-w-[min(100%,980px)]">
+    <div data-world-veil className="hero-copy relative max-w-[min(100%,980px)]">
       <SiteName name={SITE_NAME} />
       <PaceAccent text={PACE_LINE} />
     </div>

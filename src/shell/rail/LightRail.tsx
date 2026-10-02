@@ -44,7 +44,7 @@ export default function LightRail({ variant, marks = [], litWeek, today = new Da
               .fromTo(root.current, { opacity: 0.2 }, { opacity: 0.6, duration: 0.08, ease: 'none' })
               .to(root.current, { opacity: 0.15, duration: 0.12, ease: 'none' })
               .to(root.current, { opacity: 0.6, duration: 0.06, ease: 'none' })
-              .to(root.current, { opacity: 0.35, duration: 0.5, ease: 'power2.out' });
+              .to(root.current, { opacity: 0.6, duration: 0.5, ease: 'power2.out' });
             return;
           }
           const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
@@ -60,7 +60,7 @@ export default function LightRail({ variant, marks = [], litWeek, today = new Da
           }
         },
         () => {
-          if (variant === 'unlit') gsap.set(root.current, { opacity: 0.35 });
+          if (variant === 'unlit') gsap.set(root.current, { opacity: 0.6 });
           if (variant === 'compact') gsap.set('.rail-bloom', { scale: 1.2, transformOrigin: '50% 50%' });
         },
       ),
@@ -86,7 +86,7 @@ export default function LightRail({ variant, marks = [], litWeek, today = new Da
         <RailPoster variant={variant} litWeeks={litWeeks} bloomWeek={litWeek} today={today} label={label} dim={formed} />
         {variant !== 'unlit' && !formed ? <RailPulse base={base} /> : null}
       </div>
-      <figcaption className="mt-2 flex items-baseline justify-between gap-4 font-mono text-meta text-text-2">
+      <figcaption className="rail-caption mt-2 flex items-baseline justify-between gap-4 font-mono text-meta text-text-2">
         <span>1 Oct</span>
         <span className={variant === 'unlit' ? '' : 'text-text'}>{variant === 'unlit' ? 'No signal' : todayCaption(today)}</span>
         <span>30 Dec</span>

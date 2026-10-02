@@ -52,15 +52,15 @@ Form formHalos() {
 }
 `;
 
-// The running numbers as particle glyphs, right-aligned on each shipped tile and rising from behind it: the
-// lower half is hidden by the tile, the upper half stands in the gutter above. They burn for a beat when they
+// The running numbers as particle glyphs, right-aligned on each shipped tile and standing whole in the gutter
+// above it (the grid keeps an 80px band over every row for them), never half-hidden behind a card. They burn for a beat when they
 // form (uGlyphBeat), then rest as a quiet glow. Particles not drawing a numeral stay on the halo, dimmer.
 export const GLYPH_GLSL = /* glsl */ `
 Form formGlyph() {
   Form halo = formHalos();
   vec4 r = uTiles[int(aGrid.x + 0.5)];
-  float h = min(170.0, r.z * 0.42);
-  vec2 corner = vec2(r.x + r.z * 0.94, r.y - h * 0.48);
+  float h = min(72.0, r.z * 0.3);
+  vec2 corner = vec2(r.x + r.z - 6.0, r.y - h - 6.0);
   vec2 shimmer = vec2(sin(uTime * 1.3 + aSeed * 40.0), cos(uTime * 1.1 + aSeed * 23.0)) * 0.7;
   vec2 px = corner + aGlyph.xy * h + shimmer;
   float on = aGlyph.z * aGrid.w;

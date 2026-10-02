@@ -1,7 +1,9 @@
 import type { PerspectiveCamera } from 'three';
 import { positionOf, weekCenter } from '../../lib/ruler';
 import { slotOf } from '../orrery/orreryModel';
+import { bankOf } from '../orrery/orrerySpin';
 import { pulseHeat } from '../rail/railLayout';
+import { projectBodies } from './bodyScreen';
 import { placeCamera, placeClose } from './cameraRig';
 import type { WorldUniforms } from './useWorldUniforms';
 import { type Box, world } from './worldState';
@@ -45,6 +47,15 @@ let glyphFormedAt = -1;
 
 function toViewport(box: Box): [number, number] {
   return [box.left - window.scrollX, box.top - window.scrollY];
+}
+
+/** The veil boxes (data-world-veil) into the canvas's px: the fixed index canvas is the viewport, the detail
+ * and 404 canvases sit at the top of the document, so document px are canvas px there. */
+function setVeils(u: WorldUniforms, fixed: boolean) {
+  world.veil.forEach((box, i) => {
+    const [x, y] = fixed ? toViewport(box) : [box.left, box.top];
+    u.uVeil.value[i].set(x, y, box.width, box.height);
+  });
 }
 
 /** No DOM-anchored formation and no keep-out (detail and 404). */
@@ -96,15 +107,17 @@ export function frameIndex({ u, camera, width, height, time, dt, still, sway }: 
   const [fx, fy] = toViewport(f);
   u.uFar.value.set(fx + f.width / 2, f.width ? fy + f.height / 2 : -9999, Math.min(f.width * 0.9, f.height * 1.5, 900));
 
-  const sun = placeCamera(camera, width, height, beats.flight, sway);
+  const sun = placeCamera(camera, width, height, beats.flight, sway, world.spin.tilt, bankOf(world.spin));
   // The nebula's ember follows the sun down onto the rail, so today's marker carries the warm light.
   const dock = u.uSunDock.value;
   u.uSun.value.set(sun.x + (dock.x - sun.x) * dock.z, sun.y + (dock.y - sun.y) * dock.z);
   u.uFocus.value = sun.focus;
+  setVeils(u, true);
+  projectBodies(camera, width, height, time, beats.bodies > 0.6 && !still);
   u.uParallax.value.set(u.uPointer.value.x * 0.04 + beats.flight * 0.5, u.uPointer.value.y * 0.04 - beats.flight * 0.8);
 }
 
-/** Detail header: close orbit around this component's body, the body on the № glyph. */
+/** Detail header: close orbit around this component's body, the body in the header's socket beside the title. */
 export function frameClose({ u, camera, width, height, time }: Frame, slot: number) {
   clearAnchors(u);
   u.uStage.value = 0;
@@ -113,15 +126,16 @@ export function frameClose({ u, camera, width, height, time }: Frame, slot: numb
   u.uSolo.value = slot;
   // At this range the lit body would blow out the bloom: the close orbit runs a lower exposure.
   u.uIgnite.value = 0.6;
-  // The body sits just right of the № glyph's top, so the numeral reads over its dark limb and the ring
-  // runs behind both.
+  // The body sits in its socket, a box the header keeps empty beside the title (data-world-anchor="close"), so
+  // it never lands on the numeral or the summary; its ring runs off behind.
   const c = world.close;
   const anchor = c.width
-    ? { x: ((c.left + c.width * 1.02) / width) * 2 - 1, y: 1 - ((c.top + c.height * 0.58) / height) * 2 }
-    : { x: -0.5, y: 0.2 };
+    ? { x: ((c.left + c.width / 2) / width) * 2 - 1, y: 1 - ((c.top + c.height / 2) / height) * 2 }
+    : { x: 0.6, y: 0.5 };
   const { ring, u: at } = slotOf(slot);
-  u.uFocus.value = placeClose(camera, width, height, ring, at, time, world.spin.yaw, anchor);
+  u.uFocus.value = placeClose(camera, width, height, ring, at, time, world.spin.yaw, anchor, c.width ? Math.min(c.width, c.height) * 0.4 : 60);
   u.uSun.value.set(anchor.x - 1.2, anchor.y + 0.6);
+  setVeils(u, false);
   u.uParallax.value.set(u.uPointer.value.x * 0.03, u.uPointer.value.y * 0.03);
 }
 
@@ -134,5 +148,6 @@ export function frameDark({ u, camera, width, height, sway }: Frame) {
   const sun = placeCamera(camera, width, height, 0, sway);
   u.uSun.value.set(sun.x, sun.y);
   u.uFocus.value = sun.focus;
+  setVeils(u, false);
   u.uParallax.value.set(u.uPointer.value.x * 0.04, u.uPointer.value.y * 0.04);
 }

@@ -46,7 +46,7 @@ void main() {
   vBlur = mix(a.blur, b.blur, k);
   // Close orbit: points near the lens stay fine and faint, so the body and its ring read, not a bokeh soup.
   float close = step(0.0, uSolo);
-  vAlpha *= 1.0 - close * vBlur * 0.6;
+  vAlpha *= (1.0 - close * vBlur * 0.6) * (1.0 - veil(ndc) * 0.92);
   gl_PointSize = clamp(mix(a.size, b.size, k) * (1.0 + lit * 0.5), 0.5, mix(26.0, 7.0, close)) * uPixel;
   gl_Position = vec4(ndc, 0.0, 1.0);
 }

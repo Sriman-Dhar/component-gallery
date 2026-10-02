@@ -2,7 +2,7 @@ import OrreryPoster from '../orrery/OrreryPoster';
 
 /**
  * The orrery without WebGL: the SVG still framed like the live hero (sun right of center on wide screens,
- * above the type on phones), with its warm atmosphere. Scrolls with the page.
+ * above the type on phones), with its warm atmosphere. On the index it stays fixed behind the page with the rest of the world box.
  */
 export default function WorldPoster({ shipped }: { shipped: number }) {
   return (

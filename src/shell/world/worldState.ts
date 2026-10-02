@@ -1,5 +1,5 @@
 import { useSyncExternalStore } from 'react';
-import { POSTER_YAW } from '../orrery/orreryModel';
+import { POSTER_YAW, SLOT_COUNT } from '../orrery/orreryModel';
 import { createSpin } from '../orrery/orrerySpin';
 
 /** The most tiles the halo uniform holds: 30 components and the next slot. */
@@ -36,6 +36,16 @@ export const world = {
   keep: { left: 0, top: 0, width: 0, height: 0 },
   far: { left: 0, top: 0, width: 0, height: 0 },
   close: { left: 0, top: 0, width: 0, height: 0 },
+  /** The type the scene keeps clear of (data-world-veil), in document pixels. */
+  veil: [
+    { left: 0, top: 0, width: 0, height: 0 },
+    { left: 0, top: 0, width: 0, height: 0 },
+  ],
+  /** The hero's bodies on screen (viewport px x, y, radius each, in slot order) while the hero shows them. */
+  bodies: { xyr: new Float32Array(SLOT_COUNT * 3), on: false },
+  /** The body under the pointer (slot), or -1; and the label element that names it. */
+  hover: -1,
+  tag: null as HTMLElement | null,
 };
 
 export type Box = typeof world.keep;
@@ -47,6 +57,12 @@ export function measureBox(box: Box, el: Element | null): void {
   box.top = rect ? rect.top + window.scrollY : 0;
   box.width = rect?.width ?? 0;
   box.height = rect?.height ?? 0;
+}
+
+/** Re-reads every veil box on the page (call on refresh, never per frame). */
+export function measureVeils(): void {
+  const els = document.querySelectorAll('[data-world-veil]');
+  world.veil.forEach((box, i) => measureBox(box, els[i] ?? null));
 }
 
 export type WorldStatus = 'off' | 'live' | 'still';

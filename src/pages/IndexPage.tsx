@@ -1,9 +1,11 @@
-import { useRef } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { shipped } from '../lib/catalogue';
 import { pageTitle, useDocumentTitle } from '../lib/useDocumentTitle';
 import SectionHeading from '../shell/detail/SectionHeading';
 import FarCoda from '../shell/coda/FarCoda';
 import CountUp from '../shell/hero/CountUp';
+import BodyTag from '../shell/hero/BodyTag';
+import HeroFoot from '../shell/hero/HeroFoot';
 import HeroIntro from '../shell/hero/HeroIntro';
 import LightRail from '../shell/rail/LightRail';
 import TileGrid from '../shell/tiles/TileGrid';
@@ -15,7 +17,7 @@ const marks = shipped.map(({ meta }) => ({ slug: meta.slug, date: meta.date }));
 
 /**
  * Index, one continuous world (the Living Orrery behind it, see shell/world): the hero over the full-bleed
- * orrery (drag to turn it, click for a shockwave); the dive, where the camera passes through the rings
+ * orrery (drag to turn it, hover a body to name it, click for a shockwave); the dive, where the camera passes through the rings
  * beside the lit fraction; the light rail the particles stream down into; the tiles in № order, haloed, their
  * numbers rising behind them; then the coda, the whole system far away and still.
  */
@@ -27,7 +29,8 @@ export default function IndexPage() {
   const coda = useRef<HTMLDivElement>(null);
   useDiveScroll(hero, rail);
   useGridScroll(grid, coda);
-  useWorldInput(hero);
+  const [turned, setTurned] = useState(false);
+  useWorldInput(hero, useCallback(() => setTurned(true), []));
 
   return (
     <div>
@@ -37,6 +40,8 @@ export default function IndexPage() {
         className="hero-stage relative -mt-8 flex min-h-[calc(100svh-6.5rem)] touch-pan-y select-none flex-col justify-end pb-12 sm:-mt-12 lg:justify-center lg:pb-16"
       >
         <HeroIntro />
+        <HeroFoot shipped={shipped.length} turned={turned} />
+        <BodyTag />
       </section>
       <section aria-label="Progress" className="flex min-h-[52svh] items-end pb-6 pt-16 sm:pb-8 lg:min-h-[70svh]">
         <CountUp count={shipped.length} />

@@ -34,7 +34,7 @@ export default function SectionHeading({ id, children, action }: Props) {
         <span className="sh-halo absolute -inset-2 rounded-full bg-[radial-gradient(closest-side,rgb(var(--color-accent)/0.45),transparent)]" />
         <span className="sh-node rail-lit relative h-2.5 w-2.5 rounded-full bg-glow" />
       </span>
-      <h2 id={id} className="shrink-0 font-display text-[26px] font-bold leading-[34px] tracking-[-0.025em] text-text">
+      <h2 id={id} tabIndex={-1} className="shrink-0 scroll-mt-28 outline-none font-display text-[26px] font-bold leading-[34px] tracking-[-0.025em] text-text">
         {children}
       </h2>
       <span

@@ -11,7 +11,7 @@ export default function NotFoundPage() {
   return (
     <section aria-labelledby="not-found" className="space-y-12 pb-12 pt-6">
       <LightRail variant="unlit" />
-      <div className="space-y-5">
+      <div data-world-veil className="copy-scrim space-y-5">
         <h1 id="not-found" className="font-display text-[34px] font-extrabold leading-[40px] tracking-[-0.03em] text-text sm:text-[52px] sm:leading-[60px]">
           Nothing shipped <span className="accent-ink">here.</span>
         </h1>
