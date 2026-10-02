@@ -41,7 +41,7 @@ export default function CountUp({ count }: { count: number }) {
   );
 
   return (
-    <p ref={root} className="flex flex-col items-start gap-3" aria-label={`${count} of ${TARGET} components shipped`}>
+    <p ref={root} data-world-keep className="flex flex-col items-start gap-3" aria-label={`${count} of ${TARGET} components shipped`}>
       <span aria-hidden="true" className="flex items-end gap-2">
         <span className="relative">
           <span className="numeral-bloom pointer-events-none absolute -inset-x-16 -inset-y-12" />

@@ -1,4 +1,5 @@
 import { WORLD_R } from '../worldLayout';
+import { MAX_TILES } from '../worldState';
 
 /**
  * Uniforms and helpers every world program shares. One uniform object feeds the particles, the bodies, the
@@ -27,6 +28,37 @@ uniform vec3 uCore;
 uniform vec3 uBody;
 uniform vec3 uCool;
 uniform vec3 uDeep;
+uniform vec4 uTiles[${MAX_TILES}];
+uniform float uTileCount;
+uniform float uGlyphBeat;
+uniform vec3 uFar;
+uniform vec4 uKeep;
+uniform float uGutter;
+uniform float uSolo;
+
+// Viewport px (y down) to NDC (y up) and back.
+vec2 pxToNdc(vec2 px) { return vec2(px.x / uViewport.x * 2.0 - 1.0, 1.0 - px.y / uViewport.y * 2.0); }
+vec2 ndcToPx(vec2 ndc) { return vec2((ndc.x * 0.5 + 0.5) * uViewport.x, (0.5 - ndc.y * 0.5) * uViewport.y); }
+
+// The type the particles flow around: a point inside the keep-out box (plus a margin) is carried to its
+// nearest edge, so a stream parts around the fraction instead of crossing it. Each particle keeps its own
+// margin (seed), so the parting edge is a soft falloff, never a drawn box.
+vec2 keepOut(vec2 ndc, float seed) {
+  if (uKeep.z < 1.0) return ndc;
+  vec2 px = ndcToPx(ndc);
+  float m = 14.0 + seed * 46.0;
+  vec2 lo = uKeep.xy - m;
+  vec2 hi = uKeep.xy + uKeep.zw + m;
+  if (px.x <= lo.x || px.x >= hi.x || px.y <= lo.y || px.y >= hi.y) return ndc;
+  vec2 toLo = px - lo;
+  vec2 toHi = hi - px;
+  float dx = min(toLo.x, toHi.x);
+  float dy = min(toLo.y, toHi.y);
+  // Carried past the edge by a share of its depth inside, so the parted stream stays loose, not a hard line.
+  if (dx < dy) px.x = toLo.x < toHi.x ? lo.x - dx * 0.5 : hi.x + dx * 0.5;
+  else px.y = toLo.y < toHi.y ? lo.y - dy * 0.5 : hi.y + dy * 0.5;
+  return pxToNdc(px);
+}
 
 vec3 rotY(vec3 p, float a) {
   float c = cos(a);
@@ -54,10 +86,13 @@ vec2 forces(vec2 ndc, float reach, inout float lit) {
   vec2 bend = -d * well * 0.42 + vec2(-d.y, d.x) * well * 0.18;
   vec2 s = (ndc - uShock.xy) * vec2(aspect, 1.0);
   float sr = length(s) + 1e-4;
-  float front = uShock.z * 1.25;
-  float band = exp(-pow((sr - front) / 0.07, 2.0)) * exp(-uShock.z * 1.4) * step(0.0, uShock.z) * reach;
-  vec2 push = s / sr * band * 0.06;
-  lit += well * 0.6 + band * 1.4;
+  // The shockwave: a ring of displacement and light racing out from the click, a second softer echo behind it.
+  float front = uShock.z * 1.15;
+  float fade = exp(-uShock.z * 0.9) * step(0.0, uShock.z) * reach;
+  float band = exp(-pow((sr - front) / 0.085, 2.0)) * fade;
+  float echo = exp(-pow((sr - front * 0.62) / 0.06, 2.0)) * fade * 0.45;
+  vec2 push = s / sr * (band * 0.15 - echo * 0.05);
+  lit += well * 0.6 + band * 2.4 + echo * 1.2;
   return ndc + (bend + push) / vec2(aspect, 1.0);
 }
 `;

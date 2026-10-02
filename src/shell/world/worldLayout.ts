@@ -16,15 +16,15 @@ export interface Framing {
 
 /**
  * Hero framing per viewport. Wide screens: the system fills the frame, sun right of center so the type on
- * the left reads over the dark side of the rings. Tall screens (phones): the orrery sits above the type,
- * its outer ring bleeding just past both edges.
+ * the left reads over the dark side of the rings. Tall screens (phones): the orrery sits low enough that its
+ * near ring runs down into the title (no dead band between them), the outer ring bleeding past both edges.
  */
 export function heroFraming(width: number, height: number): Framing {
   const aspect = width / Math.max(1, height);
   const tan = Math.tan(((FOV / 2) * Math.PI) / 180);
   const outer = 0.41 * WORLD_R * 2;
   if (aspect < 0.9) {
-    return { distance: outer / (2 * tan * aspect * 1.24), shift: [0, 0.36] };
+    return { distance: outer / (2 * tan * aspect * 1.5), shift: [0, 0.14] };
   }
   const fill = aspect > 1.45 ? 0.82 : 0.96;
   return { distance: Math.max(2.4, outer / (2 * tan * aspect * fill)), shift: [aspect > 1.45 ? 0.34 : 0.24, 0.02] };

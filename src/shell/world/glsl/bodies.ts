@@ -18,7 +18,8 @@ varying float vLit;
 void main() {
   float arrive = smoothstep(aOrder * 0.6, aOrder * 0.6 + 0.4, uArrive);
   vec3 center = ringPoint(aSlotRing, aSlotU, vec3(0.0)) * mix(2.4, 1.0, arrive);
-  float scale = mix(0.024, 0.042, aLit) * arrive * uBodies;
+  float solo = uSolo < 0.0 ? 1.0 : 1.0 - step(0.5, abs(aOrder * 30.0 - uSolo));
+  float scale = mix(0.024, 0.042, aLit) * arrive * uBodies * solo;
   vec3 world = center + position * scale;
   vNormal = normalize(normal);
   vWorld = world;
@@ -53,17 +54,27 @@ void main() {
 }
 `;
 
-/** The sun: a camera-facing disc with an HDR core, a corona and a slow flicker; uIgnite flares it on load. */
+/**
+ * The sun: a camera-facing disc with an HDR core, a corona and a slow flicker; uIgnite flares it on load. At
+ * the end of the dive it leaves the ring plane and docks on the rail as today's marker (uSunDock), a small
+ * fixed-size star. On the 404 it gutters (uGutter): an uneven, failing light.
+ */
 export const sunVertex = /* glsl */ `
 uniform float uIgnite;
 uniform float uBodies;
+uniform vec3 uSunDock;
+uniform vec2 uViewport;
+uniform float uSolo;
 varying vec2 vUv;
 void main() {
   vUv = position.xy;
   vec4 view = viewMatrix * vec4(0.0, 0.0, 0.0, 1.0);
   float flare = 1.0 + 1.4 * smoothstep(0.0, 0.25, uIgnite) * (1.0 - smoothstep(0.25, 0.9, uIgnite));
-  view.xy += position.xy * 0.62 * flare * mix(0.2, 1.0, uBodies);
-  gl_Position = projectionMatrix * view;
+  // Close orbit: the sun is a distant small star at the frame's edge, never a wash behind the type.
+  view.xy += position.xy * 0.62 * flare * mix(0.2, 1.0, uBodies) * (uSolo < 0.0 ? 1.0 : 0.22);
+  vec4 clip = projectionMatrix * view;
+  vec2 docked = uSunDock.xy + position.xy * 92.0 * 2.0 / uViewport;
+  gl_Position = vec4(mix(clip.xy / clip.w, docked, uSunDock.z), 0.0, 1.0);
 }
 `;
 
@@ -71,9 +82,13 @@ export const sunFragment = /* glsl */ `
 uniform float uBodies;
 uniform vec3 uCore;
 uniform vec3 uBody;
+uniform vec3 uDeep;
+uniform vec3 uSunDock;
 uniform float uIgnite;
 uniform float uTime;
 uniform float uLight;
+uniform float uGutter;
+uniform float uSolo;
 varying vec2 vUv;
 void main() {
   float r = length(vUv);
@@ -84,7 +99,11 @@ void main() {
   float rays = exp(-r * 5.0) * pow(abs(sin(a * 6.0 + uTime * 0.15)), 18.0) * 0.25 * (1.0 - uLight);
   vec3 color = vec3(1.0, 0.97, 0.9) * core * 6.0 + uCore * corona * 2.2 + uBody * (rays + exp(-r * 3.5) * 0.25);
   float alpha = clamp(core + corona + rays, 0.0, 1.0);
-  color *= uIgnite * mix(1.0, 0.45, uLight) * mix(0.3, 1.0, uBodies);
+  // Guttering: three beating flickers multiply into uneven dips, the light cools toward ember.
+  float k = sin(uTime * 7.3) * sin(uTime * 2.1 + 1.3) * sin(uTime * 13.7 + 0.4);
+  float gutter = clamp(0.3 + 0.55 * k * k + 0.2 * sin(uTime * 1.7), 0.06, 1.0);
+  color = mix(color, uDeep * 3.0 * (core + corona) + uBody * corona, uGutter * 0.6) * mix(1.0, gutter, uGutter);
+  color *= (uSolo < 0.0 ? 1.0 : 0.3) * uIgnite * mix(1.0, 0.45, uLight) * mix(mix(0.3, 1.0, uBodies), 0.9, uSunDock.z);
   gl_FragColor = vec4(color, alpha * uIgnite);
 }
 `;

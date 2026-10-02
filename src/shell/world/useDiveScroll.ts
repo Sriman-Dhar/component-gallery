@@ -2,8 +2,9 @@ import type { RefObject } from 'react';
 import { MOTION_OK, ScrollTrigger, gsap, useGSAP } from '../../lib/motion';
 import { world } from './worldState';
 
-/** Where the rail sits in the viewport when the dive ends: its box center at 62% of the height. */
-const DIVE_END = 'center 62%';
+/** Where the rail sits in the viewport when the dive ends: its box center at 54% of the height, the fraction
+ * just above it and the grid's heading below, one composed frame. */
+const DIVE_END = 'center 54%';
 
 /** Reads the rail anchor's place in the document (one layout read, on refresh only, never per frame). */
 function measureRail(anchor: HTMLElement | null) {
@@ -21,7 +22,7 @@ function measureRail(anchor: HTMLElement | null) {
 }
 
 /**
- * The dive's single scroll source: one ScrollTrigger from the hero's top to the rail settling at 62% of the
+ * The dive's single scroll source: one ScrollTrigger from the hero's top to the rail settling at 54% of the
  * viewport. It only writes the target progress; the scene damps toward it. The rail anchor is measured on
  * every refresh (resize, fonts, layout) so the particle rail lands exactly on the DOM rail. Reduced motion:
  * no trigger at all, the scene stays a still and the rail stays the poster.
