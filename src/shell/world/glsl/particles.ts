@@ -38,7 +38,9 @@ void main() {
   vec2 bend = vec2(a.ndc.x + sin(aSeed * 40.0 + uTime * 0.8) * 0.06, b.ndc.y + cos(aSeed * 23.0) * 0.05);
   vec2 ndc = (1.0 - k) * (1.0 - k) * a.ndc + 2.0 * k * (1.0 - k) * bend + k * k * b.ndc;
   float lit = 0.0;
-  ndc = keepOut(forces(ndc, mix(1.0, 0.45, clamp(s, 0.0, 1.0)), lit), aSeed);
+  // The sun's own core never feels the pointer: a hand resting near it after a drag must not pull it into an egg.
+  float sunCore = (1.0 - step(0.5, abs(aKind - 2.0))) * (1.0 - clamp(s, 0.0, 1.0));
+  ndc = keepOut(forces(ndc, mix(1.0, 0.45, clamp(s, 0.0, 1.0)) * (1.0 - sunCore), lit), aSeed);
   float travel = 4.0 * k * (1.0 - k);
   vAlpha = (mix(a.bright, b.bright, k) + lit * 0.5 + travel * 0.35) * mix(1.0, 0.5, uGutter);
   vWarm = mix(a.warm, b.warm, k);
