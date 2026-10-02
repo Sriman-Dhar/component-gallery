@@ -11,7 +11,7 @@ import { useStageWidth } from './useStageWidth';
 const WIDTH_NOTE: Record<WidthPreset, string> = { '375': '375 px viewport', '768': '768 px viewport', full: 'Full width' };
 const THEME_NAME: Record<StageTheme, string> = { light: 'Light', dark: 'Dark' };
 
-/** The stage: 1px grid, its own theme (the frame's at first, the dark one lit by the scene's sun along its top edge; light on demand), a frame that narrows to three widths, lit corner marks. Slides up into place. */
+/** The stage: 1px grid, its own theme (the frame's until the visitor picks one, the dark one lit by the scene's sun along its top edge; light on demand), a frame that narrows to three widths, lit corner marks. Slides up into place. */
 export default function Stage({ entry }: { entry: GalleryEntry }) {
   const Demo = useMemo(() => lazy(entry.loadDemo), [entry]);
   const root = useRef<HTMLElement>(null);
@@ -19,10 +19,11 @@ export default function Stage({ entry }: { entry: GalleryEntry }) {
   const frame = useRef<HTMLDivElement>(null);
   const veil = useRef<HTMLDivElement>(null);
   const rim = useRef<HTMLDivElement>(null);
-  // The stage opens in the frame's own theme (a dark slab on paper was the loudest thing on the page); after
-  // that it is the visitor's choice, independent of the frame.
+  // The stage follows the frame's theme (a dark slab on paper was the loudest thing on the page), live switches
+  // included, until the visitor picks a stage theme; that pick then holds for this component's page.
   const frameTheme = useFrameTheme();
-  const [theme, setTheme] = useState<StageTheme>(frameTheme);
+  const [pick, setPick] = useState<{ slug: string; theme: StageTheme } | null>(null);
+  const theme = pick?.slug === entry.meta.slug ? pick.theme : frameTheme;
   const { width, unavailable, resize } = useStageWidth(room, frame);
   useStageThemeFade(veil, rim, theme);
 
@@ -42,7 +43,7 @@ export default function Stage({ entry }: { entry: GalleryEntry }) {
         unavailable={unavailable}
         onWidth={resize}
         theme={theme}
-        onTheme={setTheme}
+        onTheme={(next) => setPick({ slug: entry.meta.slug, theme: next })}
       />
       <div ref={room}>
         <div
