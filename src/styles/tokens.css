@@ -44,10 +44,11 @@
   --p-stage-dark: 18 18 22; /* #121216 */
   --p-stage-dark-grid: 36 36 44; /* #24242C */
 
-  /* type: one display face for the big moments (Shantell Sans, hand drawn but built for reading, roman + italic),
-     Geist for UI, Geist Mono for metadata and code. 'Shantell Fallback' is Arial resized to Shantell's metrics
-     (src/index.css). */
-  --font-display: 'Shantell Sans', 'Shantell Fallback', ui-sans-serif, system-ui, sans-serif;
+  /* type (v3, 2026-10-02): the wide display sans for every display surface (set at wdth 125 by .font-display),
+     the script signature once per route, Geist for UI, Geist Mono for metadata and code. 'Archivo Fallback' is
+     Arial resized to the display face's wide metrics (src/index.css), so font-display: swap barely shifts. */
+  --font-display: 'Archivo', 'Archivo Fallback', ui-sans-serif, system-ui, sans-serif;
+  --font-signature: 'Mrs Saint Delafield', 'Snell Roundhand', 'Segoe Script', cursive;
   --font-sans: 'Geist', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 

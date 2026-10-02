@@ -5,46 +5,25 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Metric fallback for the display face: Arial scaled to Shantell Sans's advance (measured over the site's display
-   strings: 115% of Arial at 500, 109.5% of Arial Bold at 600) and its vertical metrics (unitsPerEm 1000, ascent
-   1020, descent 320, gap 0), each override divided by the size-adjust, so font-display: swap shifts almost nothing.
-   Arial, not a comic face: the fallback should read plain, and it exists on every desktop and phone. */
+/* Metric fallback for the display face: Arial scaled to its advance at wdth 125 (measured headless over the site's
+   display strings, 2026-10-02: 125.7% of Arial Bold at 600 and up, 128.7% of Arial below) and its vertical metrics
+   (ascent 878, descent 210 per 1000, gap 0), each override divided by the size-adjust, so swap shifts almost nothing. */
 @font-face {
-  font-family: 'Shantell Fallback';
+  font-family: 'Archivo Fallback';
   src: local('Arial'), local('ArialMT');
   font-weight: 100 549;
-  size-adjust: 115%;
-  ascent-override: 88.7%;
-  descent-override: 27.8%;
+  size-adjust: 128.7%;
+  ascent-override: 68.2%;
+  descent-override: 16.3%;
   line-gap-override: 0%;
 }
 @font-face {
-  font-family: 'Shantell Fallback';
-  font-style: italic;
-  src: local('Arial Italic'), local('Arial-ItalicMT');
-  font-weight: 100 549;
-  size-adjust: 115%;
-  ascent-override: 88.7%;
-  descent-override: 27.8%;
-  line-gap-override: 0%;
-}
-@font-face {
-  font-family: 'Shantell Fallback';
+  font-family: 'Archivo Fallback';
   src: local('Arial Bold'), local('Arial-BoldMT');
   font-weight: 550 900;
-  size-adjust: 109.5%;
-  ascent-override: 93.2%;
-  descent-override: 29.2%;
-  line-gap-override: 0%;
-}
-@font-face {
-  font-family: 'Shantell Fallback';
-  font-style: italic;
-  src: local('Arial Bold Italic'), local('Arial-BoldItalicMT');
-  font-weight: 550 900;
-  size-adjust: 109.5%;
-  ascent-override: 93.2%;
-  descent-override: 29.2%;
+  size-adjust: 125.7%;
+  ascent-override: 69.8%;
+  descent-override: 16.7%;
   line-gap-override: 0%;
 }
 
@@ -59,6 +38,13 @@
   ::selection {
     background-color: rgb(var(--color-accent) / 0.3);
     color: rgb(var(--color-text));
+  }
+}
+
+@layer utilities {
+  /* Every display surface sets the wide cut of the display face (its wdth axis at 125). */
+  .font-display {
+    font-stretch: 125%;
   }
 }
 

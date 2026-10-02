@@ -33,7 +33,7 @@ export default function NextSlot({ week }: { week: number }) {
         </span>
       </div>
       <div className="flex flex-1 flex-col justify-end p-5">
-        <p className="pr-[0.06em] font-display text-[23px] font-medium italic leading-7 tracking-[-0.01em] text-text-2">Next: Week {week}</p>
+        <p className="font-display text-[20px] font-semibold leading-7 tracking-[-0.02em] text-text-2">Next: Week {week}</p>
         <p className="mt-1 font-mono text-meta text-text-2">Opens {weekOpens(week)}.</p>
       </div>
     </li>

@@ -47,7 +47,7 @@ export default function DetailHeader({ meta }: { meta: ComponentMeta }) {
       <div className="lg:col-span-9 lg:pt-3">
         <h1
           aria-label={meta.name}
-          className="font-display text-[40px] font-semibold leading-[44px] tracking-[-0.015em] text-text sm:text-[60px] sm:leading-[64px] sm:tracking-[-0.02em]"
+          className="font-display text-[34px] font-extrabold leading-[40px] tracking-[-0.03em] text-text sm:text-[52px] sm:leading-[58px]"
         >
           <RiseText text={meta.name} />
         </h1>

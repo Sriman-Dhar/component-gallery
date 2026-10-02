@@ -45,7 +45,11 @@ pointer but never fights the text).
   the fill meets that section, lighting as it is reached and jumping there on click; below lg a 2px amber progress
   line under the header. 404: unlit rail with a flicker →
   "Nothing shipped here." → link home. No tabs hide Code or Prompt.
-- Typography (updated 2026-10-01, fourth pass, the owner's final ruling). His words: "get rid of the font gallery
+- **Typography is superseded by v3 (2026-10-02, owner ruling, see `docs/DESIGN-BRIEF-v3.md`):** display = Archivo
+  expanded (wdth 125, weights 600 to 800, tracking -0.02 to -0.035em) on every display surface; signature = Mrs Saint
+  Delafield, the name "Sriman" once per route at most; Geist + Geist Mono stay. Shantell Sans is retired and no
+  longer loads. The paragraph below is kept as history only.
+- (Superseded) Typography (updated 2026-10-01, fourth pass). His words: "get rid of the font gallery
   and select a font on your own; requirment is to have one that like handwritten style or something but readble
   easily". The DISPLAY face is Shantell Sans (Google Fonts, OFL): drawn from handwriting, so every big moment reads
   as made by a person, but engineered for reading (open counters, generous x-height, steady rhythm), and its italic

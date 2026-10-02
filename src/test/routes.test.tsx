@@ -17,7 +17,7 @@ describe('routes', () => {
   it('shows the hero, the count, the light rail and equal tiles in № order on the index', async () => {
     renderAt('/');
     expect(screen.getByRole('heading', { level: 1, name: "Sriman's Gallery" })).toBeInTheDocument();
-    expect(screen.getByText('thirty components in thirteen weeks.')).toBeInTheDocument();
+    expect(screen.getByText('Thirty components in thirteen weeks.')).toBeInTheDocument();
     expect(screen.getByLabelText(`${shipped.length} of 30 components shipped`)).toBeInTheDocument();
     expect(screen.getByTestId('light-rail')).toHaveAttribute('data-variant', 'hero');
     const grid = screen.getByRole('list', { name: 'Components' });

@@ -53,7 +53,7 @@ export default function Tile({ entry, caption, rel }: Props) {
             <Link
               to={`/components/${meta.slug}`}
               rel={rel}
-              className="-my-2 block truncate py-2 font-display text-[23px] font-medium leading-7 tracking-[-0.01em] text-text outline-none after:absolute after:inset-0 after:content-['']"
+              className="-my-2 block truncate py-2 font-display text-[20px] font-semibold leading-7 tracking-[-0.02em] text-text outline-none after:absolute after:inset-0 after:content-['']"
             >
               {meta.name}
             </Link>

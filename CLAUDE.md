@@ -58,6 +58,12 @@ npm run build      # tsc + vite build
 5. Commit that component alone: `feat(<slug>): <Name> (week N, <type>)`.
    Example: `feat(pricing-card): Pricing Card (week 2, card)`. One component = one commit.
 
+## Design brief
+
+The site's design brief is `docs/DESIGN-BRIEF-v3.md` ("The Living Orrery", 2026-10-02): one WebGL scene behind
+the index (`src/shell/world/`), Archivo expanded display type, the Mrs Saint Delafield signature. It extends
+`docs/DESIGN-BRIEF.md` (v2), which still holds wherever v3 does not override it.
+
 ## Quality bar
 
 The gallery is judged against the best component work on the web, not against "it renders".
