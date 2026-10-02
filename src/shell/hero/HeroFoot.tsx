@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motionAllowed } from '../../lib/motion';
 import { FOCUS_RING } from '../focus';
+import { useWorldStatus } from '../world/worldState';
 
 const HINT_KEY = 'gallery-turned';
 
@@ -17,8 +18,11 @@ function seenBefore(): boolean {
  * the visitor first turns the orrery, a quiet hint that it turns. The hint retires for good once used.
  */
 export default function HeroFoot({ shipped, turned }: { shipped: number; turned: boolean }) {
-  const [hint, setHint] = useState(false);
-  useEffect(() => setHint(motionAllowed() && !seenBefore()), []);
+  const [fresh, setFresh] = useState(false);
+  useEffect(() => setFresh(!seenBefore()), []);
+  // Only a live scene turns: no hint over the still or the no-WebGL poster.
+  const live = useWorldStatus() === 'live';
+  const hint = fresh && live;
   useEffect(() => {
     if (!turned) return;
     try {

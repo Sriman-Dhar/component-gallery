@@ -2,6 +2,7 @@ import { useEffect, type RefObject } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { slotCaption } from '../../lib/catalogue';
 import { gsap, motionAllowed } from '../../lib/motion';
+import { canUseWebGL } from '../../lib/webgl';
 import { dragEnd, dragMove, dragStart } from '../orrery/orrerySpin';
 import { bodyUnder } from './bodyScreen';
 import { world } from './worldState';
@@ -44,7 +45,8 @@ export function useWorldInput(hero: RefObject<HTMLElement>, onTurned: () => void
   const navigate = useNavigate();
   useEffect(() => {
     const el = hero.current;
-    if (!el || !motionAllowed()) return;
+    // Only a live scene turns: no grab cursor over the still or the SVG poster.
+    if (!el || !motionAllowed() || !canUseWebGL()) return;
     let press = { x: 0, y: 0, t: 0, on: false, travel: 0 };
     let used = false;
     el.dataset.cursor = 'grab';
