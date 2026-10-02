@@ -15,8 +15,9 @@ const FILL = 'bg-gradient-to-b from-accent-deep via-accent to-glow shadow-[0_0_1
 /**
  * The detail page's own light rail. From lg up: a slim vertical line fixed in the left gutter that fills
  * with amber light as the page scrolls, with a node per section that lights as it is reached and jumps
- * there on click. Below lg: a 2px progress line under the header, no nodes. Portaled to <body> so the
- * route transition's transform never captures the fixed position.
+ * there on click. Below lg: a 2px progress line under the header, no nodes. Portaled to the Layout's slot
+ * right after the header (outside the route transition, whose transform would capture the fixed position),
+ * so keyboard users meet it before the page, not after the footer.
  */
 export default function ScrollRail({ stops }: { stops: RailStop[] }) {
   const fill = useRef<HTMLSpanElement>(null);
@@ -77,6 +78,6 @@ export default function ScrollRail({ stops }: { stops: RailStop[] }) {
         </ol>
       </nav>
     </>,
-    document.body,
+    document.getElementById('page-rail') ?? document.body,
   );
 }

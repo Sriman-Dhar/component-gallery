@@ -274,6 +274,15 @@ html[data-world='live'] .vignette {
   transform: scale(0.6);
   border-color: rgb(var(--color-glow));
 }
+.cursor-ring[data-paper='true'] .cursor-ring-dot {
+  border-color: rgb(var(--p-amber-900) / 0.55);
+  box-shadow: 0 0 6px rgb(var(--color-accent) / 0.18);
+}
+.cursor-ring[data-paper='true'][data-state='hot'] .cursor-ring-dot {
+  transform: scale(1.4);
+  border-color: rgb(var(--p-amber-900) / 0.75);
+  box-shadow: 0 0 8px rgb(var(--color-accent) / 0.22);
+}
 .cursor-ring[data-on='true'][data-state='text'] .cursor-ring-dot {
   opacity: 0;
 }

@@ -33,6 +33,8 @@ export default function Layout() {
       <CursorRing />
       <RouteCarry />
       <Header />
+      {/* The detail page's rail portals here: fixed on screen, but next after the header in the tab order. */}
+      <div id="page-rail" />
       <div className="relative z-10 mx-auto max-w-frame px-4 sm:px-8 lg:px-12">
         <main className="pb-20 pt-8 sm:pt-12">
           <RouteTransition />

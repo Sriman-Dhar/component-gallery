@@ -39,6 +39,9 @@ export default function CursorRing() {
                 ? 'hot'
                 : 'idle';
         if (el.dataset.state !== state) el.dataset.state = state;
+        // On paper (the light frame or a light stage) the ring takes a warm-ink stroke so it never fades out.
+        const paper = document.documentElement.dataset.theme === 'light' || Boolean(target?.closest('[data-stage-theme="light"]'));
+        if (el.dataset.paper !== String(paper)) el.dataset.paper = String(paper);
         el.dataset.on = 'true';
       };
       const leave = () => {
