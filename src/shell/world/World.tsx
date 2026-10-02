@@ -65,7 +65,7 @@ export default function World({ mode, shipped, litWeeks, grid, slot = 0 }: Props
       className={`pointer-events-none inset-x-0 top-0 z-0 ${box}`}
       style={mode === 'index' ? undefined : { ...FADE, height: mode === 'close' ? closeHeight : undefined }}
     >
-      {poster ? <WorldPoster shipped={mode === 'dark' ? 0 : shipped} /> : null}
+      {poster ? <WorldPoster shipped={mode === 'dark' ? 0 : shipped} recede={fixed} /> : null}
       {canvas ? (
         <Suspense fallback={null}>
           <WorldCanvas

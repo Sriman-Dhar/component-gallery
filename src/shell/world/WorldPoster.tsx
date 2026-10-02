@@ -1,12 +1,22 @@
+import { useScrolled } from '../../lib/useScrolled';
 import OrreryPoster from '../orrery/OrreryPoster';
+
+/** How far down the page (a share of the viewport) the fixed poster steps back behind the story. */
+const RECEDE_AT = 0.6;
 
 /**
  * The orrery without WebGL: the SVG still framed like the live hero (sun right of center on wide screens,
- * above the type on phones), with its warm atmosphere. On the index it stays fixed behind the page with the rest of the world box.
+ * above the type on phones), with its warm atmosphere. On the index it stays fixed behind the page with the rest of the world box,
+ * and once the hero has gone it steps back (dimmed), so section headings and tiles never sit on its rings.
  */
-export default function WorldPoster({ shipped }: { shipped: number }) {
+export default function WorldPoster({ shipped, recede = false }: { shipped: number; recede?: boolean }) {
+  const past = useScrolled(typeof window === 'undefined' ? 0 : window.innerHeight * RECEDE_AT);
+  const back = recede && past;
   return (
-    <div data-testid="world-poster" className="pointer-events-none absolute inset-x-0 top-0 h-[100svh] overflow-hidden">
+    <div
+      data-testid="world-poster"
+      className={`pointer-events-none absolute inset-x-0 top-0 h-[100svh] overflow-hidden transition-opacity duration-slow ease-out motion-reduce:transition-none ${back ? 'opacity-25' : ''}`}
+    >
       <div className="absolute left-[-4%] top-[4%] aspect-[1.3] w-[108%] lg:left-auto lg:right-[-10%] lg:top-[10%] lg:w-[84%]">
         <div className="orrery-atmos absolute -inset-x-[6%] -inset-y-[14%]" />
         <OrreryPoster shipped={shipped} />
