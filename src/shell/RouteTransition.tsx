@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useLocation, useNavigationType, useOutlet } from 'react-router-dom';
 import { gsap, motionAllowed, ScrollTrigger } from '../lib/motion';
 import { snapWorld } from './world/worldState';
@@ -24,14 +24,21 @@ export default function RouteTransition() {
 
   const stale = shown.key !== location.key;
   const current = stale ? shown.element : outlet;
+  // The entry whose scroll is being recorded: none while a view is leaving, so no restore or swap overwrites it.
+  const recording = useRef('');
+  recording.current = stale ? '' : shown.key;
+
+  useEffect(() => {
+    const save = () => {
+      if (recording.current) scrollOf.set(recording.current, window.scrollY);
+    };
+    window.addEventListener('scroll', save, { passive: true });
+    return () => window.removeEventListener('scroll', save);
+  }, []);
 
   useLayoutEffect(() => {
     if (!stale) return;
-    scrollOf.set(shown.key, window.scrollY);
-    const swap = () => {
-      setShown({ key: location.key, element: latest.current });
-      window.scrollTo(0, 0);
-    };
+    const swap = () => setShown({ key: location.key, element: latest.current });
     if (!motionAllowed() || !view.current) return swap();
     const out = gsap.to(view.current, { opacity: 0, y: -12, duration: 0.16, ease: 'power2.in', onComplete: swap });
     return () => {
@@ -39,6 +46,7 @@ export default function RouteTransition() {
     };
   }, [stale, location.key]);
 
+  const lastShown = useRef(shown.key);
   useLayoutEffect(() => {
     if (!view.current) return;
     if (motionAllowed()) {
@@ -47,9 +55,12 @@ export default function RouteTransition() {
       gsap.set(view.current, { opacity: 1, clearProps: 'transform' });
     }
     ScrollTrigger.refresh();
-    const back = pop ? scrollOf.get(shown.key) : undefined;
+    // The first view keeps the browser's own landing (a #hash); every later one opens at the top or where it was left.
+    const arrived = lastShown.current !== shown.key;
+    lastShown.current = shown.key;
+    const back = arrived && pop ? (scrollOf.get(shown.key) ?? 0) : 0;
+    if (arrived) window.scrollTo(0, back);
     if (back) {
-      window.scrollTo(0, back);
       ScrollTrigger.update();
       snapWorld();
     }
