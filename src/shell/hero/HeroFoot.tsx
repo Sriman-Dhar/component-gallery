@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motionAllowed } from '../../lib/motion';
+import { useScrolled } from '../../lib/useScrolled';
 import { FOCUS_RING } from '../focus';
 import { useWorldStatus } from '../world/worldState';
 
@@ -23,6 +24,8 @@ export default function HeroFoot({ shipped, turned }: { shipped: number; turned:
   // Only a live scene turns: no hint over the still or the no-WebGL poster.
   const live = useWorldStatus() === 'live';
   const hint = fresh && live;
+  // The hint steps out as the dive starts, so no body passing through the hero's foot ever sits on it.
+  const away = useScrolled(40);
   useEffect(() => {
     if (!turned) return;
     try {
@@ -53,7 +56,7 @@ export default function HeroFoot({ shipped, turned }: { shipped: number; turned:
       {hint ? (
         <p
           aria-hidden="true"
-          className={`drag-hint pointer-events-none flex items-center whitespace-nowrap gap-2 font-mono text-meta text-text-2 transition-opacity duration-slow ${turned ? 'opacity-0' : 'opacity-100'}`}
+          className={`drag-hint pointer-events-none flex items-center whitespace-nowrap gap-2 font-mono text-meta text-text-2 transition-opacity duration-slow ${turned || away ? 'opacity-0' : 'opacity-100'}`}
         >
           <svg viewBox="0 0 20 12" className="h-3 w-5 text-accent" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round">
             <ellipse cx="10" cy="6" rx="8.5" ry="3.6" />
