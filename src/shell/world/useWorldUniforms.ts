@@ -48,6 +48,8 @@ function createUniforms() {
     uSunDock: { value: new Vector3(0, 0, 0) },
     /** 404: the sun gutters and the whole system runs dim (0 normal .. 1 dark). */
     uGutter: { value: 0 },
+    /** 1 for the reduced-motion still: the veil hides the sun outright, it has no flight to clear the type with. */
+    uStill: { value: 0 },
     /** Close orbit: this component's slot (the only body drawn, points kept fine), or -1 in other modes. */
     uSolo: { value: -1 },
     /** Boxes of type the scene keeps clear of (viewport px of the canvas); width 0 = none. */

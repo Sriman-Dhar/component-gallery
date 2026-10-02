@@ -112,10 +112,12 @@ uniform float uTime;
 uniform float uLight;
 uniform float uGutter;
 uniform float uSolo;
+uniform float uStill;
 varying vec2 vUv;
 varying float vVeil;
 void main() {
   float r = length(vUv);
+  float hide = 1.0 - vVeil * mix(0.85, 1.0, uStill);
   float a = atan(vUv.y, vUv.x);
   float flick = 1.0 + 0.06 * sin(uTime * 3.1) + 0.04 * sin(a * 7.0 + uTime * 0.7);
   float core = smoothstep(0.075, 0.0, r);
@@ -139,10 +141,10 @@ void main() {
     float ink = clamp((ring + spokes) * 1.6, 0.0, 1.0);
     vec3 paper = mix(mix(uBody, uDeep, ink), face, disc);
     float cover = clamp(disc + ring + spokes + halo, 0.0, 1.0) * mix(1.0, 0.75, uGutter * (1.0 - gutter));
-    gl_FragColor = vec4(paper, cover * strength * (1.0 - vVeil * 0.85));
+    gl_FragColor = vec4(paper, cover * strength * hide);
     return;
   }
-  color *= strength * (1.0 - vVeil * 0.85);
-  gl_FragColor = vec4(color, alpha * uIgnite * (1.0 - vVeil * 0.85));
+  color *= strength * hide;
+  gl_FragColor = vec4(color, alpha * uIgnite * hide);
 }
 `;

@@ -41,7 +41,7 @@ export default function World({ mode, shipped, litWeeks, grid, slot = 0, leaving
   const [lost, setLost] = useState(false);
   const [ready, setReady] = useState(false);
   const closeHeight = useCloseFrame(mode === 'close');
-  useVeils();
+  useVeils(render === 'still');
   const canvas = render !== 'poster' && !lost && (mode !== 'close' || closeHeight > 0);
   // The index backdrop is fixed in every render (live, still, poster), so the reduced-motion and no-WebGL
   // pages keep one continuous world behind the whole story instead of a hero-high picture that ends.

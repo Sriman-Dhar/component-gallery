@@ -47,7 +47,7 @@ const TileGrid = forwardRef<HTMLUListElement, Props>(function TileGrid({ entries
   );
 
   return (
-    <ul ref={root} aria-label="Components" className="relative grid grid-cols-1 gap-x-5 gap-y-24 pt-20 md:grid-cols-2 lg:grid-cols-3 lg:gap-x-6">
+    <ul ref={root} data-world-veil-still aria-label="Components" className="relative grid grid-cols-1 gap-x-5 gap-y-24 pt-20 md:grid-cols-2 lg:grid-cols-3 lg:gap-x-6">
       {entries.map((entry) => (
         <Tile key={entry.meta.slug} entry={entry} />
       ))}

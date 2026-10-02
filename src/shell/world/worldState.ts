@@ -2,8 +2,8 @@ import { useSyncExternalStore } from 'react';
 import { POSTER_YAW, SLOT_COUNT } from '../orrery/orreryModel';
 import { createSpin } from '../orrery/orrerySpin';
 
-/** The most veil boxes a page may mark (data-world-veil): the index's hero and coda words and the footer;
- * the 404's ruler, copy and footer. */
+/** The most veil boxes a page may mark (data-world-veil): the index's hero words, its tile grid (reduced
+ * motion only, data-world-veil-still), coda words and footer; the 404's ruler, copy and footer. */
 export const VEIL_COUNT = 4;
 
 /** The most tiles the halo uniform holds: 30 components and the next slot. */
@@ -67,10 +67,28 @@ export function measureBox(box: Box, el: Element | null): void {
   box.height = rect?.height ?? 0;
 }
 
-/** Re-reads every veil box on the page (call on refresh, never per frame). */
-export function measureVeils(): void {
-  const els = document.querySelectorAll('[data-world-veil]');
-  world.veil.forEach((box, i) => measureBox(box, els[i] ?? null));
+/** Re-reads every veil box on the page (call on refresh, never per frame). The reduced-motion still also keeps
+ * clear of the boxes marked data-world-veil-still: its frozen hero frame sits behind the whole page, where the
+ * live scene would have re-formed around them. `data-world-veil-right` widens a box to the right (px). */
+export function measureVeils(still = false): void {
+  const els = document.querySelectorAll<HTMLElement>(still ? '[data-world-veil], [data-world-veil-still]' : '[data-world-veil]');
+  world.veil.forEach((box, i) => {
+    layoutBox(box, els[i] ?? null);
+    if (box.width) box.width += Number(els[i].dataset.worldVeilRight ?? 0);
+  });
+}
+
+/** An element's layout box in document pixels, transforms ignored: the hero words' scroll lift and a route's
+ * fade-in rise must not leave a veil measured mid-move (it would sit off the type once they settle). */
+function layoutBox(box: Box, el: HTMLElement | null): void {
+  box.left = box.top = box.width = box.height = 0;
+  if (!el) return;
+  box.width = el.offsetWidth;
+  box.height = el.offsetHeight;
+  for (let at: HTMLElement | null = el; at; at = at.offsetParent as HTMLElement | null) {
+    box.left += at.offsetLeft;
+    box.top += at.offsetTop;
+  }
 }
 
 export type WorldStatus = 'off' | 'live' | 'still';

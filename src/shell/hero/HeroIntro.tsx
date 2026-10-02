@@ -25,7 +25,7 @@ export default function HeroIntro() {
     { scope: root },
   );
   return (
-    <div ref={root} data-world-veil className="hero-copy relative w-fit max-w-[min(100%,980px)]">
+    <div ref={root} data-world-veil data-world-veil-right="32" className="hero-copy relative w-fit max-w-[min(100%,980px)]">
       <SiteName name={SITE_NAME} />
       <PaceAccent text={PACE_LINE} />
     </div>

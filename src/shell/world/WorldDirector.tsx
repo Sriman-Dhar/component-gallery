@@ -28,6 +28,7 @@ export default function WorldDirector({ uniforms: u, still, mode, slot }: Props)
     const time = still ? 6 : state.clock.elapsedTime;
     if (!still) stepSpin(world.spin, dt);
     u.uTime.value = time;
+    u.uStill.value = still ? 1 : 0;
     u.uYaw.value = world.spin.yaw;
     u.uViewport.value.set(size.width, size.height);
     u.uPixel.value = viewport.dpr;
