@@ -5,7 +5,7 @@ import { gsap, motionAllowed } from '../../lib/motion';
 import { canUseWebGL } from '../../lib/webgl';
 import { armCarry } from '../carry/carry';
 import { dragEnd, dragMove, dragStart } from '../orrery/orrerySpin';
-import { bodyUnder } from './bodyScreen';
+import { bodyUnder } from './bodyHit';
 import { world } from './worldState';
 
 /** A press that travels less than this (px) and lifts within this (ms) is a click, not a drag. */
