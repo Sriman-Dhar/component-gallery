@@ -352,3 +352,9 @@ html[data-world='live'] .vignette {
   pointer-events: none;
   background: radial-gradient(closest-side, rgb(var(--color-bg) / 0.8), rgb(var(--color-bg) / 0.55) 62%, transparent);
 }
+/* The 404's copy sits on the open nebula with nothing beside it: a wider, longer falloff, so the glow dims
+   under the words instead of showing a band with an edge. */
+.copy-scrim-soft::before {
+  inset: -72px -96px;
+  background: radial-gradient(closest-side, rgb(var(--color-bg) / 0.72), rgb(var(--color-bg) / 0.42) 50%, rgb(var(--color-bg) / 0.12) 80%, transparent);
+}
