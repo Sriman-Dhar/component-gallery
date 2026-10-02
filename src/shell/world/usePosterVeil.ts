@@ -5,7 +5,7 @@ const PAD = 8;
 
 /**
  * The poster's half of the veil rule the live scene keeps: a body dot that lands on the page's type
- * (data-world-veil) is hidden, so no-WebGL visitors never see specks on the headline. Re-checked on mount,
+ * (data-world-veil) is hidden, so no-WebGL visitors never see specks on the headline; the rings fade out above the footer. Re-checked on mount,
  * once fonts settle, on resize and when a scroll comes to rest (no frame loop of its own).
  */
 export function usePosterVeil(root: RefObject<HTMLElement>): void {
@@ -20,6 +20,12 @@ export function usePosterVeil(root: RefObject<HTMLElement>): void {
         const hit = veils.some((v) => b.right > v.left - PAD && b.left < v.right + PAD && b.bottom > v.top - PAD && b.top < v.bottom + PAD);
         slot.style.opacity = hit ? '0' : '';
       });
+      // The rings are whole paths, so they fade out above the footer instead (its rule and date stay clean).
+      const foot = document.querySelector('footer[data-world-veil]')?.getBoundingClientRect();
+      const top = foot ? foot.top - el.getBoundingClientRect().top : Infinity;
+      const mask = top < el.offsetHeight ? `linear-gradient(to bottom, #000 ${Math.round(top - 56)}px, transparent ${Math.round(top - 12)}px)` : '';
+      el.style.setProperty('mask-image', mask);
+      el.style.setProperty('-webkit-mask-image', mask);
     };
     const schedule = () => {
       window.clearTimeout(timer);
