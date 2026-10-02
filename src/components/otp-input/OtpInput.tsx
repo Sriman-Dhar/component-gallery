@@ -37,6 +37,8 @@ export const CELL_MIN_PX = 36;
 export const GAP_NARROW_PX = 6;
 
 const FADE = 'transition-opacity duration-150 ease-out motion-reduce:transition-none [grid-area:1/1]';
+/** The line fading in waits for the one fading out, so the two never print over each other mid-swap. */
+const FADE_IN = 'delay-150 motion-reduce:delay-0';
 
 export interface OtpInputProps {
   /** Number of cells. Six is the common length for SMS and email codes. */
@@ -174,9 +176,9 @@ export default function OtpInput({
           />
         ))}
       </div>
-      {/* Two reserved lines: the hint (or the checking line), with the error fading in over it. */}
+      {/* Two reserved lines in one cell: the hint (or the checking line) and the error, one fading out before the other fades in. */}
       <div id={`${id}-note`} className="grid min-h-10 text-[14px] leading-5">
-        <span aria-hidden={showError || undefined} className={`${FADE} text-[rgb(var(--otp-muted))] ${showError ? 'opacity-0' : ''}`}>
+        <span aria-hidden={showError || undefined} className={`${FADE} text-[rgb(var(--otp-muted))] ${showError ? 'opacity-0' : FADE_IN}`}>
           {success ? (
             <span className="inline-flex items-center gap-2 text-[rgb(var(--otp-success))]">
               <Check />
@@ -191,7 +193,7 @@ export default function OtpInput({
             hint
           )}
         </span>
-        <span aria-hidden={!showError || undefined} className={`${FADE} text-[rgb(var(--otp-error))] ${showError ? '' : 'opacity-0'}`}>
+        <span aria-hidden={!showError || undefined} className={`${FADE} text-[rgb(var(--otp-error))] ${showError ? FADE_IN : 'opacity-0'}`}>
           {message || lastMessage.current}
         </span>
       </div>
