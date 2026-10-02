@@ -1,10 +1,11 @@
-import { lazy, Suspense, useMemo, useRef, useState } from 'react';
+import { lazy, Suspense, useMemo, useRef } from 'react';
 import { gsap, useGSAP, withMotion } from '../../lib/motion';
 import { useFrameTheme } from '../../lib/theme';
 import type { GalleryEntry } from '../../lib/types';
 import DemoBoundary from '../DemoBoundary';
 import StageCorners from './StageCorners';
 import StageControls, { type StageTheme, type WidthPreset } from './StageControls';
+import { useStagePick } from './useStagePick';
 import { useStageThemeFade } from './useStageThemeFade';
 import { useStageWidth } from './useStageWidth';
 
@@ -20,10 +21,8 @@ export default function Stage({ entry }: { entry: GalleryEntry }) {
   const veil = useRef<HTMLDivElement>(null);
   const rim = useRef<HTMLDivElement>(null);
   // The stage follows the frame's theme (a dark slab on paper was the loudest thing on the page), live switches
-  // included, until the visitor picks a stage theme; that pick then holds for this component's page.
-  const frameTheme = useFrameTheme();
-  const [pick, setPick] = useState<{ slug: string; theme: StageTheme } | null>(null);
-  const theme = pick?.slug === entry.meta.slug ? pick.theme : frameTheme;
+  // included, until the visitor picks a stage theme; that pick then holds for this page and its history entry.
+  const [theme, pickTheme] = useStagePick(entry.meta.slug, useFrameTheme());
   const { width, unavailable, resize } = useStageWidth(room, frame);
   useStageThemeFade(veil, rim, theme);
 
@@ -43,7 +42,7 @@ export default function Stage({ entry }: { entry: GalleryEntry }) {
         unavailable={unavailable}
         onWidth={resize}
         theme={theme}
-        onTheme={(next) => setPick({ slug: entry.meta.slug, theme: next })}
+        onTheme={pickTheme}
       />
       <div ref={room}>
         <div
