@@ -10,6 +10,7 @@ import Header from './Header';
 import LightField from './LightField';
 import RepoLink from './RepoLink';
 import RouteTransition from './RouteTransition';
+import { useShownPath } from './shownRoute';
 import World from './world/World';
 import { sceneModeFor } from './world/worldModes';
 
@@ -22,13 +23,16 @@ const grid = { labels: shipped.map(({ meta }) => runningLabel(meta.slug)), next:
  * system), grain, glass header, the routed view, one-line footer. Max 1280.
  */
 export default function Layout() {
-  const { pathname } = useLocation();
+  const location = useLocation();
+  // The scene runs for the view on screen: while the old view fades out its world fades with it.
+  const pathname = useShownPath(location.pathname);
+  const leaving = pathname !== location.pathname;
   const mode = sceneModeFor(pathname);
   const slot = Math.max(0, numberOf(pathname.split('/')[2] ?? '') - 1);
   return (
     <div className="relative min-h-[100dvh] overflow-x-clip bg-bg text-text">
       <LightField />
-      <World key={mode === 'index' ? mode : pathname} mode={mode} shipped={shipped.length} litWeeks={litWeeks} grid={grid} slot={slot} />
+      <World key={mode === 'index' ? mode : pathname} mode={mode} shipped={shipped.length} litWeeks={litWeeks} grid={grid} slot={slot} leaving={leaving} />
       <GrainLayer />
       <CursorRing />
       <RouteCarry />

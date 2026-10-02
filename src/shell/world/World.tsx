@@ -19,6 +19,8 @@ interface Props {
   grid: GridPlan;
   /** Close mode: this component's slot (0-based ship order). */
   slot?: number;
+  /** The route has changed and this world's view is fading out: fade with it rather than cut. */
+  leaving?: boolean;
 }
 
 /** The canvas edge that meets the page fades out over its last 140px (a static mask, painted once). */
@@ -34,7 +36,7 @@ const FADE: CSSProperties = {
  * Reduced motion: the same scene as one composed still, fixed behind the page, no flight, no ignition. No WebGL or a lost context:
  * the SVG poster (none on the detail page, whose header carries its own glow). Decorative throughout.
  */
-export default function World({ mode, shipped, litWeeks, grid, slot = 0 }: Props) {
+export default function World({ mode, shipped, litWeeks, grid, slot = 0, leaving = false }: Props) {
   const [render] = useState<Render>(() => (!canUseWebGL() ? 'poster' : motionAllowed() ? 'live' : 'still'));
   const [lost, setLost] = useState(false);
   const [ready, setReady] = useState(false);
@@ -62,7 +64,7 @@ export default function World({ mode, shipped, litWeeks, grid, slot = 0 }: Props
       data-testid="world"
       data-mode={mode}
       data-render={canvas ? render : 'poster'}
-      className={`pointer-events-none inset-x-0 top-0 z-0 ${box}`}
+      className={`pointer-events-none inset-x-0 top-0 z-0 transition-opacity duration-[160ms] ease-linear motion-reduce:transition-none ${box} ${leaving ? 'opacity-0' : ''}`}
       style={mode === 'index' ? undefined : { ...FADE, height: mode === 'close' ? closeHeight : undefined }}
     >
       {poster ? <WorldPoster shipped={mode === 'dark' ? 0 : shipped} recede={fixed} /> : null}

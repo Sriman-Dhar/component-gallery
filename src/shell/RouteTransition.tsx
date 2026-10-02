@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useLocation, useNavigationType, useOutlet } from 'react-router-dom';
 import { gsap, motionAllowed, ScrollTrigger } from '../lib/motion';
+import { primeShownPath, setShownPath } from './shownRoute';
 import { snapWorld } from './world/worldState';
 
 /** Where each history entry was scrolled to when the visitor left it, so Back returns to the same place. */
@@ -20,7 +21,10 @@ export default function RouteTransition() {
   const latest = useRef(outlet);
   latest.current = outlet;
   const view = useRef<HTMLDivElement>(null);
-  const [shown, setShown] = useState({ key: location.key, element: outlet });
+  const [shown, setShown] = useState(() => {
+    primeShownPath(location.pathname);
+    return { key: location.key, element: outlet };
+  });
 
   const stale = shown.key !== location.key;
   const current = stale ? shown.element : outlet;
@@ -38,7 +42,10 @@ export default function RouteTransition() {
 
   useLayoutEffect(() => {
     if (!stale) return;
-    const swap = () => setShown({ key: location.key, element: latest.current });
+    const swap = () => {
+      setShown({ key: location.key, element: latest.current });
+      setShownPath(location.pathname);
+    };
     if (!motionAllowed() || !view.current) return swap();
     const out = gsap.to(view.current, { opacity: 0, y: -12, duration: 0.16, ease: 'power2.in', onComplete: swap });
     return () => {
