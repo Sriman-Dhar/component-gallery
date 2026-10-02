@@ -112,6 +112,17 @@
 .rail-label {
   fill: color-mix(in srgb, rgb(var(--color-heat)) calc(var(--heat, 0) * 100%), rgb(var(--color-text-2)));
 }
+/* The particle band runs right under the ruler: every label sits on a halo of the frame's background so it
+   reads over the stream (the halo is paint behind the glyph, so the letterforms stay crisp). */
+[data-week-label] {
+  paint-order: stroke;
+  stroke: rgb(var(--color-bg) / 0.9);
+  stroke-width: 4px;
+  stroke-linejoin: round;
+}
+.rail-caption span {
+  text-shadow: 0 0 3px rgb(var(--color-bg)), 0 0 8px rgb(var(--color-bg)), 0 0 14px rgb(var(--color-bg) / 0.8);
+}
 
 /* The orrery poster (no WebGL): a warm atmosphere behind it with a faint cool rim, and the still's core.
    Both scale with --bloom-alpha, so they step down on the light frame. */
@@ -217,4 +228,99 @@ html[data-world='live'] .light-pointer,
 html[data-world='live'] .light-core,
 html[data-world='live'] .vignette {
   display: none;
+}
+
+/* The hero is the orrery's handle: grab anywhere that is not a control, grabbing while turning, a pointer
+   over a shipped body (it clicks through). Controls keep their own cursor. */
+.hero-stage[data-cursor='grab'] { cursor: grab; }
+.hero-stage[data-cursor='grabbing'] { cursor: grabbing; }
+.hero-stage[data-cursor='pointer'] { cursor: pointer; }
+.hero-stage :is(a, button) { cursor: pointer; }
+
+/* The cursor ring (CursorRing.tsx): an ember outline centered on the pointer. Hidden until a fine pointer
+   moves, swollen and warm over controls, tight while grabbing, gone over text fields and code. */
+.cursor-ring {
+  display: none;
+}
+@media (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .cursor-ring {
+    display: block;
+    width: 0;
+    height: 0;
+  }
+}
+.cursor-ring-dot {
+  position: absolute;
+  left: -14px;
+  top: -14px;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  border: 1px solid rgb(var(--color-accent) / 0.55);
+  box-shadow: 0 0 12px rgb(var(--color-accent) / 0.25), inset 0 0 8px rgb(var(--color-glow) / 0.12);
+  opacity: 0;
+  transition: transform var(--dur-base) var(--ease-out), opacity var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-base) var(--ease-out);
+}
+.cursor-ring[data-on='true'] .cursor-ring-dot {
+  opacity: 1;
+}
+.cursor-ring[data-state='hot'] .cursor-ring-dot {
+  transform: scale(1.6);
+  border-color: rgb(var(--color-glow) / 0.9);
+  box-shadow: 0 0 22px rgb(var(--color-accent) / 0.5), inset 0 0 10px rgb(var(--color-glow) / 0.25);
+}
+.cursor-ring[data-state='grab'] .cursor-ring-dot {
+  transform: scale(0.6);
+  border-color: rgb(var(--color-glow));
+}
+.cursor-ring[data-on='true'][data-state='text'] .cursor-ring-dot {
+  opacity: 0;
+}
+
+/* Code: token colors from the frame's own ramp (amber keywords, warm strings, cool types, muted comments),
+   every one AA on the code surface in both themes; numbered gutter by CSS counter. */
+.code-lines {
+  counter-reset: line;
+  --code-str: var(--p-amber-200);
+}
+[data-theme='light'] .code-lines {
+  --code-str: var(--p-amber-950);
+}
+.code-line::before {
+  counter-increment: line;
+  content: counter(line);
+  display: inline-block;
+  width: 2.5em;
+  margin-right: 1.25em;
+  text-align: right;
+  color: rgb(var(--color-text-2) / 0.75);
+  user-select: none;
+}
+.tok-k { color: rgb(var(--color-accent)); }
+.tok-s, .tok-n { color: rgb(var(--code-str)); }
+.tok-t { color: rgb(var(--color-rim)); }
+.tok-f { color: rgb(var(--color-text)); font-weight: 600; }
+.tok-c { color: rgb(var(--color-text-2)); font-style: italic; }
+/* Narrow screens: the line runs on sideways, so the right edge fades to say there is more. */
+@media (max-width: 639px) {
+  .code-scroll {
+    -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+    mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+  }
+}
+
+/* A soft pool of the frame's own background under copy that sits over the scene (detail header, 404), so
+   the words keep AA contrast whatever passes behind them. Feathered, never a drawn box. */
+.copy-scrim {
+  position: relative;
+  isolation: isolate;
+}
+.copy-scrim::before {
+  content: '';
+  position: absolute;
+  inset: -28px -40px;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(closest-side, rgb(var(--color-bg) / 0.8), rgb(var(--color-bg) / 0.55) 62%, transparent);
 }

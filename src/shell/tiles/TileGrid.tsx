@@ -34,11 +34,12 @@ const TileGrid = forwardRef<HTMLUListElement, Props>(function TileGrid({ entries
             const cards = batch.flatMap((tile) => [...tile.querySelectorAll('.tile-card')]);
             const content = batch.flatMap((tile) => [...tile.querySelectorAll('.stage-content')]);
             // The tile rises, its stage light flickers on, then the component appears in the light.
-            gsap
+            // The next slot has no card or stage: a batch of it alone tweens only the rise.
+            const tl = gsap
               .timeline()
-              .to(batch, { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out', stagger: 0.04, overwrite: true, clearProps: 'transform' })
-              .to(cards, { keyframes: { '--spot-on': [0, 0.8, 0.2, 1] }, duration: 0.45, ease: 'none', stagger: 0.08 }, 0.2)
-              .to(content, { opacity: 1, duration: 0.5, ease: 'power2.out', stagger: 0.08, clearProps: 'opacity' }, 0.5);
+              .to(batch, { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out', stagger: 0.04, overwrite: true, clearProps: 'transform' });
+            if (cards.length) tl.to(cards, { keyframes: { '--spot-on': [0, 0.8, 0.2, 1] }, duration: 0.45, ease: 'none', stagger: 0.08 }, 0.2);
+            if (content.length) tl.to(content, { opacity: 1, duration: 0.5, ease: 'power2.out', stagger: 0.08, clearProps: 'opacity' }, 0.5);
           },
         });
       }),

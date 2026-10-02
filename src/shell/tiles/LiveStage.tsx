@@ -9,7 +9,7 @@ const VIRTUAL = { width: 720, height: 450 };
 /**
  * The component itself, live and inert (never focusable or clickable), on a mini stage that follows
  * the frame theme. A component's `preview.tsx` renders at its own designed size, centered and cropped
- * by the tile; without one, the demo is scaled to fit as a fallback. A crash shows a plain line.
+ * by the tile and scaled down only when the tile is narrower; without one, the demo is scaled to fit as a fallback. A crash shows a plain line.
  */
 export default function LiveStage({ entry, className = '' }: { entry: GalleryEntry; className?: string }) {
   const hasPreview = Boolean(entry.loadPreview);
@@ -23,17 +23,25 @@ export default function LiveStage({ entry, className = '' }: { entry: GalleryEnt
     const view = inner.current;
     if (!box) return;
     box.setAttribute('inert', '');
-    if (hasPreview || !view) return;
-    const fit = () => {
-      const scale = Math.min(box.clientWidth / VIRTUAL.width, box.clientHeight / VIRTUAL.height) || 0.4;
-      const left = (box.clientWidth - VIRTUAL.width * scale) / 2;
-      const top = (box.clientHeight - VIRTUAL.height * scale) / 2;
-      view.style.transform = `translate(${left}px, ${top}px) scale(${scale})`;
-    };
+    if (!view) return;
+    // A preview keeps its designed size and only scales down when the tile is narrower than it (24px air
+    // each side); a bare demo is fitted into its virtual viewport.
+    const fit = hasPreview
+      ? () => {
+          const scale = Math.min(1, (box.clientWidth - 48) / Math.max(1, view.offsetWidth));
+          view.style.transform = scale < 1 ? `scale(${scale.toFixed(3)})` : '';
+        }
+      : () => {
+          const scale = Math.min(box.clientWidth / VIRTUAL.width, box.clientHeight / VIRTUAL.height) || 0.4;
+          const left = (box.clientWidth - VIRTUAL.width * scale) / 2;
+          const top = (box.clientHeight - VIRTUAL.height * scale) / 2;
+          view.style.transform = `translate(${left}px, ${top}px) scale(${scale})`;
+        };
     fit();
     if (typeof ResizeObserver === 'undefined') return;
     const observer = new ResizeObserver(fit);
     observer.observe(box);
+    observer.observe(view);
     return () => observer.disconnect();
   }, [hasPreview]);
 
@@ -48,7 +56,11 @@ export default function LiveStage({ entry, className = '' }: { entry: GalleryEnt
   return (
     <div ref={frame} aria-hidden="true" data-stage-theme={stageTheme} className={`stage-surface pointer-events-none relative overflow-hidden ${className}`}>
       {hasPreview ? (
-        <div className="stage-content absolute inset-0 flex items-center justify-center p-6">{content}</div>
+        <div className="stage-content absolute inset-0 flex items-center justify-center">
+          <div ref={inner} className="w-max shrink-0 origin-center">
+            {content}
+          </div>
+        </div>
       ) : (
         <div
           ref={inner}

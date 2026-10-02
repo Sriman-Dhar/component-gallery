@@ -84,8 +84,9 @@
     box-shadow: inset 0 1px 0 rgb(var(--color-text) / 0.06), 0 1px 0 rgb(var(--color-line) / 0.8);
   }
   .glass[data-scrolled='true'] {
-    backdrop-filter: blur(14px) saturate(140%);
-    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    background-color: rgb(var(--color-bg) / 0.86);
+    backdrop-filter: blur(20px) saturate(140%);
+    -webkit-backdrop-filter: blur(20px) saturate(140%);
   }
 
   /* Stage surface: a faint 1px grid from the stage's own tokens; theme switch crossfades. */
@@ -108,6 +109,28 @@
     z-index: -1;
     pointer-events: none;
     background: var(--stage-wash);
+  }
+
+  /* The dark stage belongs to the world: the scene's sun sits above it, so its top edge catches a warm rim
+     that fades along the frame, the light spills a little onto the page above, and the corner marks burn. */
+  .stage-surface[data-stage-theme='dark'] {
+    box-shadow: 0 0 0 1px rgb(var(--color-line)), 0 -18px 60px -30px rgb(var(--color-accent) / 0.45),
+      0 40px 80px -40px rgb(var(--color-accent-deep) / var(--shadow-alpha));
+  }
+  .stage-surface[data-stage-theme='dark']::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    background: linear-gradient(90deg, transparent, rgb(var(--color-glow) / 0.75) 30%, rgb(var(--color-accent) / 0.35) 62%, transparent)
+        top / 100% 1px no-repeat,
+      radial-gradient(70% 120px at 32% 0%, rgb(var(--color-accent) / 0.12), transparent 70%);
+  }
+  .stage-surface[data-stage-theme='dark'] .sc-corner {
+    opacity: 0.9;
+    filter: drop-shadow(0 0 4px rgb(var(--color-accent) / 0.9));
   }
 
   /* Tiles: hairline, tinted shadow, border glow on hover or keyboard focus, sheen follows the pointer. */
