@@ -53,7 +53,10 @@ void main() {
   vec3 dark = mix(uDeep * 0.12, uBody * 0.5, ndl * 0.35);
   // On the light frame a future body is smoked glass, not an ink blot: lifted toward the paper.
   dark = mix(dark, mix(uDeep, vec3(0.86), 0.62), uLight * 0.75);
-  vec3 color = mix(dark, lit, vLit) + uCool * fres * (1.0 - ndl) * mix(0.9, 0.5, vLit);
+  // A shipped body is self-lit: its night side keeps an ember core and a warm atmosphere rim that the bloom
+  // spreads into a halo, so the two shipped planets read as special at rest, from any angle, before any hover.
+  lit += uBody * (0.55 + 0.25 * (1.0 - ndl)) * mix(1.0, 0.5, uLight) + uCore * pow(fres, 1.6) * mix(2.2, 0.9, uLight);
+  vec3 color = mix(dark, lit, vLit) + uCool * fres * (1.0 - ndl) * mix(0.9, 0.2, vLit);
   gl_FragColor = vec4(color, 1.0);
 }
 `;

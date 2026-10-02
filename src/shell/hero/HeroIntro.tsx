@@ -5,7 +5,8 @@ import PaceAccent from './PaceAccent';
 import SiteName from './SiteName';
 
 /**
- * The index hero's words, over the Living Orrery. Left aligned on every width: against the dark side of
+ * The index hero's words, over the Living Orrery. The box hugs the words (it is the scene's veil, so no
+ * empty margin hides a planet). Left aligned on every width: against the dark side of
  * the rings on wide screens, at the foot of the viewport under the orrery on phones. As the dive starts the
  * words lift and fade with the camera (scrubbed), so no line is left hanging over the flight.
  */
@@ -24,7 +25,7 @@ export default function HeroIntro() {
     { scope: root },
   );
   return (
-    <div ref={root} data-world-veil className="hero-copy relative max-w-[min(100%,980px)]">
+    <div ref={root} data-world-veil className="hero-copy relative w-fit max-w-[min(100%,980px)]">
       <SiteName name={SITE_NAME} />
       <PaceAccent text={PACE_LINE} />
     </div>
