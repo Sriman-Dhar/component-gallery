@@ -1,5 +1,6 @@
 import { useEffect, useMemo } from 'react';
 import { PlaneGeometry, ShaderMaterial } from 'three';
+import { gsap, motionAllowed } from '../../lib/motion';
 import type { WorldUniforms } from './useWorldUniforms';
 
 const vertex = /* glsl */ `
@@ -12,7 +13,9 @@ void main() {
 
 /**
  * The backdrop: the frame's bg colour with a very faint nebula (two octaves of value noise, ember near the
- * sun, a cool breath far from it) that drifts against the camera for parallax. Low tier: flat bg only.
+ * sun, a cool breath far from it) that drifts against the camera for parallax. The warm pool is the hero's
+ * atmosphere, so it never switches off: the low tier only eases it to 80% over 1.5s (one full-screen quad is
+ * cheap next to the particles it saves).
  */
 const fragment = /* glsl */ `
 uniform vec3 uBg;
@@ -45,15 +48,22 @@ void main() {
 }
 `;
 
-export default function WorldNebula({ uniforms, on }: { uniforms: WorldUniforms; on: boolean }) {
+/** The low tier's nebula strength: a floor well above half the lit state, so a tier drop changes no mood. */
+const LOW_TIER_NEBULA = 0.8;
+
+export default function WorldNebula({ uniforms, low }: { uniforms: WorldUniforms; low: boolean }) {
   const geometry = useMemo(() => new PlaneGeometry(2, 2), []);
   const material = useMemo(
     () => new ShaderMaterial({ vertexShader: vertex, fragmentShader: fragment, uniforms, depthTest: false, depthWrite: false }),
     [uniforms],
   );
   useEffect(() => {
-    uniforms.uNebula.value = on ? 1 : 0;
-  }, [uniforms, on]);
+    const value = low ? LOW_TIER_NEBULA : 1;
+    const tween = gsap.to(uniforms.uNebula, { value, duration: motionAllowed() ? 1.5 : 0, ease: 'sine.inOut' });
+    return () => {
+      tween.kill();
+    };
+  }, [uniforms, low]);
   useEffect(
     () => () => {
       geometry.dispose();

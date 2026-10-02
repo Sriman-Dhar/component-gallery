@@ -15,7 +15,9 @@ import WorldParticles from './WorldParticles';
 import { FOV, particleCount, startTier } from './worldLayout';
 import type { WorldMode } from './worldModes';
 
-/** Full-screen canvas DPR band (PERF.md rule 3: a full-viewport canvas caps at 1.5); the close orbit is cheaper. */
+/** Full-screen canvas DPR band (PERF.md rule 3: a full-viewport canvas caps at 1.5); the close orbit is cheaper.
+ * Never above the screen's own ratio: supersampling a 1x screen buys nothing and its frame cost made the monitor
+ * flip-flop into the low tier mid-drag. */
 const DPR_MAX = 1.5;
 const DPR_CLOSE = 1.25;
 const DPR_MIN = 1;
@@ -60,7 +62,7 @@ function Scene({ mode, still, shipped, litWeeks, grid, slot, low }: Omit<Props, 
   return (
     <>
       <WorldDirector uniforms={uniforms} still={still} mode={mode} slot={slot} />
-      <WorldNebula uniforms={uniforms} on={!low} />
+      <WorldNebula uniforms={uniforms} low={low} />
       <WorldBodies uniforms={uniforms} shipped={lit} />
       <WorldParticles uniforms={uniforms} count={count} low={low} shipped={lit} litWeeks={mode === 'dark' ? [] : litWeeks} grid={grid} />
       <EffectComposer multisampling={0} frameBufferType={HalfFloatType} depthBuffer={false}>
@@ -75,12 +77,12 @@ function Scene({ mode, still, shipped, litWeeks, grid, slot, low }: Omit<Props, 
 /**
  * The Living Orrery's one canvas: fixed behind the DOM, opaque (it paints the frame's bg and nebula itself),
  * no antialias (a particle field), no own loop (FrameDriver). DPR 1 to 1.5, stepped by a 55 fps floor;
- * a fallback from the monitor drops to the low tier (half the particles, no depth blur, no nebula).
+ * a fallback from the monitor drops to the low tier (half the particles, no depth blur, the nebula eased to 80%).
  */
 export default function WorldCanvas({ onReady, onLost, ...scene }: Props) {
-  const max = scene.mode === 'close' ? DPR_CLOSE : DPR_MAX;
+  const max = Math.max(DPR_MIN, Math.min(window.devicePixelRatio || 1, scene.mode === 'close' ? DPR_CLOSE : DPR_MAX));
   const [low, setLow] = useState(() => startTier() === 'low');
-  const [dpr, setDpr] = useState(() => Math.min(window.devicePixelRatio || 1, max));
+  const [dpr, setDpr] = useState(max);
   const current = useRef(dpr);
   current.current = dpr;
   // Already at the floor and still slow: the low tier is the next step down.
