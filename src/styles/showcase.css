@@ -123,6 +123,23 @@
 .rail-caption span {
   text-shadow: 0 0 3px rgb(var(--color-bg)), 0 0 8px rgb(var(--color-bg)), 0 0 14px rgb(var(--color-bg) / 0.8);
 }
+/* Phones: the rail's particle streak runs right through the date row, so the row sits on a soft band of the
+   ground (a DOM backdrop over the canvas), tight enough to leave the ruler line above it lit. */
+@media (max-width: 639px) {
+  .rail-caption {
+    position: relative;
+    isolation: isolate;
+  }
+  .rail-caption::before {
+    content: '';
+    position: absolute;
+    inset: -3px -8px;
+    z-index: -1;
+    pointer-events: none;
+    background: linear-gradient(90deg, transparent, rgb(var(--color-bg) / 0.6) 6%, rgb(var(--color-bg) / 0.6) 94%, transparent);
+    filter: blur(3px);
+  }
+}
 
 /* The orrery poster (no WebGL): a warm atmosphere behind it with a faint cool rim, and the still's core.
    Both scale with --bloom-alpha, so they step down on the light frame. */
