@@ -1,7 +1,7 @@
 import type { PerspectiveCamera } from 'three';
 import { positionOf, weekCenter } from '../../lib/ruler';
 import { slotOf } from '../orrery/orreryModel';
-import { bankOf } from '../orrery/orrerySpin';
+import { bankOf, hurryPastSun } from '../orrery/orrerySpin';
 import { pulseHeat } from '../rail/railLayout';
 import { projectBodies } from './bodyScreen';
 import { placeCamera, placeClose } from './cameraRig';
@@ -113,7 +113,7 @@ export function frameIndex({ u, camera, width, height, time, dt, still, sway }: 
   u.uSun.value.set(sun.x + (dock.x - sun.x) * dock.z, sun.y + (dock.y - sun.y) * dock.z);
   u.uFocus.value = sun.focus;
   setVeils(u, true);
-  projectBodies(camera, width, height, time, beats.bodies > 0.6 && !still);
+  if (projectBodies(camera, width, height, time, beats.bodies > 0.6 && !still)) hurryPastSun(world.spin, dt);
   u.uParallax.value.set(u.uPointer.value.x * 0.04 + beats.flight * 0.5, u.uPointer.value.y * 0.04 - beats.flight * 0.8);
 }
 

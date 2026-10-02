@@ -78,3 +78,9 @@ export function dragEnd(spin: Spin, now: number): void {
     spin.tiltVel = 0;
   }
 }
+
+/** A shipped body parked behind the sun reads as missing: the free spin quickens (eased, never a jump) until it is clear. */
+export function hurryPastSun(spin: Spin, dt: number): void {
+  if (spin.dragging) return;
+  spin.vel += (BASE_SPIN * 5 - spin.vel) * (1 - Math.exp(-dt * 1.5));
+}
