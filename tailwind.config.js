@@ -6,6 +6,8 @@ export default {
   content: ['./index.html', './src/**/*.{ts,tsx}'],
   theme: {
     extend: {
+      // Desktop screens 900px tall or less: the detail page's header tightens so the stage starts in the first view.
+      screens: { short: { raw: '(min-width: 1024px) and (max-height: 900px)' } },
       colors: {
         bg: token('bg'),
         surface: token('surface'),

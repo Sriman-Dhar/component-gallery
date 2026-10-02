@@ -30,7 +30,7 @@ export default function DetailHeader({ meta }: { meta: ComponentMeta }) {
 
   const number = runningLabel(meta.slug);
   return (
-    <header ref={root} className="relative grid grid-cols-1 gap-y-5 pb-8 lg:grid-cols-12 lg:gap-x-8">
+    <header ref={root} className="relative grid grid-cols-1 gap-y-5 pb-8 lg:grid-cols-12 lg:gap-x-8 short:pb-3">
       {/* The close orbit's socket: an empty box beside the title where the scene puts this component's body,
           clear of the numeral and the summary (phones: right of the numeral; wide: past the title's end, and on
           desktop pulled in toward the title at its height, above the summary, so it reads as the title's own planet). */}
@@ -61,10 +61,10 @@ export default function DetailHeader({ meta }: { meta: ComponentMeta }) {
           >
             <RiseText text={meta.name} />
           </h1>
-          <div className="dh-rise mt-5">
+          <div className="dh-rise mt-5 short:mt-3">
             <MetaChips meta={meta} />
           </div>
-          <p className="dh-rise mt-5 max-w-column text-lead text-text-2 xl:max-w-[46ch]">{meta.summary}</p>
+          <p className="dh-rise mt-5 short:mt-3 max-w-column text-lead text-text-2 xl:max-w-[46ch]">{meta.summary}</p>
         </div>
       </div>
     </header>

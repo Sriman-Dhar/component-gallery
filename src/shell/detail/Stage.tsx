@@ -36,7 +36,7 @@ export default function Stage({ entry }: { entry: GalleryEntry }) {
   );
 
   return (
-    <section ref={root} id="stage" tabIndex={-1} aria-label="Live demo" className="scroll-mt-24 space-y-3 outline-none">
+    <section ref={root} id="stage" tabIndex={-1} aria-label="Live demo" className="scroll-mt-24 space-y-3 outline-none short:!mt-6">
       <StageControls
         width={width}
         unavailable={unavailable}
