@@ -1,5 +1,8 @@
 @import './styles/tokens.css';
-@import './styles/showcase.css';
+@import './styles/showcase/light.css';
+@import './styles/showcase/hero.css';
+@import './styles/showcase/cursor.css';
+@import './styles/showcase/detail.css';
 
 @tailwind base;
 @tailwind components;
@@ -57,7 +60,7 @@
     background: radial-gradient(35% 50% at 74% 100%, rgb(var(--color-rim) / var(--rim-alpha)), transparent 70%);
   }
   /* The pointer lights are their own layers (will-change): GSAP moves them on every pointermove, and without
-     a layer each move repainted the 600px gradient (PERF.md). .light-core in showcase.css shares this. */
+     a layer each move repainted the 600px gradient (PERF.md). .light-core in showcase/light.css shares this. */
   .light-pointer,
   .light-core {
     will-change: transform;

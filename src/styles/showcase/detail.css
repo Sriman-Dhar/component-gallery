@@ -1,0 +1,54 @@
+/* Showcase layer, part 4 of 4: the detail page's code block and the copy scrims (detail header, 404). */
+
+/* Code: token colors from the frame's own ramp (amber keywords, warm strings, cool types, muted comments),
+   every one AA on the code surface in both themes; numbered gutter by CSS counter. */
+.code-lines {
+  counter-reset: line;
+  --code-str: var(--p-amber-200);
+}
+[data-theme='light'] .code-lines {
+  --code-str: var(--p-amber-950);
+}
+.code-line::before {
+  counter-increment: line;
+  content: counter(line);
+  display: inline-block;
+  width: 2.5em;
+  margin-right: 1.25em;
+  text-align: right;
+  color: rgb(var(--color-text-2) / 0.75);
+  user-select: none;
+}
+.tok-k { color: rgb(var(--color-accent)); }
+.tok-s, .tok-n { color: rgb(var(--code-str)); }
+.tok-t { color: rgb(var(--color-rim)); }
+.tok-f { color: rgb(var(--color-text)); font-weight: 600; }
+.tok-c { color: rgb(var(--color-text-2)); font-style: italic; }
+/* Narrow screens: the line runs on sideways, so the right edge fades to say there is more. */
+@media (max-width: 639px) {
+  .code-scroll {
+    -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+    mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+  }
+}
+
+/* A soft pool of the frame's own background under copy that sits over the scene (detail header, 404), so
+   the words keep AA contrast whatever passes behind them. Feathered, never a drawn box. */
+.copy-scrim {
+  position: relative;
+  isolation: isolate;
+}
+.copy-scrim::before {
+  content: '';
+  position: absolute;
+  inset: -28px -40px;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(closest-side, rgb(var(--color-bg) / 0.8), rgb(var(--color-bg) / 0.55) 62%, transparent);
+}
+/* The 404's copy sits on the open nebula with nothing beside it: a wider, longer falloff, so the glow dims
+   under the words instead of showing a band with an edge. */
+.copy-scrim-soft::before {
+  inset: -72px -96px;
+  background: radial-gradient(closest-side, rgb(var(--color-bg) / 0.72), rgb(var(--color-bg) / 0.42) 50%, rgb(var(--color-bg) / 0.12) 80%, transparent);
+}

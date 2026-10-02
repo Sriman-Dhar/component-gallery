@@ -101,7 +101,7 @@ pointer but never fights the text).
   each tile stage is lit from above, a beam that lands as a pool on its floor behind the component and leans after
   the pointer (--spot-x). New tokens: --color-heat, --numeral-top/--numeral-bottom, --shaft-alpha, --vignette-alpha,
   --spot-alpha, --spot-blend (screen on dark, multiply on light); all showcase classes live in
-  src/styles/showcase.css. Tonal depth
+  src/styles/showcase/. Tonal depth
   through the accent ramp: glow for nodes and the pulse core, accent for body, deep for shadows and tints.
 - Shape & depth: radius 12 on tiles and stage, 8 on controls, pill on the theme switch. Tinted shadows only
   (accent-deep at 25% on dark). Hairlines in line. Glass only on the sticky header (backdrop blur + 1px inner top
