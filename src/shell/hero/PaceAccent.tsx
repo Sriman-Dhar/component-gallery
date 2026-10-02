@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { gsap, useGSAP, withMotion } from '../../lib/motion';
+import { bootLate, gsap, useGSAP, withMotion } from '../../lib/motion';
 
 /**
  * The pace statement under the name: wide caps in the amber ramp. It rises in just after the title's
@@ -11,6 +11,7 @@ export default function PaceAccent({ text }: { text: string }) {
   useGSAP(
     () =>
       withMotion(() => {
+        if (bootLate()) return;
         gsap
           .timeline({ delay: 0.7 })
           .from(root.current, { y: 14, autoAlpha: 0, duration: 0.7, ease: 'power3.out' })

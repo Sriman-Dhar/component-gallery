@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { gsap, useGSAP, withMotion } from '../../lib/motion';
+import { bootLate, gsap, useGSAP, withMotion } from '../../lib/motion';
 import { SIGNATURE, TITLE_WORD } from '../../lib/site';
 import RiseText from '../RiseText';
 import Signature from './Signature';
@@ -17,6 +17,7 @@ export default function SiteName({ name }: { name: string }) {
   useGSAP(
     () =>
       withMotion(() => {
+        if (bootLate()) return;
         gsap.from('.letter', { yPercent: 110, duration: 0.7, ease: 'power4.out', stagger: 0.03, delay: 0.25 });
       }),
     { scope: root },

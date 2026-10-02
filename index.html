@@ -16,6 +16,8 @@
           if (stored === 'light' || stored === 'dark') theme = stored;
         } catch (e) {}
         document.documentElement.setAttribute('data-theme', theme);
+        // The static shell's hero words belong to the index only; other routes boot with the header alone.
+        if (location.pathname !== '/') document.documentElement.setAttribute('data-boot', 'page');
       })();
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -35,10 +37,43 @@
       .boot { position: fixed; inset: 0; pointer-events: none; background: radial-gradient(34% 42% at 67% 48%, rgb(255 138 42 / 0.16), rgb(138 62 10 / 0.08) 45%, transparent 72%); }
       html[data-theme='light'] .boot { background: radial-gradient(34% 42% at 67% 48%, rgb(173 74 5 / 0.08), transparent 72%); }
       @media (max-width: 900px) { .boot { background-position: 0 -18vh; } }
+      /* The static shell: the header's name at once, the hero words only if the app is still loading after
+         1.2s (a fast load replaces them unseen, so the intro plays as designed; a slow one shows the name). */
+      .boot-hero { animation: boot-in 0.4s ease-out 1.2s both; }
+      html[data-boot='page'] .boot-hero { display: none; }
+      @keyframes boot-in { from { opacity: 0; } to { opacity: 1; } }
     </style>
   </head>
   <body>
-    <div id="root"><div class="boot" aria-hidden="true"></div></div>
+    <!-- Static shell, replaced on mount: the same boxes the app renders (Layout, Header, IndexPage hero), so the
+         first frame on a slow connection carries the name and nothing moves when the app takes over. -->
+    <div id="root">
+      <div class="boot" aria-hidden="true"></div>
+      <div class="relative min-h-[100dvh] overflow-x-clip text-text">
+        <header class="glass sticky top-0 z-40">
+          <div class="mx-auto flex h-16 max-w-frame items-center justify-between gap-4 px-4 sm:px-8 lg:px-12">
+            <div class="flex min-w-0 items-baseline gap-3">
+              <a href="/" class="inline-flex min-h-11 items-center whitespace-nowrap rounded-control font-display text-[18px] font-bold tracking-[-0.02em] text-text sm:min-h-0 [@media(pointer:coarse)]:min-h-11">Sriman’s Gallery</a>
+              <span class="hidden text-small text-text-2 sm:inline">component gallery</span>
+            </div>
+          </div>
+        </header>
+        <div class="boot-hero relative z-10 mx-auto max-w-frame px-4 sm:px-8 lg:px-12">
+          <main class="pb-20 pt-8 sm:pt-12">
+            <section class="hero-stage relative -mt-8 flex min-h-[calc(100svh-6.5rem)] flex-col justify-end pb-12 sm:-mt-12 lg:justify-center lg:pb-16">
+              <div class="hero-copy relative w-fit max-w-[min(100%,980px)]">
+                <h1 class="hero-title" aria-label="Sriman's Gallery">
+                  <span class="signature-ink block" aria-hidden="true">Sriman</span>
+                  <span class="hero-name block font-display font-extrabold uppercase text-text" aria-hidden="true"><span class="-mx-[0.06em] inline-block overflow-hidden px-[0.06em] pb-[0.12em] align-bottom">Gallery</span></span>
+                </h1>
+                <p class="hero-accent font-display font-bold uppercase"><span class="accent-ink">Thirty components in thirteen weeks.</span></p>
+              </div>
+              <div class="hero-foot relative mt-10 h-11 lg:absolute lg:inset-x-0 lg:bottom-8 lg:mt-0"></div>
+            </section>
+          </main>
+        </div>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

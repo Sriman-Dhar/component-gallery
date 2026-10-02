@@ -27,4 +27,9 @@ export function motionAllowed(): boolean {
     : false;
 }
 
+/** True when the app mounted over the static shell's already visible hero words (a slow load, see main.tsx). */
+export function bootLate(): boolean {
+  return typeof document !== 'undefined' && document.documentElement.dataset.bootLate === 'true';
+}
+
 export { gsap, ScrollTrigger, useGSAP };

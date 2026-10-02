@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { gsap, useGSAP, withMotion } from '../../lib/motion';
+import { bootLate, gsap, useGSAP, withMotion } from '../../lib/motion';
 
 /**
  * The signature: the name in the script face, in amber, written on left to right by a clip sweep (1.2s,
@@ -12,6 +12,7 @@ export default function Signature({ text, delay = 0.55 }: { text: string; delay?
   useGSAP(
     () =>
       withMotion(() => {
+        if (bootLate()) return;
         gsap.fromTo(
           ink.current,
           { clipPath: 'inset(-20% 100% -30% -6%)' },
