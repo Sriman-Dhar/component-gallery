@@ -48,6 +48,8 @@ function Scene({ mode, still, shipped, litWeeks, grid, slot, low }: Omit<Props, 
 
   useEffect(() => {
     uniforms.uDof.value = low ? 0 : 1;
+    // Exposed for QA runs: which tier the frame-rate monitor has settled on.
+    document.documentElement.dataset.worldTier = low ? 'low' : 'high';
   }, [uniforms, low]);
 
   useEffect(() => {
@@ -66,7 +68,7 @@ function Scene({ mode, still, shipped, litWeeks, grid, slot, low }: Omit<Props, 
       <WorldBodies uniforms={uniforms} shipped={lit} />
       <WorldParticles uniforms={uniforms} count={count} low={low} shipped={lit} litWeeks={mode === 'dark' ? [] : litWeeks} grid={grid} />
       <EffectComposer multisampling={0} frameBufferType={HalfFloatType} depthBuffer={false}>
-        <Bloom mipmapBlur levels={low || mode === 'close' ? 5 : 7} intensity={dark ? 1.05 : 0} luminanceThreshold={0.92} luminanceSmoothing={0.2} radius={0.74} />
+        <Bloom mipmapBlur levels={mode === 'close' ? 5 : 7} intensity={dark ? 1.05 : 0} luminanceThreshold={0.92} luminanceSmoothing={0.2} radius={0.74} />
         <Vignette offset={0.32} darkness={dark ? 0.62 : 0.18} />
       </EffectComposer>
       <FrameDriver still={still} redraw={redraw} fixed={mode === 'index'} />
@@ -77,7 +79,7 @@ function Scene({ mode, still, shipped, litWeeks, grid, slot, low }: Omit<Props, 
 /**
  * The Living Orrery's one canvas: fixed behind the DOM, opaque (it paints the frame's bg and nebula itself),
  * no antialias (a particle field), no own loop (FrameDriver). DPR 1 to 1.5, stepped by a 55 fps floor;
- * a fallback from the monitor drops to the low tier (half the particles, no depth blur, the nebula eased to 80%).
+ * a fallback from the monitor drops to the low tier (70% of the particles, no depth blur, the nebula eased to 80%).
  */
 export default function WorldCanvas({ onReady, onLost, ...scene }: Props) {
   const max = Math.max(DPR_MIN, Math.min(window.devicePixelRatio || 1, scene.mode === 'close' ? DPR_CLOSE : DPR_MAX));

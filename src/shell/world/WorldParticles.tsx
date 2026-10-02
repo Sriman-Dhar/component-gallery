@@ -7,10 +7,13 @@ import { GLYPH_FONT } from './glyphSampler';
 import { castGlyphs, type GridPlan } from './gridGeometry';
 import { buildWorldGeometry } from './worldGeometry';
 
+/** The low tier keeps 70% of the swarm: below that the orbit trails thin to dotted outlines. */
+const LOW_SHARE = 0.7;
+
 interface Props {
   uniforms: WorldUniforms;
   count: number;
-  /** Low tier draws only the first half of the buffer (a fair sample: kinds are interleaved). */
+  /** Low tier draws only the first LOW_SHARE of the buffer (a fair sample: kinds are interleaved). */
   low: boolean;
   shipped: number;
   litWeeks: number[];
@@ -47,7 +50,7 @@ export default function WorldParticles({ uniforms, count, low, shipped, litWeeks
   );
 
   useEffect(() => {
-    geometry.setDrawRange(0, low ? Math.floor(count / 2) : count);
+    geometry.setDrawRange(0, low ? Math.floor(count * LOW_SHARE) : count);
   }, [geometry, low, count]);
 
   useEffect(() => {
