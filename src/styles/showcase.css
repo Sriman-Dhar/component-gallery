@@ -274,7 +274,8 @@ html[data-world='live'] .vignette {
   height: 28px;
   border-radius: 999px;
   border: 1px solid rgb(var(--color-accent) / 0.55);
-  box-shadow: 0 0 12px rgb(var(--color-accent) / 0.25), inset 0 0 8px rgb(var(--color-glow) / 0.12);
+  /* A dark hairline outside the stroke, the mirror of paper's cream one, so it reads over white type too. */
+  box-shadow: 0 0 0 1px rgb(12 8 4 / 0.6), 0 0 12px rgb(var(--color-accent) / 0.25), inset 0 0 8px rgb(var(--color-glow) / 0.12);
   opacity: 0;
   transition: transform var(--dur-base) var(--ease-out), opacity var(--dur-fast) var(--ease-out),
     border-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-base) var(--ease-out);
@@ -285,7 +286,7 @@ html[data-world='live'] .vignette {
 .cursor-ring[data-state='hot'] .cursor-ring-dot {
   transform: scale(1.6);
   border-color: rgb(var(--color-glow) / 0.9);
-  box-shadow: 0 0 22px rgb(var(--color-accent) / 0.5), inset 0 0 10px rgb(var(--color-glow) / 0.25);
+  box-shadow: 0 0 0 1px rgb(12 8 4 / 0.6), 0 0 22px rgb(var(--color-accent) / 0.5), inset 0 0 10px rgb(var(--color-glow) / 0.25);
 }
 .cursor-ring[data-state='grab'] .cursor-ring-dot {
   transform: scale(0.6);
