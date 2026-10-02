@@ -50,6 +50,13 @@ export const world = {
 
 export type Box = typeof world.keep;
 
+/** Lands the damped scroll values on their targets at once (a restored scroll position, not a flight). */
+export function snapWorld(): void {
+  world.dive = world.diveTarget;
+  world.grid = world.gridTarget;
+  world.coda = world.codaTarget;
+}
+
 /** Writes an element's box in document pixels into `box` (one layout read; call on refresh, never per frame). */
 export function measureBox(box: Box, el: Element | null): void {
   const rect = el?.getBoundingClientRect();

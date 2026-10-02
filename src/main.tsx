@@ -8,6 +8,9 @@ import './index.css';
 // The app arrived after the static shell's hero words were shown (index.html): the intro must not replay over them.
 if (performance.now() > 1000) document.documentElement.dataset.bootLate = 'true';
 
+// The routed view restores each history entry's scroll itself (RouteTransition), after its page has rendered.
+if ('scrollRestoration' in window.history) window.history.scrollRestoration = 'manual';
+
 const root = document.getElementById('root');
 if (!root) throw new Error('Missing #root element');
 
