@@ -117,8 +117,22 @@ void main() {
   float k = sin(uTime * 7.3) * sin(uTime * 2.1 + 1.3) * sin(uTime * 13.7 + 0.4);
   float gutter = clamp(0.3 + 0.55 * k * k + 0.2 * sin(uTime * 1.7), 0.06, 1.0);
   color = mix(color, uDeep * 3.0 * (core + corona) + uBody * corona, uGutter * 0.6) * mix(1.0, gutter, uGutter);
-  color *= (uSolo < 0.0 ? 1.0 : 0.3) * uIgnite * mix(1.0, 0.45, uLight) * mix(mix(0.3, 1.0, uBodies), 0.9, uSunDock.z);
-  color *= 1.0 - vVeil * 0.85;
+  float strength = (uSolo < 0.0 ? 1.0 : 0.3) * uIgnite * mix(mix(0.3, 1.0, uBodies), 0.9, uSunDock.z);
+  if (uLight > 0.5) {
+    // Paper: light cannot add, so the sun is ink. A crisp warm disc (bright amber centre to a deep rim), a thin
+    // ink ring flare, six fine ink rays and a warm halo; normal blending, so every term carries its own alpha.
+    float disc = smoothstep(0.1, 0.088, r);
+    vec3 face = mix(uBody * 1.2, uDeep, smoothstep(0.0, 0.095, r));
+    float ring = smoothstep(0.006, 0.0, abs(r - 0.15)) * 0.45 * flick;
+    float spokes = exp(-r * 9.0) * pow(abs(sin(a * 6.0 + uTime * 0.15)), 40.0) * 0.9 * smoothstep(0.1, 0.13, r);
+    float halo = exp(-r * 10.0) * 0.5 * (1.0 - disc);
+    float ink = clamp((ring + spokes) * 1.6, 0.0, 1.0);
+    vec3 paper = mix(mix(uBody, uDeep, ink), face, disc);
+    float cover = clamp(disc + ring + spokes + halo, 0.0, 1.0) * mix(1.0, 0.75, uGutter * (1.0 - gutter));
+    gl_FragColor = vec4(paper, cover * strength * (1.0 - vVeil * 0.85));
+    return;
+  }
+  color *= strength * (1.0 - vVeil * 0.85);
   gl_FragColor = vec4(color, alpha * uIgnite * (1.0 - vVeil * 0.85));
 }
 `;
