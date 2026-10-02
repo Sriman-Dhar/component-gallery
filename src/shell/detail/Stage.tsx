@@ -4,6 +4,7 @@ import type { GalleryEntry } from '../../lib/types';
 import DemoBoundary from '../DemoBoundary';
 import StageCorners from './StageCorners';
 import StageControls, { type StageTheme, type WidthPreset } from './StageControls';
+import { useStageThemeFade } from './useStageThemeFade';
 import { useStageWidth } from './useStageWidth';
 
 const WIDTH_NOTE: Record<WidthPreset, string> = { '375': '375 px viewport', '768': '768 px viewport', full: 'Full width' };
@@ -15,8 +16,11 @@ export default function Stage({ entry }: { entry: GalleryEntry }) {
   const root = useRef<HTMLElement>(null);
   const room = useRef<HTMLDivElement>(null);
   const frame = useRef<HTMLDivElement>(null);
+  const veil = useRef<HTMLDivElement>(null);
+  const rim = useRef<HTMLDivElement>(null);
   const [theme, setTheme] = useState<StageTheme>('dark');
   const { width, unavailable, resize } = useStageWidth(room, frame);
+  useStageThemeFade(veil, rim, theme);
 
   useGSAP(
     () =>
@@ -44,6 +48,8 @@ export default function Stage({ entry }: { entry: GalleryEntry }) {
           className="stage-frame stage-surface mx-auto w-full overflow-hidden rounded-tile shadow-[0_0_0_1px_rgb(var(--color-line)),0_40px_80px_-40px_rgb(var(--color-accent-deep)/var(--shadow-alpha))]"
         >
           <StageCorners />
+          <div ref={veil} aria-hidden="true" className="pointer-events-none absolute inset-0 z-[3] opacity-0" />
+          <div ref={rim} aria-hidden="true" className="stage-rim pointer-events-none absolute inset-x-0 top-0 z-[4] h-px opacity-0" />
           <div className="flex min-h-[520px] w-full items-center justify-center overflow-auto p-3 sm:p-8">
             <DemoBoundary
               fallback={(message) => (

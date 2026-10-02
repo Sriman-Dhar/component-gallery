@@ -6,7 +6,7 @@ const PX: Record<Exclude<WidthPreset, 'full'>, number> = { '375': 375, '768': 76
 
 /**
  * The stage frame's width preset. The frame itself narrows to 375 or 768 and stays centered, tweened
- * 280ms on power3.inOut; Full releases the cap after the tween. A preset as wide as the room the frame
+ * 420ms on expo.out (the frame glides and settles); Full releases the cap after the tween. A preset as wide as the room the frame
  * has (a phone, a narrow window) would change nothing, so it is reported as unavailable and, if it was
  * the active one, the stage falls back to Full.
  */
@@ -39,11 +39,16 @@ export function useStageWidth(room: RefObject<HTMLElement>, frame: RefObject<HTM
     const settle = () => void (el.style.maxWidth = next === 'full' ? '' : `${target}px`);
     tween.current?.kill();
     if (!motionAllowed()) return settle();
-    tween.current = gsap.fromTo(
-      el,
-      { maxWidth: el.getBoundingClientRect().width },
-      { maxWidth: target, duration: 0.28, ease: 'power3.inOut', onComplete: settle },
-    );
+    // A plain value tweened and written as px each tick: the cap moves every frame, never one end-state jump.
+    const cap = { px: el.getBoundingClientRect().width };
+    el.style.maxWidth = `${cap.px}px`;
+    tween.current = gsap.to(cap, {
+      px: target,
+      duration: 0.42,
+      ease: 'expo.out',
+      onUpdate: () => void (el.style.maxWidth = `${cap.px}px`),
+      onComplete: settle,
+    });
   };
 
   // The active preset outgrew the room: release it back to Full.
