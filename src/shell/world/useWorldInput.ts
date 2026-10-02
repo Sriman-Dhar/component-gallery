@@ -107,7 +107,9 @@ export function useWorldInput(hero: RefObject<HTMLElement>, onTurned: () => void
       world.pointer.on = 0;
       showTag(-1);
     };
-    window.addEventListener('pointermove', move, { passive: true });
+    // On the document, not the window: it runs before the cursor ring's window listener, so the ring reads this
+    // move's data-cursor (a shipped body under the pointer turns the ring hot on the same frame).
+    document.addEventListener('pointermove', move, { passive: true });
     el.addEventListener('pointerdown', down);
     window.addEventListener('pointerup', up);
     window.addEventListener('pointercancel', up);
@@ -115,7 +117,7 @@ export function useWorldInput(hero: RefObject<HTMLElement>, onTurned: () => void
     return () => {
       delete el.dataset.cursor;
       showTag(-1);
-      window.removeEventListener('pointermove', move);
+      document.removeEventListener('pointermove', move);
       el.removeEventListener('pointerdown', down);
       window.removeEventListener('pointerup', up);
       window.removeEventListener('pointercancel', up);
