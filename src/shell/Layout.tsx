@@ -3,6 +3,7 @@ import { numberOf, runningLabel, shipped, upcomingWeek } from '../lib/catalogue'
 import { formatDate } from '../lib/date';
 import { WINDOW_END, WINDOW_START, weekOf } from '../lib/ruler';
 import { PACE_LINE } from '../lib/site';
+import CursorRing from './CursorRing';
 import GrainLayer from './GrainLayer';
 import Header from './Header';
 import LightField from './LightField';
@@ -28,6 +29,7 @@ export default function Layout() {
       <LightField />
       <World key={mode === 'index' ? mode : pathname} mode={mode} shipped={shipped.length} litWeeks={litWeeks} grid={grid} slot={slot} />
       <GrainLayer />
+      <CursorRing />
       <Header />
       <div className="relative z-10 mx-auto max-w-frame px-4 sm:px-8 lg:px-12">
         <main className="pb-20 pt-8 sm:pt-12">
