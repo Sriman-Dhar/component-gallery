@@ -90,6 +90,12 @@ describe('routes', () => {
     }
   });
 
+  it('sends the bare /components address to the index tiles, not the 404', () => {
+    renderAt('/components');
+    expect(screen.getByRole('list', { name: 'Components' })).toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: 'Nothing shipped here.' })).not.toBeInTheDocument();
+  });
+
   it('shows the 404 view with the unlit rail for an unknown slug', () => {
     renderAt('/components/does-not-exist');
     expect(screen.getByRole('heading', { name: 'Nothing shipped here.' })).toBeInTheDocument();

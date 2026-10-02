@@ -10,6 +10,7 @@ import HeroFoot from '../shell/hero/HeroFoot';
 import HeroIntro from '../shell/hero/HeroIntro';
 import LightRail from '../shell/rail/LightRail';
 import TileGrid from '../shell/tiles/TileGrid';
+import { useLandOnTiles } from '../shell/tiles/useLandOnTiles';
 import { useDiveScroll } from '../shell/world/useDiveScroll';
 import { useGridScroll } from '../shell/world/useGridScroll';
 import { useWorldInput } from '../shell/world/useWorldInput';
@@ -33,6 +34,7 @@ export default function IndexPage() {
   const coda = useRef<HTMLDivElement>(null);
   useDiveScroll(hero, rail);
   useGridScroll(grid, coda);
+  useLandOnTiles('shipped-heading');
   const [turned, setTurned] = useState(false);
   useWorldInput(hero, useCallback(() => setTurned(true), []));
 
