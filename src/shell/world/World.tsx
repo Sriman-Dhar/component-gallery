@@ -67,7 +67,7 @@ export default function World({ mode, shipped, litWeeks, grid, slot = 0, leaving
       className={`pointer-events-none inset-x-0 top-0 z-0 transition-opacity duration-[160ms] ease-linear motion-reduce:transition-none ${box} ${leaving ? 'opacity-0' : ''}`}
       style={mode === 'index' ? undefined : { ...FADE, height: mode === 'close' ? closeHeight : undefined }}
     >
-      {poster ? <WorldPoster shipped={mode === 'dark' ? 0 : shipped} recede={fixed} /> : null}
+      {poster ? <WorldPoster shipped={mode === 'dark' ? 0 : shipped} recede={fixed} quiet={mode === 'dark'} /> : null}
       {canvas ? (
         <Suspense fallback={null}>
           <WorldCanvas
