@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { runningLabel } from '../../lib/catalogue';
 import { formatDate } from '../../lib/date';
 import type { GalleryEntry } from '../../lib/types';
+import { armCarryFrom } from '../carry/carry';
 import TypeStamp from '../TypeStamp';
 import LiveStage from './LiveStage';
 import { useTilt } from './useTilt';
@@ -53,6 +54,10 @@ export default function Tile({ entry, caption, rel }: Props) {
             <Link
               to={`/components/${meta.slug}`}
               rel={rel}
+              onClick={(event) => {
+                // A plain click carries the tile's light into the page; a new-tab click leaves this page as it is.
+                if (!event.metaKey && !event.ctrlKey && !event.shiftKey) armCarryFrom(tile.current?.querySelector('.stage-spot') ?? null);
+              }}
               className="-my-2 block truncate py-2 font-display text-[20px] font-semibold leading-7 tracking-[-0.02em] text-text outline-none after:absolute after:inset-0 after:content-['']"
             >
               {meta.name}

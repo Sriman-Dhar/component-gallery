@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { slotCaption } from '../../lib/catalogue';
 import { gsap, motionAllowed } from '../../lib/motion';
 import { canUseWebGL } from '../../lib/webgl';
+import { armCarry } from '../carry/carry';
 import { dragEnd, dragMove, dragStart } from '../orrery/orrerySpin';
 import { bodyUnder } from './bodyScreen';
 import { world } from './worldState';
@@ -90,6 +91,8 @@ export function useWorldInput(hero: RefObject<HTMLElement>, onTurned: () => void
         const i = bodyUnder(event.clientX, event.clientY);
         const slug = i >= 0 ? slotCaption(i).slug : undefined;
         if (slug) {
+          const xyr = world.bodies.xyr;
+          armCarry(xyr[i * 3], xyr[i * 3 + 1], xyr[i * 3 + 2]);
           navigate(`/components/${slug}`);
           return;
         }
