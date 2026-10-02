@@ -39,7 +39,7 @@ export default function HeroFoot({ shipped, turned }: { shipped: number; turned:
       <button
         type="button"
         onClick={toWork}
-        className={`group inline-flex min-h-11 items-center gap-2.5 rounded-full border border-line bg-surface/70 px-4 font-mono text-small text-text backdrop-blur-sm transition-colors duration-fast hover:border-accent/60 ${FOCUS_RING}`}
+        className={`group inline-flex min-h-11 shrink-0 items-center gap-2.5 whitespace-nowrap rounded-full border border-line bg-surface/70 px-4 font-mono text-small text-text backdrop-blur-sm transition-colors duration-fast hover:border-accent/60 ${FOCUS_RING}`}
       >
         See the {shipped} shipped
         <svg viewBox="0 0 12 12" aria-hidden="true" className="h-3 w-3 text-accent transition-transform duration-fast group-hover:translate-y-0.5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
@@ -49,14 +49,14 @@ export default function HeroFoot({ shipped, turned }: { shipped: number; turned:
       {hint ? (
         <p
           aria-hidden="true"
-          className={`drag-hint pointer-events-none flex items-center gap-2 font-mono text-meta text-text-2 transition-opacity duration-slow ${turned ? 'opacity-0' : 'opacity-100'}`}
+          className={`drag-hint pointer-events-none flex items-center whitespace-nowrap gap-2 font-mono text-meta text-text-2 transition-opacity duration-slow ${turned ? 'opacity-0' : 'opacity-100'}`}
         >
           <svg viewBox="0 0 20 12" className="h-3 w-5 text-accent" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round">
             <ellipse cx="10" cy="6" rx="8.5" ry="3.6" />
             <path d="M15.5 1.2 18.6 2.6 17 5.4" />
           </svg>
           <span className="hidden [@media(pointer:fine)]:inline">Drag to turn</span>
-          <span className="[@media(pointer:fine)]:hidden">Swipe sideways to turn</span>
+          <span className="[@media(pointer:fine)]:hidden">Swipe to turn</span>
         </p>
       ) : null}
     </div>

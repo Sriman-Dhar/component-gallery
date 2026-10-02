@@ -116,8 +116,8 @@
    reads over the stream (the halo is paint behind the glyph, so the letterforms stay crisp). */
 [data-week-label] {
   paint-order: stroke;
-  stroke: rgb(var(--color-bg) / 0.9);
-  stroke-width: 4px;
+  stroke: rgb(var(--color-bg) / 0.78);
+  stroke-width: 3px;
   stroke-linejoin: round;
 }
 .rail-caption span {
