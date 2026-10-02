@@ -56,7 +56,9 @@ void main() {
   dark = mix(dark, mix(uDeep, vec3(0.86), 0.62), uLight * 0.75);
   // A shipped body is self-lit: its night side keeps an ember core and a warm atmosphere rim that the bloom
   // spreads into a halo, so the two shipped planets read as special at rest, from any angle, before any hover.
-  lit += uBody * (0.55 + 0.25 * (1.0 - ndl)) * mix(1.0, 0.5, uLight) + uCore * pow(fres, 1.6) * mix(2.2, 0.9, uLight);
+  // In the dark frame the night side burns past the bloom threshold, so a far-side planet still haloes.
+  float night = mix(1.4 * (0.55 + 0.75 * (1.0 - ndl)), 0.5 * (0.55 + 0.25 * (1.0 - ndl)), uLight);
+  lit += uBody * night + uCore * pow(fres, 1.6) * mix(2.2, 0.9, uLight);
   vec3 color = mix(dark, lit, vLit) + uCool * fres * (1.0 - ndl) * mix(0.9, 0.2, vLit);
   gl_FragColor = vec4(color, 1.0);
 }

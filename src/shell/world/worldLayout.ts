@@ -26,11 +26,14 @@ export function heroFraming(width: number, height: number): Framing {
   if (aspect < 0.9) {
     return { distance: outer / (2 * tan * aspect * 1.5), shift: [0, 0.14] };
   }
-  const fill = aspect > 1.45 ? 0.82 : 0.96;
-  return { distance: Math.max(2.4, outer / (2 * tan * aspect * fill)), shift: [aspect > 1.45 ? 0.34 : 0.24, 0.02] };
+  // Near-square screens (1024x768): the headline spans most of the width, so the sun moves past its veil box
+  // and lifts above the tagline, so the inner ring (the shipped bodies) never sinks under the words.
+  const wide = aspect > 1.45;
+  const fill = wide ? 0.82 : 0.9;
+  return { distance: Math.max(2.4, outer / (2 * tan * aspect * fill)), shift: wide ? [0.34, 0.02] : [0.56, 0.1] };
 }
 
-/** Particle count for the viewport: one budget, sparser on small screens. The low tier draws half. */
+/** Particle count for the viewport: one budget, sparser on small screens. The low tier draws 70%. */
 export function particleCount(width: number): number {
   if (width >= 1024) return 11000;
   if (width >= 640) return 7000;
