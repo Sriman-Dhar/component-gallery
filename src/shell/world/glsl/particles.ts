@@ -47,7 +47,7 @@ void main() {
   // Close orbit: points near the lens stay fine and faint, so the body and its ring read, not a bokeh soup.
   float close = step(0.0, uSolo);
   vAlpha *= (1.0 - close * vBlur * 0.6) * (1.0 - veil(ndc) * 0.92);
-  gl_PointSize = clamp(mix(a.size, b.size, k) * (1.0 + lit * 0.5), 0.5, mix(26.0, 7.0, close)) * uPixel;
+  gl_PointSize = clamp(mix(a.size, b.size, k) * (1.0 + lit * 0.5), 0.5, mix(16.0, 7.0, close)) * uPixel;
   gl_Position = vec4(ndc, 0.0, 1.0);
 }
 `;
@@ -75,6 +75,11 @@ void main() {
   vec3 color = mix(mix(uCool, uCore, vHeat), warm, vWarm);
   float hdr = mix(1.0 + vHeat * 2.2 + step(1.2, vAlpha) * 0.8, 1.0, uLight);
   float alpha = a * min(vAlpha, 1.0) * (1.0 - vBlur * 0.55);
+  // On paper there is no bloom: a dense or soft cluster deepens toward warm ink and thins, so the flare reads
+  // as a darker burn, never a flat orange blob.
+  float burn = uLight * clamp(vBlur + max(vAlpha - 1.0, 0.0) * 0.5, 0.0, 0.7);
+  color = mix(color, uDeep * 0.8, burn);
+  alpha *= 1.0 - burn * 0.45;
   gl_FragColor = vec4(color * hdr, alpha);
 }
 `;

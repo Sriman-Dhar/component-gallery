@@ -25,7 +25,9 @@ Form formOrbit() {
   vec4 clip = projectionMatrix * view;
   f.ndc = clip.xy / clip.w;
   float depth = -view.z;
-  f.blur = clamp(abs(depth - uFocus) / 1.6, 0.0, 1.0) * uDof * (1.0 - isCore);
+  // Depth of field softens the far field only; a point rushing past the lens stays a fine grain, not a disc.
+  float defocus = max(depth - uFocus, (uFocus - depth) * 0.3);
+  f.blur = clamp(defocus / 1.6, 0.0, 1.0) * uDof * (1.0 - isCore);
   // Ring draw-on: the filament appears by angle with a hot head at the drawing front.
   float drawn = smoothstep(aU - 0.035, aU, uDraw * 1.04);
   float head = exp(-pow((uDraw * 1.04 - aU) / 0.02, 2.0)) * step(uDraw, 0.999);
@@ -40,10 +42,12 @@ Form formOrbit() {
   f.bright *= 1.0 + isCore * 1.6 * uIgnite;
   f.warm = mix(1.0 - aTone, 1.0, isCore);
   f.heat = 0.0;
-  float persp = 2.4 / max(0.25, depth);
+  // Perspective growth is capped near the camera (about 4x the hero size at most) so the dive's flight
+  // through the sun reads as fine sparks, and points closer than the lens fall away instead of swelling.
+  float persp = 2.4 / max(0.6, depth);
   float size = (1.3 + aSeed * 1.3 + aBright * 2.0 + isCore * 0.8) * persp;
   f.size = mix(size, (0.8 + aSeed) * persp, isDust) * (1.0 + f.blur * 2.2);
-  f.bright *= step(0.06, depth);
+  f.bright *= smoothstep(0.08, 0.55, depth);
   return f;
 }
 `,
