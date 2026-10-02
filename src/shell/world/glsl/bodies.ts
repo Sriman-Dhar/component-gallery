@@ -16,6 +16,7 @@ attribute float aOrder;
 varying vec3 vNormal;
 varying vec3 vWorld;
 varying float vLit;
+varying float vNear;
 void main() {
   float arrive = smoothstep(aOrder * 0.6, aOrder * 0.6 + 0.4, uArrive);
   vec3 center = ringPoint(aSlotRing, aSlotU, vec3(0.0)) * mix(2.4, 1.0, arrive);
@@ -27,6 +28,8 @@ void main() {
   vNormal = normalize(normal);
   vWorld = world;
   vLit = aLit;
+  // How close to the lens (the dive flies past bodies at depth < 0.9; the hero keeps them past 1.3).
+  vNear = 1.0 - smoothstep(0.35, 0.9, -(viewMatrix * vec4(center, 1.0)).z);
   gl_Position = projectionMatrix * viewMatrix * vec4(world, 1.0);
 }
 `;
@@ -36,11 +39,13 @@ uniform vec3 uCore;
 uniform vec3 uBody;
 uniform vec3 uCool;
 uniform vec3 uDeep;
+uniform vec3 uBg;
 uniform float uLight;
 uniform float uIgnite;
 varying vec3 vNormal;
 varying vec3 vWorld;
 varying float vLit;
+varying float vNear;
 void main() {
   vec3 n = normalize(vNormal);
   vec3 toSun = normalize(-vWorld);
@@ -60,6 +65,9 @@ void main() {
   float night = mix(1.4 * (0.55 + 0.75 * (1.0 - ndl)), 0.5 * (0.55 + 0.25 * (1.0 - ndl)), uLight);
   lit += uBody * night + uCore * pow(fres, 1.6) * mix(2.2, 0.9, uLight);
   vec3 color = mix(dark, lit, vLit) + uCool * fres * (1.0 - ndl) * mix(0.9, 0.2, vLit);
+  // On paper a future body rushing past the lens melts into the ground and leaves only its rim, so the
+  // depth blur never smears it into a grey disc.
+  color = mix(color, uBg, vNear * uLight * (1.0 - vLit) * (1.0 - smoothstep(0.2, 0.6, fres)));
   gl_FragColor = vec4(color, 1.0);
 }
 `;
