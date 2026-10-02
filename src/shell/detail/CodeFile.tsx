@@ -2,7 +2,11 @@ import { useId, useRef, useState } from 'react';
 import { gsap, useGSAP, withMotion } from '../../lib/motion';
 import type { SourceFile } from '../../lib/types';
 import CopyButton from '../CopyButton';
+import CodeLines from './CodeLines';
 import { FOCUS_RING } from '../focus';
+
+/** A long file opens on its first lines and expands in place. */
+const HEAD = 48;
 
 interface Props {
   file: SourceFile;
@@ -12,13 +16,16 @@ interface Props {
 
 /**
  * One source file, collapsible. The header always shows the name, line count, the toggle and Copy
- * (copy works while collapsed). Each time the body opens, a 2px accent line scans it top to bottom once.
+ * (copy works while collapsed). The body is highlighted (CodeLines) and grows with the page. Each time the body opens, a 2px accent line scans it top to bottom once.
  */
 export default function CodeFile({ file, defaultOpen = false }: Props) {
   const root = useRef<HTMLElement>(null);
   const bodyId = useId();
   const [open, setOpen] = useState(defaultOpen);
+  const [full, setFull] = useState(false);
   const lines = file.code.replace(/\n$/, '').split('\n');
+  const long = lines.length > HEAD + 12;
+  const clipped = long && !full;
 
   useGSAP(
     () =>
@@ -70,20 +77,30 @@ export default function CodeFile({ file, defaultOpen = false }: Props) {
       </figcaption>
       <div id={bodyId} hidden={!open} className="relative">
         {open ? (
-          // Capped height with its own scroll, so a long file never stretches the page; focusable to scroll by keyboard.
-          <pre
-            tabIndex={0}
-            aria-label={`${file.fileName} source`}
-            className={`code-body max-h-[min(70vh,720px)] overflow-auto p-5 font-mono text-[13px] leading-[20px] text-text outline-none focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent`}
-          >
-            <code>
-              {lines.map((line, i) => (
-                <span key={i} className="block min-h-[20px]">
-                  {line}
-                </span>
-              ))}
-            </code>
-          </pre>
+          // No inner vertical scroll (the wheel never gets trapped mid-page): a long file shows its head and
+          // expands in place. Sideways overflow scrolls inside; focusable to scroll it by keyboard.
+          <>
+            <pre
+              tabIndex={0}
+              aria-label={`${file.fileName} source`}
+              className="code-body code-scroll overflow-x-auto py-5 pr-5 font-mono text-[13px] leading-[20px] text-text outline-none focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent"
+            >
+              <CodeLines code={file.code} limit={clipped ? HEAD : undefined} />
+            </pre>
+            {long ? (
+              <div className={`relative border-t border-line ${clipped ? 'before:pointer-events-none before:absolute before:inset-x-0 before:-top-16 before:h-16 before:bg-gradient-to-b before:from-transparent before:to-surface' : ''}`}>
+                <button
+                  type="button"
+                  aria-controls={bodyId}
+                  aria-expanded={!clipped}
+                  onClick={() => setFull((v) => !v)}
+                  className={`flex min-h-11 w-full items-center justify-center font-mono text-meta text-text-2 transition-colors duration-fast hover:text-text ${FOCUS_RING}`}
+                >
+                  {clipped ? `Show all ${lines.length} lines` : `Show the first ${HEAD} lines`}
+                </button>
+              </div>
+            ) : null}
+          </>
         ) : null}
         <div aria-hidden="true" className="code-scan pointer-events-none invisible absolute inset-x-0 top-0" />
       </div>
