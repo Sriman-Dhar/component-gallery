@@ -23,7 +23,10 @@ export default function NotFoundPage() {
   useNoIndex();
   return (
     <section aria-labelledby="not-found" className="space-y-12 pb-12 pt-6">
-      <LightRail variant="unlit" />
+      {/* The ruler row is type the dark system keeps clear of, like the copy below it. */}
+      <div data-world-veil>
+        <LightRail variant="unlit" />
+      </div>
       <div data-world-veil className="copy-scrim space-y-5">
         <h1 id="not-found" className="font-display text-[34px] font-extrabold leading-[40px] tracking-[-0.03em] text-text sm:text-[52px] sm:leading-[60px]">
           Nothing shipped <span className="accent-ink">here.</span>

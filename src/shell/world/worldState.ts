@@ -2,6 +2,10 @@ import { useSyncExternalStore } from 'react';
 import { POSTER_YAW, SLOT_COUNT } from '../orrery/orreryModel';
 import { createSpin } from '../orrery/orrerySpin';
 
+/** The most veil boxes a page may mark (data-world-veil): the index's hero and coda words and the footer;
+ * the 404's ruler, copy and footer. */
+export const VEIL_COUNT = 4;
+
 /** The most tiles the halo uniform holds: 30 components and the next slot. */
 export const MAX_TILES = 32;
 
@@ -37,10 +41,7 @@ export const world = {
   far: { left: 0, top: 0, width: 0, height: 0 },
   close: { left: 0, top: 0, width: 0, height: 0 },
   /** The type the scene keeps clear of (data-world-veil), in document pixels. */
-  veil: [
-    { left: 0, top: 0, width: 0, height: 0 },
-    { left: 0, top: 0, width: 0, height: 0 },
-  ],
+  veil: Array.from({ length: VEIL_COUNT }, () => ({ left: 0, top: 0, width: 0, height: 0 })),
   /** The hero's bodies on screen (viewport px x, y, radius each, in slot order) while the hero shows them. */
   bodies: { xyr: new Float32Array(SLOT_COUNT * 3), on: false },
   /** The body under the pointer (slot), or -1; and the label element that names it. */

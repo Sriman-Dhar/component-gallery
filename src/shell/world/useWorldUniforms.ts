@@ -3,7 +3,7 @@ import { Color, SRGBColorSpace, Vector2, Vector3, Vector4 } from 'three';
 import { useFrameTheme, type ThemeName } from '../../lib/theme';
 import { tokenRgb } from '../../lib/tokens';
 import { RINGS } from '../orrery/orreryModel';
-import { MAX_TILES } from './worldState';
+import { MAX_TILES, VEIL_COUNT } from './worldState';
 
 export type WorldUniforms = ReturnType<typeof createUniforms>;
 
@@ -51,7 +51,7 @@ function createUniforms() {
     /** Close orbit: this component's slot (the only body drawn, points kept fine), or -1 in other modes. */
     uSolo: { value: -1 },
     /** Boxes of type the scene keeps clear of (viewport px of the canvas); width 0 = none. */
-    uVeil: { value: [new Vector4(0, 0, 0, 0), new Vector4(0, 0, 0, 0)] },
+    uVeil: { value: Array.from({ length: VEIL_COUNT }, () => new Vector4(0, 0, 0, 0)) },
   };
 }
 

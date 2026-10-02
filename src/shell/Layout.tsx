@@ -37,7 +37,7 @@ export default function Layout() {
         <main className="pb-20 pt-8 sm:pt-12">
           <RouteTransition />
         </main>
-        <footer className="flex flex-wrap items-baseline justify-between gap-3 border-t border-line py-6 text-small text-text-2">
+        <footer data-world-veil className="flex flex-wrap items-baseline justify-between gap-3 border-t border-line py-6 text-small text-text-2">
           <span>
             {PACE_LINE} {formatDate(WINDOW_START, { year: false })} to {formatDate(WINDOW_END)}.
           </span>

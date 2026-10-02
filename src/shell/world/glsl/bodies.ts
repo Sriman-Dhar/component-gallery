@@ -1,3 +1,4 @@
+import { VEIL_COUNT } from '../worldState';
 import { commonGlsl, veilGlsl } from './common';
 
 /**
@@ -72,7 +73,7 @@ uniform float uBodies;
 uniform vec3 uSunDock;
 uniform vec2 uViewport;
 uniform float uSolo;
-uniform vec4 uVeil[2];
+uniform vec4 uVeil[${VEIL_COUNT}];
 varying vec2 vUv;
 varying float vVeil;
 ${veilGlsl}
