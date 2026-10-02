@@ -1,5 +1,7 @@
+import { useRef } from 'react';
 import { useScrolled } from '../../lib/useScrolled';
 import OrreryPoster from '../orrery/OrreryPoster';
+import { usePosterVeil } from './usePosterVeil';
 
 /** How far down the page (a share of the viewport) the fixed poster steps back behind the story. */
 const RECEDE_AT = 0.6;
@@ -13,8 +15,11 @@ const RECEDE_AT = 0.6;
 export default function WorldPoster({ shipped, recede = false, quiet = false }: { shipped: number; recede?: boolean; quiet?: boolean }) {
   const past = useScrolled(typeof window === 'undefined' ? 0 : window.innerHeight * RECEDE_AT);
   const back = recede && past;
+  const root = useRef<HTMLDivElement>(null);
+  usePosterVeil(root);
   return (
     <div
+      ref={root}
       data-testid="world-poster"
       className={`pointer-events-none absolute inset-x-0 top-0 h-[100svh] overflow-hidden transition-opacity duration-slow ease-out motion-reduce:transition-none ${back ? 'opacity-25' : ''} ${quiet ? '[@media(max-width:639px)]:opacity-25' : ''}`}
     >
