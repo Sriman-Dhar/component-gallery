@@ -39,10 +39,17 @@ export const BASE_SPIN = (Math.PI * 2) / 40;
 /** The yaw the poster is drawn at: the lit inner slots sit at the front. */
 export const POSTER_YAW = 0.9;
 
+/**
+ * Each slot's drift off even spacing (share of a turn): real orbits are never evenly spaced, and the first two
+ * slots (the first shipped pair) must not sit level and mirrored above the sun on load, where they read as a face.
+ */
+const PHASE = [0, 0.12, -0.02, 0.03, -0.04, 0.02, 0.05, -0.03, 0.01, -0.05];
+
 /** Ring and position (0..1 around it) of a component slot; each ring starts a little later than the last. */
 export function slotOf(index: number): { ring: number; u: number } {
   const ring = Math.min(RINGS.length - 1, Math.floor(index / SLOTS_PER_RING));
-  return { ring, u: (index % SLOTS_PER_RING) / SLOTS_PER_RING + ring * 0.05 };
+  const at = index % SLOTS_PER_RING;
+  return { ring, u: at / SLOTS_PER_RING + PHASE[at] + ring * 0.05 };
 }
 
 export interface Projected {
