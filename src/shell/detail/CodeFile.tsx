@@ -55,7 +55,7 @@ export default function CodeFile({ file, defaultOpen = false }: Props) {
             aria-controls={bodyId}
             aria-label={`${open ? 'Hide' : 'Show'} ${file.fileName}`}
             onClick={() => setOpen((v) => !v)}
-            className={`inline-flex h-11 min-w-11 items-center justify-center rounded-control px-3 font-mono text-meta text-text-2 transition-colors duration-fast hover:text-text max-[399px]:px-0 sm:h-8 ${FOCUS_RING}`}
+            className={`inline-flex h-11 min-w-11 items-center justify-center rounded-control px-3 font-mono text-meta text-text-2 transition-colors duration-fast hover:text-text max-[399px]:px-0 sm:h-8 [@media(pointer:coarse)]:h-11 ${FOCUS_RING}`}
           >
             {/* Below 400px the toggle is a chevron alone, so the file name keeps the line. */}
             <span className="max-[399px]:hidden">{open ? 'Hide file' : 'Show file'}</span>

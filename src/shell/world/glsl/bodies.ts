@@ -21,7 +21,7 @@ void main() {
   float solo = uSolo < 0.0 ? 1.0 : 1.0 - step(0.5, abs(aOrder * 30.0 - uSolo));
   vec4 at = projectionMatrix * viewMatrix * vec4(center, 1.0);
   // Behind the words a body sinks away rather than sit on a letter.
-  float scale = mix(0.024, 0.042, aLit) * arrive * uBodies * solo * (1.0 - veil(at.xy / at.w));
+  float scale = mix(0.024, 0.042, aLit) * arrive * uBodies * solo * (1.0 - veil(at.xy / at.w)) * mix(1.0, 0.8, uLight * (1.0 - aLit));
   vec3 world = center + position * scale;
   vNormal = normalize(normal);
   vWorld = world;
@@ -51,6 +51,8 @@ void main() {
   vec3 hot = mix(ramp, vec3(1.0), pow(ndl, 12.0) * 0.8);
   vec3 lit = hot * mix(2.6, 1.0, uLight) * (0.35 + 0.65 * uIgnite);
   vec3 dark = mix(uDeep * 0.12, uBody * 0.5, ndl * 0.35);
+  // On the light frame a future body is smoked glass, not an ink blot: lifted toward the paper.
+  dark = mix(dark, mix(uDeep, vec3(0.86), 0.62), uLight * 0.75);
   vec3 color = mix(dark, lit, vLit) + uCool * fres * (1.0 - ndl) * mix(0.9, 0.5, vLit);
   gl_FragColor = vec4(color, 1.0);
 }

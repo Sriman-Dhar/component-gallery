@@ -1,5 +1,6 @@
 import { useCallback, useRef, useState } from 'react';
 import { shipped } from '../lib/catalogue';
+import { weekOf } from '../lib/ruler';
 import { pageTitle, useDocumentTitle } from '../lib/useDocumentTitle';
 import SectionHeading from '../shell/detail/SectionHeading';
 import FarCoda from '../shell/coda/FarCoda';
@@ -14,6 +15,9 @@ import { useGridScroll } from '../shell/world/useGridScroll';
 import { useWorldInput } from '../shell/world/useWorldInput';
 
 const marks = shipped.map(({ meta }) => ({ slug: meta.slug, date: meta.date }));
+/** The latest week and what it shipped, under the count: the number gets its names. */
+const lastWeek = Math.max(0, ...shipped.map(({ meta }) => weekOf(meta.date)));
+const lastNames = shipped.filter(({ meta }) => weekOf(meta.date) === lastWeek).map(({ meta }) => meta.name);
 
 /**
  * Index, one continuous world (the Living Orrery behind it, see shell/world): the hero over the full-bleed
@@ -44,7 +48,16 @@ export default function IndexPage() {
         <BodyTag />
       </section>
       <section aria-label="Progress" className="flex min-h-[52svh] items-end pb-6 pt-16 sm:pb-8 lg:min-h-[70svh]">
-        <CountUp count={shipped.length} />
+        <div>
+          <CountUp count={shipped.length} />
+          {lastNames.length ? (
+            <p className="rail-caption mt-3 font-mono text-meta text-text-2">
+              <span>
+                Week {lastWeek}: <span className="text-text">{lastNames.join(', ')}</span>
+              </span>
+            </p>
+          ) : null}
+        </div>
       </section>
       <section ref={rail} aria-label="Ninety day light rail" className="pb-20 sm:pb-28">
         <LightRail variant="hero" marks={marks} />

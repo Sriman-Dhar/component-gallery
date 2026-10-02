@@ -49,7 +49,7 @@ export default function AskSection({ prompt }: { prompt: string }) {
         <pre
           ref={body}
           id={bodyId}
-          className="max-w-[112ch] overflow-hidden whitespace-pre-wrap break-words border-l-2 border-accent/60 pl-5 font-mono text-small leading-[24px] text-text"
+          className="max-w-[70ch] overflow-hidden whitespace-pre-wrap break-words border-l-2 border-accent/60 pl-5 font-sans text-body leading-[28px] text-text"
           style={collapsed ? { maxHeight: PREVIEW_LINES * LINE_PX } : undefined}
         >
           {prompt}
@@ -64,7 +64,7 @@ export default function AskSection({ prompt }: { prompt: string }) {
           aria-expanded={open}
           aria-controls={bodyId}
           onClick={() => setOpen((v) => !v)}
-          className={`h-11 rounded-control border border-line px-3 sm:h-8 font-mono text-meta text-text transition-colors duration-fast hover:border-text-2 ${FOCUS_RING}`}
+          className={`h-11 rounded-control border border-line px-3 sm:h-8 [@media(pointer:coarse)]:h-11 font-mono text-meta text-text transition-colors duration-fast hover:border-text-2 ${FOCUS_RING}`}
         >
           {open ? 'Show less' : 'Show full prompt'}
         </button>

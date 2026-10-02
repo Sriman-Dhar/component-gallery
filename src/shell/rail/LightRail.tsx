@@ -67,6 +67,7 @@ export default function LightRail({ variant, marks = [], litWeek, today = new Da
     { scope: root },
   );
 
+  const weekCount = marks.filter((mark) => weekOf(mark.date) === litWeek).length;
   const label = [
     'Light rail, 1 Oct to 30 Dec 2026',
     variant === 'unlit' ? 'nothing lit' : `${marks.length} ${marks.length === 1 ? 'component' : 'components'} shipped`,
@@ -88,7 +89,11 @@ export default function LightRail({ variant, marks = [], litWeek, today = new Da
       </div>
       <figcaption className="rail-caption mt-2 flex items-baseline justify-between gap-4 font-mono text-meta text-text-2">
         <span>1 Oct</span>
-        <span className={variant === 'unlit' ? '' : 'text-text'}>{variant === 'unlit' ? 'No signal' : todayCaption(today)}</span>
+        <span className={variant === 'unlit' ? '' : 'text-text'}>
+          {variant === 'unlit' ? 'No signal' : todayCaption(today)}
+          {/* The compact rail says what its lit week holds, so the one bright tick is not the whole story. */}
+          {variant === 'compact' && litWeek ? <span className="hidden text-text-2 sm:inline">{`, ${weekCount} shipped in week ${litWeek}`}</span> : null}
+        </span>
         <span>30 Dec</span>
       </figcaption>
     </figure>

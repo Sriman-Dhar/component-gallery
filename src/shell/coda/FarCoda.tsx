@@ -23,9 +23,9 @@ const FarCoda = forwardRef<HTMLDivElement, { shipped: number }>(function FarCoda
           </div>
         )}
       </div>
-      <div data-world-veil className="copy-scrim relative max-w-[34ch] text-center">
-        <h2 id="coda-heading" className="font-display text-[26px] font-bold leading-[32px] tracking-[-0.025em] text-text sm:text-[34px] sm:leading-[40px]">
-          {week ? `Week ${week} opens ${weekOpens(week).replace(/ \d{4}$/, '')}.` : 'All thirteen weeks are in.'}
+      <div data-world-veil className="copy-scrim relative max-w-[40ch] text-center">
+        <h2 id="coda-heading" className="text-balance font-display text-[26px] font-bold leading-[32px] tracking-[-0.025em] text-text sm:text-[34px] sm:leading-[40px]">
+          {week ? `Week ${week} opens ${weekOpens(week).replace(/ \d{4}$/, '').replace(' ', '\u00a0')}.` : 'All thirteen weeks are in.'}
         </h2>
         <p className="mt-3 text-text-2">
           {shipped} of {TARGET} shipped. Each new one takes its place in the orbit.

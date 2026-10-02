@@ -21,8 +21,9 @@ export default function CountUp({ count }: { count: number }) {
         const el = number.current;
         if (!el) return;
         const state = { value: 0 };
-        gsap.set(el, { opacity: 0.3 });
-        const tl = gsap.timeline({ delay: 0.1, scrollTrigger: { trigger: root.current, start: 'top 80%', once: true } });
+        // It must never sit dim on the busy field: it starts at 0.6 and the count fires as it enters the screen.
+        gsap.set(el, { opacity: 0.6 });
+        const tl = gsap.timeline({ delay: 0.1, scrollTrigger: { trigger: root.current, start: 'top 96%', once: true } });
         tl.from('.micro-tick', { scaleY: 0, transformOrigin: '50% 100%', duration: 0.4, ease: 'power3.out', stagger: 0.012 }, 0)
           .to(state, {
             value: count,
@@ -32,7 +33,7 @@ export default function CountUp({ count }: { count: number }) {
               el.textContent = String(Math.round(state.value));
             },
           }, 0)
-          .to(el, { keyframes: { opacity: [0.3, 1, 0.45, 1, 0.75, 1] }, duration: 0.42, ease: 'none' }, 0.85)
+          .to(el, { keyframes: { opacity: [0.6, 1, 0.7, 1, 0.85, 1] }, duration: 0.42, ease: 'none' }, 0.55)
           .from('.numeral-bloom', { opacity: 0, scale: 0.5, duration: 0.25, ease: 'power2.out' }, 0.85)
           .to('.numeral-bloom', { keyframes: { scale: [1, 1.18, 1] }, duration: 0.8, ease: 'power2.inOut' }, 1.05)
           .from('.micro-tick[data-lit="true"]', { opacity: 0.2, duration: 0.3, stagger: 0.08, ease: 'power2.out' }, 1.0);
