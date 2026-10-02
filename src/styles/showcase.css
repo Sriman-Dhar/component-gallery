@@ -291,12 +291,12 @@ html[data-world='live'] .vignette {
   transform: scale(0.6);
   border-color: rgb(var(--color-glow));
 }
+/* On paper the ring may cross black type or a dark control: the warm-ink stroke always carries a cream hairline
+   outside it, so one of the two contrasts with whatever is under the ring. */
 .cursor-ring[data-paper='true'] .cursor-ring-dot {
-  border-color: rgb(var(--p-amber-900) / 0.55);
-  box-shadow: 0 0 6px rgb(var(--color-accent) / 0.18);
+  border-color: rgb(var(--p-amber-900) / 0.7);
+  box-shadow: 0 0 0 1px rgb(255 247 232 / 0.85), 0 0 6px rgb(var(--color-accent) / 0.18);
 }
-/* Hot on paper may sit over a dark control (a black button on a light stage): the ink stroke gets a cream
-   hairline outside it, so one of the two always contrasts with whatever is under the ring. */
 .cursor-ring[data-paper='true'][data-state='hot'] .cursor-ring-dot {
   transform: scale(1.4);
   border-color: rgb(var(--p-amber-900) / 0.8);
