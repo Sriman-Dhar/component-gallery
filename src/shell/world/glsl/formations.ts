@@ -1,11 +1,13 @@
 import { FORMATIONS } from '../worldModes';
+import { FAR_GLSL } from './formFar';
+import { GLYPH_GLSL, HALOS_GLSL } from './formGrid';
 
 /**
  * One GLSL function per formation, keyed by name. Each returns where a particle sits in NDC (xy), its
- * depth blur, brightness, warmth (0 cool .. 1 amber) and point size in CSS px. Part B adds halos, glyph and
- * far here and in FORMATIONS; formAt() and the blend in particles.ts pick them up unchanged.
+ * depth blur, brightness, warmth (0 cool .. 1 amber) and point size in CSS px. The grid's formations live in
+ * formGrid.ts and the coda's in formFar.ts; formAt() and the blend in particles.ts pick every one up.
  */
-const FORMATION_GLSL: Record<string, string> = {
+const FORMATION_GLSL: Record<(typeof FORMATIONS)[number], string> = {
   // The 3D orrery: ring filament drawn on by angle, slot clusters arriving, a breathing core, a dust shell.
   orbit: /* glsl */ `
 Form formOrbit() {
@@ -69,6 +71,9 @@ Form formRail() {
   return f;
 }
 `,
+  halos: HALOS_GLSL,
+  glyph: GLYPH_GLSL,
+  far: FAR_GLSL,
 };
 
 const names = FORMATIONS.map((n) => `form${n[0].toUpperCase()}${n.slice(1)}`);

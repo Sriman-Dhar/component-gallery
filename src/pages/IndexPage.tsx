@@ -2,11 +2,13 @@ import { useRef } from 'react';
 import { shipped } from '../lib/catalogue';
 import { pageTitle, useDocumentTitle } from '../lib/useDocumentTitle';
 import SectionHeading from '../shell/detail/SectionHeading';
+import FarCoda from '../shell/coda/FarCoda';
 import CountUp from '../shell/hero/CountUp';
 import HeroIntro from '../shell/hero/HeroIntro';
 import LightRail from '../shell/rail/LightRail';
 import TileGrid from '../shell/tiles/TileGrid';
 import { useDiveScroll } from '../shell/world/useDiveScroll';
+import { useGridScroll } from '../shell/world/useGridScroll';
 import { useWorldInput } from '../shell/world/useWorldInput';
 
 const marks = shipped.map(({ meta }) => ({ slug: meta.slug, date: meta.date }));
@@ -14,13 +16,17 @@ const marks = shipped.map(({ meta }) => ({ slug: meta.slug, date: meta.date }));
 /**
  * Index, one continuous world (the Living Orrery behind it, see shell/world): the hero over the full-bleed
  * orrery (drag to turn it, click for a shockwave); the dive, where the camera passes through the rings
- * beside the lit fraction; the light rail the particles stream down into; then the tiles in № order.
+ * beside the lit fraction; the light rail the particles stream down into; the tiles in № order, haloed, their
+ * numbers rising behind them; then the coda, the whole system far away and still.
  */
 export default function IndexPage() {
   useDocumentTitle(pageTitle());
   const hero = useRef<HTMLElement>(null);
   const rail = useRef<HTMLElement>(null);
+  const grid = useRef<HTMLUListElement>(null);
+  const coda = useRef<HTMLDivElement>(null);
   useDiveScroll(hero, rail);
+  useGridScroll(grid, coda);
   useWorldInput(hero);
 
   return (
@@ -32,7 +38,7 @@ export default function IndexPage() {
       >
         <HeroIntro />
       </section>
-      <section aria-label="Progress" className="flex min-h-[52svh] items-center py-16 lg:min-h-[70svh]">
+      <section aria-label="Progress" className="flex min-h-[52svh] items-end pb-6 pt-16 sm:pb-8 lg:min-h-[70svh]">
         <CountUp count={shipped.length} />
       </section>
       <section ref={rail} aria-label="Ninety day light rail" className="pb-20 sm:pb-28">
@@ -40,8 +46,9 @@ export default function IndexPage() {
       </section>
       <section aria-labelledby="shipped-heading" className="space-y-6 sm:space-y-10">
         <SectionHeading id="shipped-heading">Shipped so far</SectionHeading>
-        <TileGrid entries={shipped} />
+        <TileGrid ref={grid} entries={shipped} />
       </section>
+      <FarCoda ref={coda} shipped={shipped.length} />
     </div>
   );
 }

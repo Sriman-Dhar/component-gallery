@@ -19,6 +19,8 @@ attribute float aRailKind;
 attribute float aRailU;
 attribute float aRailOff;
 attribute float aRailBright;
+attribute vec4 aGrid;
+attribute vec3 aGlyph;
 varying float vAlpha;
 varying float vWarm;
 varying float vHeat;
@@ -36,13 +38,16 @@ void main() {
   vec2 bend = vec2(a.ndc.x + sin(aSeed * 40.0 + uTime * 0.8) * 0.06, b.ndc.y + cos(aSeed * 23.0) * 0.05);
   vec2 ndc = (1.0 - k) * (1.0 - k) * a.ndc + 2.0 * k * (1.0 - k) * bend + k * k * b.ndc;
   float lit = 0.0;
-  ndc = forces(ndc, mix(1.0, 0.45, clamp(s, 0.0, 1.0)), lit);
+  ndc = keepOut(forces(ndc, mix(1.0, 0.45, clamp(s, 0.0, 1.0)), lit), aSeed);
   float travel = 4.0 * k * (1.0 - k);
-  vAlpha = mix(a.bright, b.bright, k) + lit * 0.5 + travel * 0.35;
+  vAlpha = (mix(a.bright, b.bright, k) + lit * 0.5 + travel * 0.35) * mix(1.0, 0.5, uGutter);
   vWarm = mix(a.warm, b.warm, k);
   vHeat = mix(a.heat, b.heat, k) + lit * 0.4 + travel * 0.25;
   vBlur = mix(a.blur, b.blur, k);
-  gl_PointSize = clamp(mix(a.size, b.size, k) * (1.0 + lit * 0.5), 0.5, 26.0) * uPixel;
+  // Close orbit: points near the lens stay fine and faint, so the body and its ring read, not a bokeh soup.
+  float close = step(0.0, uSolo);
+  vAlpha *= 1.0 - close * vBlur * 0.6;
+  gl_PointSize = clamp(mix(a.size, b.size, k) * (1.0 + lit * 0.5), 0.5, mix(26.0, 7.0, close)) * uPixel;
   gl_Position = vec4(ndc, 0.0, 1.0);
 }
 `;
