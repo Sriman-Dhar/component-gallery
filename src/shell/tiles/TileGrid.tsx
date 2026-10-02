@@ -1,7 +1,6 @@
-import { useRef } from 'react';
-import { TARGET } from '../../lib/catalogue';
+import { forwardRef, useImperativeHandle, useRef } from 'react';
+import { upcomingWeek } from '../../lib/catalogue';
 import { gsap, ScrollTrigger, useGSAP, withMotion } from '../../lib/motion';
-import { WEEK_COUNT, weekOf } from '../../lib/ruler';
 import type { GalleryEntry } from '../../lib/types';
 import NextSlot from './NextSlot';
 import Tile from './Tile';
@@ -11,19 +10,15 @@ interface Props {
   entries: GalleryEntry[];
 }
 
-function nextWeek(entries: GalleryEntry[]): number | undefined {
-  const weeks = entries.map((e) => weekOf(e.meta.date));
-  const next = weeks.length ? Math.max(...weeks) + 1 : 1;
-  return next <= WEEK_COUNT ? next : undefined;
-}
-
 /**
  * Equal tiles in № order: 3 columns desktop, 2 tablet, 1 phone, closed by the next week's slot.
- * Each reveal is a stage being lit: the tile rises, the light ignites, the component appears.
+ * Each reveal is a stage being lit: the tile rises, the light ignites, the component appears. The gutters
+ * are tall: the scene's particle numerals rise from behind each tile into the space above it.
  */
-export default function TileGrid({ entries }: Props) {
+const TileGrid = forwardRef<HTMLUListElement, Props>(function TileGrid({ entries }, ref) {
   const root = useRef<HTMLUListElement>(null);
-  const upcoming = entries.length < TARGET ? nextWeek(entries) : undefined;
+  useImperativeHandle(ref, () => root.current as HTMLUListElement);
+  const upcoming = upcomingWeek(entries);
 
   useGSAP(
     () =>
@@ -51,11 +46,13 @@ export default function TileGrid({ entries }: Props) {
   );
 
   return (
-    <ul ref={root} aria-label="Components" className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+    <ul ref={root} aria-label="Components" className="relative grid grid-cols-1 gap-x-5 gap-y-24 pt-20 md:grid-cols-2 lg:grid-cols-3 lg:gap-x-6">
       {entries.map((entry) => (
         <Tile key={entry.meta.slug} entry={entry} />
       ))}
       {upcoming ? <NextSlot week={upcoming} /> : null}
     </ul>
   );
-}
+});
+
+export default TileGrid;

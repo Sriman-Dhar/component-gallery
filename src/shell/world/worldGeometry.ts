@@ -1,6 +1,7 @@
 import { BufferAttribute, BufferGeometry } from 'three';
 import { WEEK_COUNT, weekCenter } from '../../lib/ruler';
 import { RINGS, SLOT_COUNT, slotOf } from '../orrery/orreryModel';
+import { addGridAttributes, type GridPlan } from './gridGeometry';
 
 /** Orbit kinds (aKind) and rail kinds (aRailKind), read by the formations' GLSL. */
 export const ORBIT_KIND = { filament: 0, node: 1, core: 2, dust: 3 } as const;
@@ -28,9 +29,9 @@ function pick(weights: number[]): number {
  * core, the dust shell) and a rail home (the line, a week cluster, the reflection, the dust): the ring
  * filament becomes the line, slot clusters become week clusters, the core becomes the reflection. Kinds are
  * drawn per particle, not in blocks, so any prefix of the buffer is a fair sample: the low tier simply draws
- * the first half (setDrawRange).
+ * the first half (setDrawRange). The grid's homes (halos, numerals) come from gridGeometry.
  */
-export function buildWorldGeometry(count: number, shipped: number, litWeeks: number[]): BufferGeometry {
+export function buildWorldGeometry(count: number, shipped: number, litWeeks: number[], grid: GridPlan): BufferGeometry {
   const a = {
     aKind: new Float32Array(count),
     aRing: new Float32Array(count),
@@ -108,5 +109,6 @@ export function buildWorldGeometry(count: number, shipped: number, litWeeks: num
   for (const [name, data] of Object.entries(a)) {
     geometry.setAttribute(name, new BufferAttribute(data, name === 'aJit' ? 3 : 1));
   }
+  addGridAttributes(geometry, count, grid);
   return geometry;
 }

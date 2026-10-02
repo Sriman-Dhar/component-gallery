@@ -3,6 +3,8 @@ import { AdditiveBlending, NormalBlending, ShaderMaterial } from 'three';
 import { useFrameTheme } from '../../lib/theme';
 import { particleFragment, particleVertex } from './glsl/particles';
 import type { WorldUniforms } from './useWorldUniforms';
+import { GLYPH_FONT } from './glyphSampler';
+import { castGlyphs, type GridPlan } from './gridGeometry';
 import { buildWorldGeometry } from './worldGeometry';
 
 interface Props {
@@ -12,14 +14,25 @@ interface Props {
   low: boolean;
   shipped: number;
   litWeeks: number[];
+  grid: GridPlan;
 }
 
 /** The swarm: one points draw, all motion in the vertex shader, light on dark, ink on light. */
-export default function WorldParticles({ uniforms, count, low, shipped, litWeeks }: Props) {
+export default function WorldParticles({ uniforms, count, low, shipped, litWeeks, grid }: Props) {
   const theme = useFrameTheme();
-  const litKey = litWeeks.join(',');
+  const key = `${litWeeks.join(',')}|${grid.labels.join(',')}|${grid.next}`;
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const geometry = useMemo(() => buildWorldGeometry(count, shipped, litWeeks), [count, shipped, litKey]);
+  const geometry = useMemo(() => buildWorldGeometry(count, shipped, litWeeks, grid), [count, shipped, key]);
+
+  // The numerals are cast in the display face: recast once it has loaded, if it had not yet.
+  useEffect(() => {
+    let live = true;
+    document.fonts?.load(GLYPH_FONT).then(() => live && castGlyphs(geometry, grid));
+    return () => {
+      live = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [geometry]);
   const material = useMemo(
     () =>
       new ShaderMaterial({

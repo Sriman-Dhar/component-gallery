@@ -1,4 +1,5 @@
 import { registry } from './registry';
+import { WEEK_COUNT, weekOf } from './ruler';
 import type { GalleryEntry } from './types';
 
 /** The challenge target: 30 components over 13 weeks. */
@@ -34,4 +35,12 @@ export function neighbours(slug: string): { prev?: GalleryEntry; next?: GalleryE
   const index = shipped.findIndex((entry) => entry.meta.slug === slug);
   if (index < 0) return {};
   return { prev: shipped[index - 1], next: shipped[index + 1] };
+}
+
+/** The week the grid's next slot waits for: one after the latest shipped week, or none once the window is done. */
+export function upcomingWeek(entries: GalleryEntry[]): number | undefined {
+  if (entries.length >= TARGET) return undefined;
+  const weeks = entries.map((e) => weekOf(e.meta.date));
+  const next = weeks.length ? Math.max(...weeks) + 1 : 1;
+  return next <= WEEK_COUNT ? next : undefined;
 }
