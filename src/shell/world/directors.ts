@@ -1,4 +1,4 @@
-import type { PerspectiveCamera } from 'three';
+import { MathUtils, type PerspectiveCamera } from 'three';
 import { positionOf, weekCenter } from '../../lib/ruler';
 import { slotOf } from '../orrery/orreryModel';
 import { bankOf, hurryPastSun } from '../orrery/orrerySpin';
@@ -47,6 +47,18 @@ let glyphFormedAt = -1;
 
 function toViewport(box: Box): [number, number] {
   return [box.left - window.scrollX, box.top - window.scrollY];
+}
+
+/** The paper still has no flight to carry the sun past the type, so it draws the sun only when the flare ring
+ * (r 0.15 of the sun's quad, see sunFragment) plus a margin clears every veil box: never a half-veiled ghost. */
+function setSunClear(u: WorldUniforms, camera: PerspectiveCamera, width: number, height: number) {
+  const dock = u.uSunDock.value;
+  const reach = 0.15 * 0.62 * MathUtils.lerp(0.2, 1, u.uBodies.value);
+  const ring = MathUtils.lerp((reach * camera.projectionMatrix.elements[0] * width) / 2 / camera.position.length(), 0.15 * 92, dock.z) + 12;
+  const x = (u.uSun.value.x * 0.5 + 0.5) * width;
+  const y = (0.5 - u.uSun.value.y * 0.5) * height;
+  const gaps = u.uVeil.value.filter((b) => b.z >= 1).map((b) => Math.max(b.x - x, x - b.x - b.z, b.y - y, y - b.y - b.w));
+  u.uSunClear.value = Math.min(Infinity, ...gaps) >= ring ? 1 : 0;
 }
 
 /** The veil boxes (data-world-veil) into the canvas's px: the fixed index canvas is the viewport, the detail
@@ -113,6 +125,7 @@ export function frameIndex({ u, camera, width, height, time, dt, still, sway }: 
   u.uSun.value.set(sun.x + (dock.x - sun.x) * dock.z, sun.y + (dock.y - sun.y) * dock.z);
   u.uFocus.value = sun.focus;
   setVeils(u, true);
+  setSunClear(u, camera, width, height);
   if (projectBodies(camera, width, height, time, beats.bodies > 0.6 && !still)) hurryPastSun(world.spin, dt);
   u.uParallax.value.set(u.uPointer.value.x * 0.04 + beats.flight * 0.5, u.uPointer.value.y * 0.04 - beats.flight * 0.8);
 }
@@ -149,5 +162,6 @@ export function frameDark({ u, camera, width, height, sway }: Frame) {
   u.uSun.value.set(sun.x, sun.y);
   u.uFocus.value = sun.focus;
   setVeils(u, false);
+  setSunClear(u, camera, width, height);
   u.uParallax.value.set(u.uPointer.value.x * 0.04, u.uPointer.value.y * 0.04);
 }

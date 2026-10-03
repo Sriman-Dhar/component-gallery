@@ -50,6 +50,8 @@ function createUniforms() {
     uGutter: { value: 0 },
     /** 1 for the reduced-motion still: the veil hides the sun outright, it has no flight to clear the type with. */
     uStill: { value: 0 },
+    /** 0 when the sun's flare ring would reach a veil box: the paper still then leaves the sun out (directors). */
+    uSunClear: { value: 1 },
     /** Close orbit: this component's slot (the only body drawn, points kept fine), or -1 in other modes. */
     uSolo: { value: -1 },
     /** Boxes of type the scene keeps clear of (viewport px of the canvas); width 0 = none. */

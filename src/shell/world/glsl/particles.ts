@@ -8,6 +8,8 @@ import { formationsGlsl } from './formations';
  */
 export const particleVertex = /* glsl */ `
 ${commonGlsl}
+uniform float uStill;
+uniform float uSunClear;
 attribute float aKind;
 attribute float aRing;
 attribute float aU;
@@ -49,6 +51,8 @@ void main() {
   // Close orbit: points near the lens stay fine and faint, so the body and its ring read, not a bokeh soup.
   float close = step(0.0, uSolo);
   vAlpha *= (1.0 - close * vBlur * 0.6) * (1.0 - veil(ndc));
+  // The paper still leaves the sun out when its ring would reach the type (directors' setSunClear): its core points go with it.
+  vAlpha *= 1.0 - sunCore * uStill * uLight * (1.0 - uSunClear);
   gl_PointSize = clamp(mix(a.size, b.size, k) * (1.0 + lit * 0.5), 0.5, mix(16.0, 7.0, close)) * uPixel;
   gl_Position = vec4(ndc, 0.0, 1.0);
 }

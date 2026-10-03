@@ -113,6 +113,7 @@ uniform float uLight;
 uniform float uGutter;
 uniform float uSolo;
 uniform float uStill;
+uniform float uSunClear;
 varying vec2 vUv;
 varying float vVeil;
 void main() {
@@ -141,7 +142,8 @@ void main() {
     float ink = clamp((ring + spokes) * 1.6, 0.0, 1.0);
     vec3 paper = mix(mix(uBody, uDeep, ink), face, disc);
     float cover = clamp(disc + ring + spokes + halo, 0.0, 1.0) * mix(1.0, 0.75, uGutter * (1.0 - gutter));
-    gl_FragColor = vec4(paper, cover * strength * hide);
+    // The paper still leaves out a sun whose ring would reach the type (uSunClear), never a half-veiled ghost.
+    gl_FragColor = vec4(paper, cover * strength * hide * mix(1.0, uSunClear, uStill));
     return;
   }
   color *= strength * hide;
