@@ -52,7 +52,7 @@ crisp and measurable). 404: the orrery with all bodies dark, the sun guttering.
 - Light: a real lighting story in the shader: sun = HDR core > bloom; bodies have a fresnel rim from the key light;
   cool rim on the far side. Tonal ramp inside amber (white-hot core, amber body, deep ember shadow). Fog/depth fade.
 - Texture: keep grain; add a very faint nebula noise in the scene background (shader, not an image).
-- TYPE (owner ruling 2026-10-02, Shantell Sans rejected; he chose "sleek sans + signature"):
+- TYPE (2026-10-02: sleek sans + signature, replacing Shantell Sans):
   - Display = **Archivo** expanded (Google Fonts variable, `Archivo:wdth,wght@62..125,100..900`, use wdth 125 for
     display, weights 600 to 800, tracking -0.02 to -0.035em, uppercase allowed for the pace statement). Sleek, wide,
     sharp; it replaces Shantell Sans on EVERY display surface (hero, fraction, numbers, headings, tiles, 404).
