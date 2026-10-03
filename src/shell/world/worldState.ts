@@ -2,9 +2,9 @@ import { useSyncExternalStore } from 'react';
 import { POSTER_YAW, SLOT_COUNT } from '../orrery/orreryModel';
 import { createSpin } from '../orrery/orrerySpin';
 
-/** The most veil boxes a page may mark (data-world-veil): the index's hero words, its tile grid (reduced
- * motion only, data-world-veil-still), coda words and footer; the 404's ruler, copy and footer. */
-export const VEIL_COUNT = 4;
+/** The most veil boxes a page may mark (data-world-veil): the index's hero words, rail caption, tile grid
+ * (reduced motion only, data-world-veil-still), coda words and footer; the 404's ruler, copy and footer. */
+export const VEIL_COUNT = 5;
 
 /** The most tiles the halo uniform holds: 30 components and the next slot. */
 export const MAX_TILES = 32;

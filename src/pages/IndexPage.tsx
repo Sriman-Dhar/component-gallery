@@ -53,7 +53,7 @@ export default function IndexPage() {
         <div>
           <CountUp count={shipped.length} />
           {lastNames.length ? (
-            <p className="rail-caption mt-3 font-mono text-meta text-text-2">
+            <p data-world-veil className="rail-caption mt-3 w-fit font-mono text-meta text-text-2">
               <span>
                 Week {lastWeek}: <span className="text-text">{lastNames.join(', ')}</span>
               </span>
