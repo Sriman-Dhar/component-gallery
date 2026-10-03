@@ -1,8 +1,7 @@
 # CREATIVE BRIEF v3 — Sriman's Gallery: "The Living Orrery"
 
-Written 2026-10-02 after the peer benchmark (`benchmark/BENCHMARK.md`). Owner ruling the same day: "I want mines to be
-the very BEST 3d design animation NO LIMITS" and "YOU NEED TO PROVE YOU ARE BETTER THAN ANYONE ELSE". Peer work is a
-bar only, never copied (see memory feedback-bc-peer-work-benchmark-only). This brief EXTENDS v2 (gallery/docs/DESIGN-BRIEF.md);
+Written 2026-10-02. Goal: the strongest 3D design and animation of any gallery in the challenge, built from our own
+ideas only. This brief EXTENDS v2 (docs/DESIGN-BRIEF.md);
 everything v2 locks that is not overridden here stays: dark studio, amber key + cool rim lighting, Geist body +
 Geist Mono, two tone hero (now sans + signature), light rail signature, both themes real, AA, reduced motion honoured.
 
@@ -11,9 +10,8 @@ seconds whether this is the best gallery in the cohort and a developer who wants
 job is "be amazed in the first second, then open a component and take it", in a confident, cinematic, technical
 register, at studio complexity, now with ONE world-class WebGL scene that is the spine of the whole site.
 
-**Bar to beat (measured):** strongest peer 3D = a WebGL technical drawing hero with callouts (static-feeling, one
-section only); strongest atmosphere = a layered raster hero; strongest motion = 16 to 21 DOM animations. None of them
-has a 3D scene that lives through the whole scroll, reacts to the user, and carries meaning (shipped vs future).
+**Bar to beat:** a 3D scene that lives through the whole scroll, reacts to the user, and carries meaning (shipped vs
+future), not a single decorative hero canvas.
 
 ## Directions considered
 - A. **The Living Orrery (CHOSEN).** Our existing 30-slot orrery grows from a side ornament into a full-viewport,
@@ -69,7 +67,7 @@ crisp and measurable). 404: the orrery with all bodies dark, the sun guttering.
   cheap custom depth fade, Vignette, Noise off if grain exists). GPU particle morph via a position-target texture or
   attribute lerp in the vertex shader; no per-particle JS per frame.
 - Single rAF (R3F's). Pause when tab hidden and when the canvas is offscreen. Adaptive DPR [1, 2] with a 55 fps floor
-  (PerformanceMonitor). Low tier: fewer particles, no DoF. Respect the perf rules in `benchmark/perf/PERF.md`.
+  (PerformanceMonitor). Low tier: fewer particles, no DoF. Respect the perf rules: one rAF, pause offscreen, adaptive DPR, no live full-page blur or blend.
 - Targets on a real GPU (headed Chrome): index >= 55 fps during the hero and the dive at 1440x900 DPR 2; detail page
   >= 58 fps; 4x CPU throttle stays >= 30 fps; JS for the 3D layer lazy-loaded, the DOM paints first.
 - Reduced motion: no flight, no ignition; the composed most beautiful still of the orrery, rail and halos.
@@ -78,6 +76,5 @@ crisp and measurable). 404: the orrery with all bodies dark, the sun guttering.
 - Mobile (390): same story, fewer particles, the orrery framed above the type, dive shorter; 0px overflow.
 
 ## Explicitly rejected
-- Spinning earth / globe (owner: not the default). Generic starfield wallpaper. A second competing canvas.
-- Anything resembling a peer: no technical-drawing callouts, no photographic subject hero, no lilac gradient wash.
+- Spinning earth / globe . Generic starfield wallpaper. A second competing canvas.
 - 3D for decoration only: every formation encodes something real (slots, weeks, shipped components).
