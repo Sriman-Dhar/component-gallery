@@ -24,7 +24,7 @@ describe('routes', () => {
     const names = within(grid).getAllByRole('link').map((link) => link.textContent);
     expect(names).toEqual(shipped.map(({ meta }) => meta.name));
     expect(names.slice(0, 2)).toEqual(['Magnetic Button', 'OTP Input']);
-    expect(within(grid).getByText('Next: Week 2')).toBeInTheDocument();
+    expect(within(grid).getByText(`Next: Week ${Math.max(...shipped.map(({ meta }) => meta.week)) + 1}`)).toBeInTheDocument();
     expect(within(grid).getAllByText('Type: button').length).toBeGreaterThan(0);
     expect(within(grid).getAllByText(formatDate(shipped[0].meta.date)).length).toBeGreaterThan(0);
     expect(await within(grid).findByText('Join the waitlist')).toBeInTheDocument();
