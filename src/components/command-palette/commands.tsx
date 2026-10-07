@@ -24,6 +24,7 @@ const SPECS: Spec[] = [
   { id: 'weather', label: 'Weather', group: 'Go to', icon: 'screen', keywords: ['wind', 'cloud', 'humidity', 'forecast'], shortcut: ['G', 'W'], hint: 'Wind, cloud and dew point, live.' },
   { id: 'equipment', label: 'Equipment', group: 'Go to', icon: 'screen', keywords: ['camera', 'mount', 'focuser', 'gear'], shortcut: ['G', 'E'], hint: 'Camera, mount and focuser status.' },
   { id: 'plan', label: "Tonight's plan", group: 'Go to', icon: 'screen', keywords: ['schedule', 'queue'], shortcut: ['G', 'P'], hint: 'The target queue in rising order.' },
+  { id: 'nights', label: 'Go to a night', group: 'Go to', icon: 'screen', keywords: ['date', 'session', 'past'], hint: 'Pick one night of the log to open.' },
   { id: 'settings', label: 'Settings', group: 'Go to', icon: 'screen', keywords: ['preferences', 'options', 'config'], shortcut: ['G', 'S'], hint: 'Site, units and alerts.' },
   { id: 'shortcuts', label: 'Keyboard shortcuts', group: 'Help', icon: 'help', keywords: ['keys', 'hotkeys'], shortcut: ['?'], hint: 'Every key the console listens to.' },
   { id: 'checklist', label: 'Observing checklist', group: 'Help', icon: 'help', keywords: ['start', 'routine'], hint: 'The ten steps before first light.' },
@@ -31,9 +32,25 @@ const SPECS: Spec[] = [
   { id: 'about', label: 'About Domeboard', group: 'Help', icon: 'help', keywords: ['version', 'console'], hint: 'The night console of Lantern Point.' },
 ];
 
-/** The demo's 23 commands; `onRun` hears the label of whatever runs. */
+/** The nights "Go to a night" opens: its second page. */
+const NIGHTS: Spec[] = [
+  { id: 'night-1006', label: 'Night of 6 Oct', group: 'Nights', icon: 'screen', keywords: ['monday'], hint: '4 targets, 62 frames, clear until 3:10.' },
+  { id: 'night-1005', label: 'Night of 5 Oct', group: 'Nights', icon: 'screen', keywords: ['sunday'], hint: '2 targets, 18 frames, cloud after midnight.' },
+  { id: 'night-1003', label: 'Night of 3 Oct', group: 'Nights', icon: 'screen', keywords: ['friday'], hint: '5 targets, 91 frames, the best seeing this month.' },
+  { id: 'night-0929', label: 'Night of 29 Sep', group: 'Nights', icon: 'screen', keywords: ['monday'], hint: 'Dome closed for wind at 22:40.' },
+];
+
+/** The demo's 24 commands; `onRun` hears the label of whatever runs. "Go to a night" opens a page of nights. */
 export function domeboardCommands(onRun: (label: string) => void): PaletteItem[] {
-  return SPECS.map((spec) => ({ ...spec, run: () => onRun(spec.label) }));
+  const runs = (spec: Spec): PaletteItem => ({ ...spec, run: () => onRun(spec.label) });
+  return SPECS.map((spec) => (spec.id === 'nights' ? { ...runs(spec), page: NIGHTS.map(runs) } : runs(spec)));
+}
+
+/** A command's label by id, nights included (the demo's status line is rebuilt from the stored recent ids). */
+export function commandLabel(id: string): string | null {
+  const plate = /^plate-(\d+)$/.exec(id);
+  if (plate) return `Sky plate ${plate[1]}`;
+  return [...SPECS, ...NIGHTS].find((spec) => spec.id === id)?.label ?? null;
 }
 
 /** A synthetic archive of numbered sky plates, so the demo can prove filtering speed at 1,000 items. */

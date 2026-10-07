@@ -3,7 +3,7 @@
  * Kept as .tsx (like week 1's hooks) so the detail page's source panel, which lists .tsx files, shows it.
  */
 
-/** Perspective on the card root, in px. */
+/** Perspective on the case's mount, in px (the case is the only part that tilts). */
 export const PERSPECTIVE = 1100;
 /** The front glass sits this far in front of the case's back wall, in front of every ring at full spread. */
 export const GLASS_Z = 160;
@@ -27,15 +27,24 @@ export const RIM_REST = 0.55;
 const RIM_FULL = 1;
 
 /**
- * The three gimbal rings: outer to inner. Each sits in its own plane (true 3D, not an ellipse drawing), and
- * `spread` is the share of the Z spread it takes at full tilt: the outer ring comes forward, the inner one
- * steps back, the middle one holds. GSAP re-applies the pose as a set so its z tweens keep the angles.
+ * The three gimbal rings: outer to inner. Each sits in its own plane (true 3D, not an ellipse drawing). `z` is its
+ * resting depth (the outer ring rides in front, the inner one behind, so the tilt shows them sliding over each other),
+ * `spread` the share of the extra Z spread it takes at full tilt, and `spec` the resting angle of its specular arc.
+ * GSAP re-applies the pose as a set so its z tweens keep the angles.
  */
 export const RINGS = [
-  { size: 136, pose: { rotationY: 58 }, css: 'rotateY(58deg)', spread: 1 },
-  { size: 114, pose: { rotationX: 72 }, css: 'rotateX(72deg)', spread: 0 },
-  { size: 94, pose: { rotation: 28, rotationX: 56 }, css: 'rotate(28deg) rotateX(56deg)', spread: -1 },
+  { size: 140, pose: { rotationY: 58 }, css: 'rotateY(58deg)', z: 22, spread: 1, spec: -40 },
+  { size: 116, pose: { rotationX: 62 }, css: 'rotateX(62deg)', z: 0, spread: 0, spec: 200 },
+  { size: 94, pose: { rotation: 28, rotationX: 56 }, css: 'rotate(28deg) rotateX(56deg)', z: -22, spread: -1, spec: 120 },
 ] as const;
+
+/** How far the specular arcs swing around their rings per degree of tilt: the highlight slides as the case turns. */
+export const SPEC_SWING = 7;
+
+/** The specular arc's angle on a ring for a tilt: its resting angle plus a swing that follows the tilt. */
+export function specFor(base: number, rx: number, ry: number): number {
+  return base + (ry - rx) * SPEC_SWING;
+}
 
 export interface Box {
   left: number;

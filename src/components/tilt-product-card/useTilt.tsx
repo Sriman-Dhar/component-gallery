@@ -1,17 +1,24 @@
 import type { MutableRefObject, RefObject } from 'react';
-import { gsap, motionAllowed, POINTER_MOTION, useGSAP } from '../../lib/motion';
-import { GLARE_PARK, GLASS_SCALE, RIM_PARK, RIM_REST, RINGS, glareFor, rimFor, spreadFor, tiltFor, vitrineBox } from './tiltMath';
+import { gsap, motionAllowed, MOTION_OK, POINTER_MOTION, useGSAP } from '../../lib/motion';
+import { GLARE_PARK, GLASS_SCALE, RIM_PARK, RIM_REST, RINGS, glareFor, rimFor, specFor, spreadFor, tiltFor, vitrineBox } from './tiltMath';
+import { idleSway } from './idleSway';
 
 export interface TiltParts {
   /** The untransformed card root: pointer coordinates are read against its box, so they never wobble with the tilt. */
   root: RefObject<HTMLElement>;
-  /** The case: rotateX / rotateY. */
+  /** The case (the vitrine alone; the card's text never tilts): rotateX / rotateY. */
   tilt: RefObject<HTMLElement>;
   glare: RefObject<HTMLElement>;
   rim: RefObject<HTMLElement>;
+  streak: RefObject<HTMLElement>;
   core: RefObject<HTMLElement>;
   rings: MutableRefObject<(HTMLElement | null)[]>;
+  /** Each ring's specular arc. */
+  specs: MutableRefObject<(HTMLElement | null)[]>;
 }
+
+/** A coarse pointer that allows motion: no tilt, only the rings' slow idle sway. */
+const TOUCH_MOTION = `${MOTION_OK} and (pointer: coarse)`;
 
 const ROTATE = { duration: 0.45, ease: 'power3.out' };
 const LIGHT = { duration: 0.3, ease: 'power3.out' };
@@ -19,7 +26,7 @@ const SPREAD = { duration: 0.6, ease: 'power3.out' };
 /** Home: rotation and spread spring back with one soft overshoot (magnetic-button's elastic family). */
 const HOME = { duration: 0.9, ease: 'elastic.out(1, 0.5)' };
 const LIGHT_HOME = { duration: 0.6, ease: 'power3.out' };
-/** Over a control the tilt halves, so a target never drifts out from under the cursor. */
+/** Over a control, or over the flat text below the case, the tilt halves (the controls themselves never move). */
 const CONTROLS = 'a, button, input, label';
 
 type QuickTo = ReturnType<typeof gsap.quickTo>;
@@ -34,16 +41,18 @@ export function useTilt(parts: TiltParts, { maxTilt, still }: { maxTilt: number;
   const { contextSafe } = useGSAP(
     () => {
       // The ring poses go through GSAP once, so the spread's z tweens keep each ring's gimbal angle.
-      parts.rings.current.forEach((el, i) => el && gsap.set(el, { ...RINGS[i].pose, z: 0 }));
+      parts.rings.current.forEach((el, i) => el && gsap.set(el, { ...RINGS[i].pose, z: RINGS[i].z }));
+      parts.specs.current.forEach((el, i) => el && gsap.set(el, { z: 0.5, rotation: RINGS[i].spec }));
       if (still) return;
       const mm = gsap.matchMedia();
+      mm.add(TOUCH_MOTION, () => idleSway(parts));
       mm.add(POINTER_MOTION, (_context, contextSafeMm) => {
         const card = parts.root.current;
-        const { tilt, glare, rim, core } = parts;
+        const { tilt, glare, rim, streak, core } = parts;
         const [outer, , inner] = parts.rings.current;
-        const els = [tilt.current, glare.current, rim.current, core.current, outer, inner];
+        const els = [tilt.current, glare.current, rim.current, streak.current, core.current, outer, inner, ...parts.specs.current];
         if (!card || els.some((el) => !el)) return;
-        const [t, g, r, c, o, n] = els as HTMLElement[];
+        const [t, g, r, k, c, o, n, ...sp] = els as HTMLElement[];
 
         const tracks: Track[] = [
           [t, 'rotationX', gsap.quickTo(t, 'rotationX', ROTATE)],
@@ -56,8 +65,10 @@ export function useTilt(parts: TiltParts, { maxTilt, still }: { maxTilt: number;
           [r, 'x', gsap.quickTo(r, 'x', LIGHT)],
           [r, 'y', gsap.quickTo(r, 'y', LIGHT)],
           [r, 'opacity', gsap.quickTo(r, 'opacity', LIGHT)],
+          [k, 'x', gsap.quickTo(k, 'x', LIGHT)],
           [o, 'z', gsap.quickTo(o, 'z', SPREAD)],
           [n, 'z', gsap.quickTo(n, 'z', SPREAD)],
+          ...sp.map((el): Track => [el, 'rotation', gsap.quickTo(el, 'rotation', ROTATE)]),
         ];
         let engaged = false;
         let settle: gsap.core.Timeline | null = null;
@@ -71,19 +82,22 @@ export function useTilt(parts: TiltParts, { maxTilt, still }: { maxTilt: number;
             .timeline({ defaults: HOME })
             .to(t, { rotationX: 0, rotationY: 0 }, 0)
             .to(c, { rotationX: 0, rotationY: 0 }, 0)
-            .to([o, n], { z: 0 }, 0)
-            .to([g, r], { x: 0, y: 0, ...LIGHT_HOME }, 0)
+            .to(o, { z: RINGS[0].z }, 0)
+            .to(n, { z: RINGS[2].z }, 0)
+            .to(sp, { rotation: (i: number) => RINGS[i].spec }, 0)
+            .to([g, r, k], { x: 0, y: 0, ...LIGHT_HOME }, 0)
             .to(r, { opacity: RIM_REST, ...LIGHT_HOME }, 0);
         });
 
         const onMove = safe((event: PointerEvent) => {
           if (event.pointerType === 'touch') return;
-          const box = card.getBoundingClientRect();
+          // The case turns toward the pointer as read against the case itself; below it (the flat text) it leans less.
+          const vit = vitrineBox(card.getBoundingClientRect());
+          const below = event.clientY > vit.top + vit.height;
           const overControl = event.target instanceof Element && event.target.closest(CONTROLS) !== null;
-          const { rx, ry } = tiltFor(event.clientX, event.clientY, box, maxTilt * (overControl ? 0.5 : 1));
+          const { rx, ry } = tiltFor(event.clientX, event.clientY, vit, maxTilt * (overControl || below ? 0.5 : 1));
           const spread = spreadFor(rx, ry);
           // The glare moves in glass-local px (the glass is GLASS_SCALE of the vitrine); both lights move relative to their park points.
-          const vit = vitrineBox(box);
           const halfW = (vit.width * GLASS_SCALE) / 2;
           const halfH = (vit.height * GLASS_SCALE) / 2;
           const at = glareFor(event.clientX, event.clientY, vit);
@@ -99,8 +113,11 @@ export function useTilt(parts: TiltParts, { maxTilt, still }: { maxTilt: number;
             ((away.x - RIM_PARK.x) * vit.width) / 2,
             ((away.y - RIM_PARK.y) * vit.height) / 2,
             away.strength,
-            spread * RINGS[0].spread,
-            spread * RINGS[2].spread,
+            // The streak slides against the pointer, as a reflection does when the glass turns.
+            -at.x * halfW * 0.9,
+            RINGS[0].z + spread * RINGS[0].spread,
+            RINGS[2].z + spread * RINGS[2].spread,
+            ...RINGS.map((ring) => specFor(ring.spec, rx, ry)),
           ];
           const fresh = !engaged;
           if (fresh) {

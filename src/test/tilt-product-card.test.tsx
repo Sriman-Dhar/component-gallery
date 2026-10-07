@@ -113,4 +113,15 @@ describe('tilt product card', () => {
     fireEvent.click(screen.getByRole('radio', { name: 'Graphite' }));
     expect(screen.getByRole('radio', { name: 'Graphite' })).toBeChecked();
   });
+
+  it('tilts the case alone: the text block is never inside the tilting element, and the bag count stays on the card', () => {
+    const { container } = render(<TiltProductCard bagCount={2} />);
+    const tilt = container.querySelector('[data-tilt]');
+    const info = container.querySelector('[data-card-info]');
+    expect(tilt).not.toBeNull();
+    expect(info).not.toBeNull();
+    expect(tilt!.contains(info)).toBe(false);
+    expect(info!.contains(tilt)).toBe(false);
+    expect(screen.getByText('2 in bag')).toBeInTheDocument();
+  });
 });

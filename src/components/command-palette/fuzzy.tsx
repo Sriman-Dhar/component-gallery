@@ -4,12 +4,15 @@ export interface Match {
   score: number;
   /** Character ranges of the label that matched; empty when only a keyword matched. */
   ranges: MatchRange[];
+  /** The keyword that matched, when the label did not: the row shows it, so a hit is never unexplained. */
+  via?: string;
 }
 
 export interface Ranked {
   item: PaletteItem;
   score: number;
   ranges: MatchRange[];
+  via?: string;
 }
 
 /** Scores for the parts of a match. A contiguous hit always outranks a scattered one. */
@@ -26,6 +29,8 @@ const TYPO_FACTOR = 0.6;
 const TYPO_MIN = 20;
 /** A keyword hit ranks below a label hit of the same quality: the label is what the reader sees. */
 const KEYWORD_FACTOR = 0.7;
+/** A scattered (non-substring) match must earn this much per query character, or it is noise ("cls" in "Take calibration flats"). */
+const SCATTER_MIN = 4;
 
 /** Lowercase letters and digits only: the text is lowercased before it gets here. */
 function isWordChar(code: number): boolean {
@@ -110,6 +115,7 @@ function exact(q: string, text: string): Match | null {
   if (!plain) return null;
   const words = walk(q, text, true) ?? plain;
   const [hits, best] = scoreHits(text, words) >= scoreHits(text, plain) ? [words, scoreHits(text, words)] : [plain, scoreHits(text, plain)];
+  if (best < q.length * SCATTER_MIN) return null;
   return { score: best - (text.length - q.length) * 0.05, ranges: toRanges(hits) };
 }
 
@@ -130,23 +136,51 @@ function matchText(q: string, text: string): Match | null {
 }
 
 /**
+ * Several words: each must match the label on its own (a space is a word boundary, not ignored), and a one letter
+ * word only at a word start, so "o c" means "o... c..." words, not any o and any c. Scores add up; ranges merge.
+ */
+function tokens(words: string[], text: string): Match | null {
+  let total = 0;
+  const ranges: MatchRange[] = [];
+  for (const word of words) {
+    const m = word.length === 1 ? initial(word, text) : matchText(word, text);
+    if (!m) return null;
+    total += m.score;
+    ranges.push(...m.ranges);
+  }
+  ranges.sort((a, b) => a[0] - b[0]);
+  return { score: total, ranges };
+}
+
+/** A one letter word: the first word in the text that starts with it. */
+function initial(c: string, text: string): Match | null {
+  for (let i = 0; i < text.length; i++) {
+    if (text[i] === c && isWordStart(text, i)) return { score: PER_CHAR + WORD_START + (i === 0 ? AT_START / 5 : 0), ranges: [[i, i + 1]] };
+  }
+  return null;
+}
+
+/**
  * Score one label (and its keywords) against a query. Subsequence match with bonuses for a prefix, a word start,
- * a whole word and consecutive runs, plus a one-typo tolerance for queries of 4+ characters. Null means no match.
- * An empty query matches everything with score 0.
+ * a whole word and consecutive runs, plus a one-typo tolerance for queries of 4+ characters; a scattered match
+ * has to clear a minimum. A query with spaces matches word by word. Null means no match. An empty query matches
+ * everything with score 0.
  */
 export function score(query: string, text: string, keywords: string[] = []): Match | null {
-  const q = query.trim().toLowerCase();
+  const q = query.trim().toLowerCase().replace(/\s+/g, ' ');
   if (!q) return { score: 0, ranges: [] };
-  const label = matchText(q, text.toLowerCase());
-  let keyword: number | null = null;
+  const lower = text.toLowerCase();
+  const words = q.split(' ');
+  const label = words.length > 1 ? tokens(words, lower) : matchText(q, lower);
+  let keyword: { score: number; word: string } | null = null;
   for (const word of keywords) {
     // Keywords match exactly only: a typo on a hidden word would surface rows with nothing visibly matched.
     const m = exact(q, word.toLowerCase());
-    if (m && (keyword === null || m.score > keyword)) keyword = m.score;
+    if (m && (keyword === null || m.score > keyword.score)) keyword = { score: m.score, word };
   }
-  const fromKeyword = keyword === null ? null : keyword * KEYWORD_FACTOR;
+  const fromKeyword = keyword === null ? null : keyword.score * KEYWORD_FACTOR;
   if (label && (fromKeyword === null || label.score >= fromKeyword)) return label;
-  if (fromKeyword !== null) return { score: fromKeyword, ranges: label?.ranges ?? [] };
+  if (keyword && fromKeyword !== null) return { score: fromKeyword, ranges: [], via: keyword.word };
   return null;
 }
 
@@ -158,8 +192,8 @@ export function rank(items: PaletteItem[], query: string, recent: string[] = [])
     const m = score(query, item.label, item.keywords);
     if (!m) continue;
     const seen = recent.indexOf(item.id);
-    out.push({ item, score: m.score, ranges: m.ranges, order, seen: seen < 0 ? Infinity : seen });
+    out.push({ item, score: m.score, ranges: m.ranges, via: m.via, order, seen: seen < 0 ? Infinity : seen });
   }
   out.sort((a, b) => b.score - a.score || a.seen - b.seen || a.order - b.order);
-  return out.map(({ item, score: s, ranges }) => ({ item, score: s, ranges }));
+  return out.map(({ item, score: s, ranges, via }) => ({ item, score: s, ranges, via }));
 }

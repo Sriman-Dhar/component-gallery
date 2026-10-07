@@ -3,7 +3,7 @@ import { useLayoutEffect, useState, type RefObject } from 'react';
 /** Below this overlay width the panel becomes a full-width top sheet. Measured on the overlay, not the window, so the stage's 375 frame gets the sheet on a wide screen. */
 export const SHEET_BELOW = 640;
 
-function coarsePointer(): boolean {
+export function coarsePointer(): boolean {
   return typeof window !== 'undefined' && typeof window.matchMedia === 'function' && window.matchMedia('(pointer: coarse)').matches;
 }
 

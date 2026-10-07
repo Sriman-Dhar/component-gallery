@@ -4,6 +4,12 @@ import type { PaletteGroup, PaletteItem } from './types';
 
 /** What the no-match state offers instead of a dead end. */
 const TRY = ['dome', 'log', 'weather'];
+/** The no-match line echoes at most this many characters of the query. */
+const ECHO_MAX = 48;
+
+function echo(query: string): string {
+  return query.length > ECHO_MAX ? `${query.slice(0, ECHO_MAX)}…` : query;
+}
 
 interface Props {
   listboxId: string;
@@ -37,7 +43,7 @@ export default function PaletteResults(props: Props) {
           ref={props.light}
           aria-hidden="true"
           className={`pointer-events-none invisible absolute inset-x-0 top-0 rounded-[8px] bg-[rgb(var(--pal-light)/var(--pal-light-alpha))] opacity-0 will-change-transform ${
-            compact ? 'h-12' : 'h-11'
+            compact ? 'h-14' : 'h-11'
           }`}
         >
           <span className="absolute inset-y-2 left-0 w-[2px] rounded-full bg-[rgb(var(--pal-edge))]" />
@@ -70,9 +76,10 @@ export default function PaletteResults(props: Props) {
           })}
         </div>
         {empty && query.trim() ? (
-          <div className="flex flex-col gap-3 px-3 py-8 text-[14px] leading-5">
-            <p className="text-[rgb(var(--pal-ink))]">
-              Nothing matches <span className="font-semibold">{query.trim()}</span>.
+          <div className="flex min-w-0 flex-col gap-3 px-3 py-8 text-[14px] leading-5">
+            {/* A pasted id or URL wraps inside the list and is cut after ECHO_MAX characters, never past the pane. */}
+            <p className="min-w-0 text-[rgb(var(--pal-ink))] [overflow-wrap:anywhere]">
+              Nothing matches <span className="font-semibold">{echo(query.trim())}</span>.
             </p>
             <p className="flex flex-wrap items-center gap-2 text-[rgb(var(--pal-ink-2))]">
               Try
@@ -91,7 +98,8 @@ export default function PaletteResults(props: Props) {
           </div>
         ) : null}
         {total > shown ? (
-          <p className="px-3 pb-2 pt-3 font-mono text-[12px] leading-4 text-[rgb(var(--pal-ink-2))]">
+          // Pinned to the foot of the list, so the cue is on screen wherever the list is scrolled.
+          <p data-more="" className="sticky bottom-0 z-[2] -mx-2 border-t border-[rgb(var(--pal-line))] bg-[rgb(var(--pal-surface))] px-5 py-2.5 font-mono text-[12px] leading-4 text-[rgb(var(--pal-ink-2))]">
             Showing {shown} of {total.toLocaleString('en-US')}. Keep typing to narrow.
           </p>
         ) : null}

@@ -18,6 +18,8 @@ interface Options {
 const BRING_INTO_VIEW_TOP = 96;
 /** A scoped palette needs this much of its container on screen (the panel's full height), or the open scrolls it into view. */
 const MIN_VISIBLE = 560;
+/** A container top above this line sits under a sticky site header (64px): the open scrolls it down into view. */
+const CLEAR_TOP = 72;
 
 function isHotkey(event: KeyboardEvent): boolean {
   return (event.metaKey || event.ctrlKey) && !event.altKey && !event.shiftKey && (event.key === 'k' || event.key === 'K' || event.code === 'KeyK');
@@ -83,7 +85,7 @@ export function useCommandPalette({ hotkey, staticOpen, open, onOpenChange, cont
       // A hotkey can fire with the stage scrolled away; bring its top into view (close scrolls back exactly).
       const top = container.getBoundingClientRect().top;
       const need = Math.min(container.clientHeight, MIN_VISIBLE);
-      if (top < 0 || top + need > window.innerHeight) window.scrollBy({ top: top - BRING_INTO_VIEW_TOP, behavior: 'instant' });
+      if (top < CLEAR_TOP || top + need > window.innerHeight) window.scrollBy({ top: top - BRING_INTO_VIEW_TOP, behavior: 'instant' });
     }
     const gutter = window.innerWidth - html.clientWidth;
     html.style.overflow = 'hidden';

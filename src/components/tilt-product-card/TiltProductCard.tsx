@@ -50,10 +50,11 @@ function modelOf(name: string): string | null {
 }
 
 /**
- * Armillary Vitrine: a product card that is a glass display case. The case tilts toward a fine pointer in real
- * perspective; inside it a desk armillary built from CSS 3D planes shows its depth, its rings breathe apart along Z,
- * an amber glare follows the pointer across the glass and a cool rim lights the far edge. On touch and under reduced
- * motion it holds a composed still. Name, finish, price, Save and Add to bag sit flat on the front plane.
+ * Armillary Vitrine: a product card that is a glass display case. Only the case tilts toward a fine pointer, in real
+ * perspective, so you look around the object while the name, price and controls stay flat and still; inside it a
+ * desk armillary of thick lit CSS 3D rings shows its depth, the rings slide apart along Z and their specular arcs
+ * swing with the turn, an amber hotspot and a streak cross the glass and a cool rim lights the far edge. On touch it
+ * holds still with a slow ring sway; under reduced motion it is a composed still.
  */
 export default function TiltProductCard({
   name = 'Armilla No. 3',
@@ -86,9 +87,11 @@ export default function TiltProductCard({
   const tilt = useRef<HTMLDivElement>(null);
   const glare = useRef<HTMLDivElement>(null);
   const rim = useRef<HTMLDivElement>(null);
+  const streak = useRef<HTMLDivElement>(null);
   const core = useRef<HTMLDivElement>(null);
   const rings = useRef<(HTMLDivElement | null)[]>([]);
-  const { flare } = useTilt({ root, tilt, glare, rim, core, rings }, { maxTilt: clampTilt(maxTilt), still });
+  const specs = useRef<(HTMLDivElement | null)[]>([]);
+  const { flare } = useTilt({ root, tilt, glare, rim, streak, core, rings, specs }, { maxTilt: clampTilt(maxTilt), still });
 
   const pickFinish = (id: string) => {
     if (finish === undefined) setOwnFinish(id);
@@ -103,30 +106,37 @@ export default function TiltProductCard({
     <article
       ref={root}
       aria-labelledby={nameId}
-      style={{ perspective: PERSPECTIVE, perspectiveOrigin: `50% ${VITRINE.inset + VITRINE.height / 2}px` }}
       className={`${CARD_THEME} relative w-full min-w-[280px] max-w-[380px] font-sans text-[rgb(var(--tc-ink))] ${className}`}
     >
       <div
-        ref={tilt}
-        data-tilt=""
         style={{ boxShadow: CARD_SHADOW }}
-        className="relative rounded-tile border border-[rgb(var(--tc-line))] bg-[rgb(var(--tc-surface))] p-2 will-change-transform [transform-style:preserve-3d]"
+        className="relative rounded-tile border border-[rgb(var(--tc-line))] bg-[rgb(var(--tc-surface))] p-2"
       >
-        <div
-          style={{ height: VITRINE.height, background: VITRINE_BACK, boxShadow: VITRINE_INNER }}
-          className="relative rounded-control [transform-style:preserve-3d]"
-        >
-          <ArmillaryObject finish={spec} rings={rings} core={core} />
-          <CardLight glare={glare} rim={rim} />
-          <p data-vitrine-description="" className="sr-only">
-            {describeFinish(spec.label)}
-          </p>
+        {/* The case's mount: perspective from the case's own centre, so the forward glass lands exactly on it. */}
+        <div style={{ perspective: PERSPECTIVE, perspectiveOrigin: '50% 50%' }}>
+          <div
+            ref={tilt}
+            data-tilt=""
+            style={{ height: VITRINE.height, background: VITRINE_BACK, boxShadow: VITRINE_INNER }}
+            className="relative rounded-control will-change-transform [transform-style:preserve-3d]"
+          >
+            <ArmillaryObject finish={spec} rings={rings} specs={specs} core={core} dim={soldOut} />
+            <CardLight glare={glare} rim={rim} streak={streak} />
+            <p data-vitrine-description="" className="sr-only">
+              {describeFinish(spec.label)}
+            </p>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 px-3 pb-3 pt-4 [backface-visibility:hidden]">
+        {/* The text block sits flat on the card and never takes a transform: only the case above it turns. */}
+        <div data-card-info="" className="flex flex-col gap-4 px-3 pb-3 pt-4">
           <div className="flex flex-col gap-0.5">
-            <p className="font-mono text-[12px] uppercase leading-4 tracking-[0.12em] text-[rgb(var(--tc-ink-2))]">
-              {maker}
-              {model ? ` · ${model}` : ''}
+            <p className="flex items-baseline justify-between gap-3 font-mono text-[12px] uppercase leading-4 tracking-[0.12em] text-[rgb(var(--tc-ink-2))]">
+              <span className="min-w-0 truncate">
+                {maker}
+                {model ? ` · ${model}` : ''}
+              </span>
+              {/* A quiet trace of what is already in the bag, so a finished add never leaves the card unchanged. */}
+              {bagCount ? <span className="shrink-0 tabular-nums text-[rgb(var(--tc-ink))]">{bagCount} in bag</span> : null}
             </p>
             <h2 id={nameId} className="font-display text-[22px] font-semibold leading-[1.15] tracking-[-0.01em] sm:text-[26px]">
               <a

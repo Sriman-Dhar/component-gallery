@@ -140,7 +140,7 @@ describe('command palette component', () => {
   });
 
   it('registers no hotkey when static (the gallery tile)', () => {
-    render(<CommandPalette items={items} groupOrder={['Targets', 'Actions', 'Go to', 'Help']} hotkey={false} staticOpen initialQuery="dom" recentKey="test:recent-e" />);
+    render(<CommandPalette items={items} groupOrder={['Targets', 'Actions', 'Go to', 'Help']} hotkey={false} staticOpen initialQuery="dome" recentKey="test:recent-e" />);
     const before = screen.getAllByRole('dialog').length;
     fireEvent.keyDown(window, { key: 'k', metaKey: true });
     expect(screen.getAllByRole('dialog')).toHaveLength(before);

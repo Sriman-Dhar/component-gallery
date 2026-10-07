@@ -31,7 +31,6 @@ const MIST_0 = p('mist-0', '255 255 255');
 const MIST_250 = p('mist-250', '217 217 225');
 const MIST_400 = p('mist-400', '156 156 171');
 const INK_600 = p('ink-600', '93 93 107');
-const INK_850 = p('ink-850', '38 38 46');
 const INK_950 = p('ink-950', '11 11 14');
 const INK_990 = p('ink-990', '18 18 22');
 
@@ -46,14 +45,16 @@ export const FINISH_SPECS: FinishSpec[] = [
   {
     id: 'graphite',
     label: 'Graphite',
-    dark: { hi: MIST_400, mid: INK_600, lo: INK_850, core: AMBER_500 },
+    // Dark: the rim is lifted a step (mist 400 body over an ink 600 shade), so graphite keeps its shape on the near black case.
+    dark: { hi: MIST_250, mid: MIST_400, lo: INK_600, core: AMBER_500 },
     light: { hi: INK_600, mid: INK_990, lo: INK_950, core: AMBER_500 },
   },
   {
     id: 'frost',
     label: 'Frost',
     dark: { hi: MIST_0, mid: MIST_250, lo: RIM_300, core: RIM_300 },
-    light: { hi: RIM_300, mid: RIM_600, lo: INK_600, core: RIM_600 },
+    // Light: frost stays near white (a white face over a cool shade), so the swatch matches its name on both stages.
+    light: { hi: MIST_0, mid: MIST_250, lo: RIM_600, core: RIM_600 },
   },
 ];
 

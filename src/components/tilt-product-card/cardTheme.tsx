@@ -11,7 +11,7 @@ const LIGHT = [
   '[--tc-inner:var(--p-ink-990,18_18_22)] [--tc-inner-alpha:0.09]',
   '[--tc-plinth-top:var(--p-mist-150,236_236_241)] [--tc-plinth-front:var(--p-mist-250,217_217_225)] [--tc-plinth-lip:var(--p-mist-0,255_255_255)]',
   // Light glare: a white highlight with an amber 700 tint where it falls off.
-  '[--tc-glare:var(--p-mist-0,255_255_255)] [--tc-glare-alpha:0.9] [--tc-glare-edge:var(--p-amber-700,173_74_5)] [--tc-glare-edge-alpha:0.1]',
+  '[--tc-glare:var(--p-mist-0,255_255_255)] [--tc-glare-alpha:0.9] [--tc-glare-edge:var(--p-amber-700,173_74_5)] [--tc-glare-edge-alpha:0.14]',
   '[--tc-rim:var(--p-rim-600,74_102_168)]',
   '[--tc-shadow:var(--p-ink-990,18_18_22)] [--tc-shadow-alpha:0.14]',
 ];
@@ -25,8 +25,8 @@ const DARK = [
   '[[data-stage-theme=dark]_&]:[--tc-back-1:var(--p-ink-900,26_26_33)] [[data-stage-theme=dark]_&]:[--tc-back-2:var(--p-ink-950,11_11_14)] [[data-stage-theme=dark]_&]:[--tc-back-glow-alpha:0.12]',
   '[[data-stage-theme=dark]_&]:[--tc-inner:var(--p-ink-950,11_11_14)] [[data-stage-theme=dark]_&]:[--tc-inner-alpha:0.6]',
   '[[data-stage-theme=dark]_&]:[--tc-plinth-top:var(--p-ink-850,38_38_46)] [[data-stage-theme=dark]_&]:[--tc-plinth-front:var(--p-ink-900,26_26_33)] [[data-stage-theme=dark]_&]:[--tc-plinth-lip:var(--p-ink-600,93_93_107)]',
-  // Dark glare: amber at about 0.22 alpha.
-  '[[data-stage-theme=dark]_&]:[--tc-glare:var(--p-amber-200,255_195_138)] [[data-stage-theme=dark]_&]:[--tc-glare-alpha:0.22] [[data-stage-theme=dark]_&]:[--tc-glare-edge:var(--p-amber-500,255_138_42)] [[data-stage-theme=dark]_&]:[--tc-glare-edge-alpha:0.08]',
+  // Dark glare: amber at 0.36 alpha in a tight core, so the hotspot under the pointer reads on the near black case.
+  '[[data-stage-theme=dark]_&]:[--tc-glare:var(--p-amber-200,255_195_138)] [[data-stage-theme=dark]_&]:[--tc-glare-alpha:0.36] [[data-stage-theme=dark]_&]:[--tc-glare-edge:var(--p-amber-500,255_138_42)] [[data-stage-theme=dark]_&]:[--tc-glare-edge-alpha:0.08]',
   '[[data-stage-theme=dark]_&]:[--tc-rim:var(--p-rim-300,124_147_201)]',
   '[[data-stage-theme=dark]_&]:[--tc-shadow:var(--p-ink-950,11_11_14)] [[data-stage-theme=dark]_&]:[--tc-shadow-alpha:0.7]',
 ];

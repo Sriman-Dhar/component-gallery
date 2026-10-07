@@ -1,10 +1,12 @@
-import { useMemo, useRef } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import PaletteDialog from './PaletteDialog';
 import PaletteTrigger from './PaletteTrigger';
 import { createRecentStore } from './recent';
 import type { PaletteItem } from './types';
 import { useCommandPalette } from './useCommandPalette';
+import { useItemShortcuts } from './useItemShortcuts';
+import { coarsePointer } from './usePaletteLayout';
 
 export interface CommandPaletteProps {
   items: PaletteItem[];
@@ -20,8 +22,12 @@ export interface CommandPaletteProps {
   recentKey?: string;
   /** Default 5. */
   maxRecent?: number;
-  /** Where the overlay mounts. Default document.body; the demo passes its stage frame so the width switcher frames it. */
+  /** Where the overlay mounts. Default document.body; the demo passes its stage frame so the width switcher frames it. A coarse pointer always mounts on document.body, as a full-width sheet. */
   container?: HTMLElement | null;
+  /** Viewport px a body mounted overlay starts below (a sticky site header), so the touch sheet sits under it. Default 0. */
+  sheetTop?: number;
+  /** Run the items' keycap shortcuts while the palette is closed. Default true (needs `hotkey`). */
+  shortcuts?: boolean;
   /** Controlled open state. */
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -47,6 +53,8 @@ export default function CommandPalette({
   recentKey = 'command-palette:recent',
   maxRecent = 5,
   container = null,
+  sheetTop = 0,
+  shortcuts = true,
   open,
   onOpenChange,
   staticOpen = false,
@@ -57,8 +65,15 @@ export default function CommandPalette({
   const input = useRef<HTMLInputElement>(null);
   const overlay = useRef<HTMLDivElement>(null);
   const store = useMemo(() => createRecentStore(recentKey, maxRecent), [recentKey, maxRecent]);
-  const palette = useCommandPalette({ hotkey, staticOpen, open, onOpenChange, container, trigger, input, overlay });
+  // Touch gets the true sheet: full viewport width under the site header, never a card inset in a stage frame.
+  const [coarse] = useState(coarsePointer);
+  const host = coarse ? null : container;
+  const palette = useCommandPalette({ hotkey, staticOpen, open, onOpenChange, container: host, trigger, input, overlay });
   const shown = palette.isOpen || palette.closing;
+  useItemShortcuts(items, shortcuts && hotkey && !staticOpen, palette.isOpen, (item) => {
+    store.push(item.id);
+    item.run();
+  });
 
   const dialog = shown ? (
     <PaletteDialog
@@ -70,9 +85,10 @@ export default function CommandPalette({
       staticOpen={staticOpen}
       closing={palette.closing}
       source={palette.source.current}
-      theme={container || staticOpen ? undefined : (trigger.current?.closest<HTMLElement>('[data-stage-theme]')?.dataset.stageTheme ?? undefined)}
-      fixed={!container && !staticOpen}
-      hostWidth={staticOpen ? 0 : (container?.clientWidth ?? window.innerWidth)}
+      theme={host || staticOpen ? undefined : (trigger.current?.closest<HTMLElement>('[data-stage-theme]')?.dataset.stageTheme ?? undefined)}
+      fixed={!host && !staticOpen}
+      top={sheetTop}
+      hostWidth={staticOpen ? 0 : (host?.clientWidth ?? window.innerWidth)}
       trigger={trigger}
       input={input}
       overlay={overlay}
@@ -96,7 +112,7 @@ export default function CommandPalette({
         onOpen={() => palette.openPalette('trigger')}
         className={className}
       />
-      {dialog ? createPortal(dialog, container ?? document.body) : null}
+      {dialog ? createPortal(dialog, host ?? document.body) : null}
     </>
   );
 }

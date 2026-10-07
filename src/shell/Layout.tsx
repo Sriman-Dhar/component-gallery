@@ -43,14 +43,14 @@ export default function Layout() {
         <main className="pb-20 pt-8 sm:pt-12">
           <RouteTransition />
         </main>
-        <footer data-world-veil className="flex flex-wrap items-baseline justify-between gap-3 border-t border-line py-6 text-small text-text-2">
+        <footer data-world-veil className="flex flex-wrap items-center justify-between gap-3 border-t border-line py-6 text-small text-text-2">
           <span>
             {PACE_LINE} {formatDate(WINDOW_START, { year: false })} to {formatDate(WINDOW_END)}.
           </span>
           <RepoLink
             label="Source"
             pending="Source coming soon"
-            className="text-text underline decoration-line underline-offset-4 hover:decoration-accent"
+            className="inline-flex min-h-11 min-w-11 items-center justify-center text-text underline decoration-line underline-offset-4 hover:decoration-accent"
           />
         </footer>
       </div>

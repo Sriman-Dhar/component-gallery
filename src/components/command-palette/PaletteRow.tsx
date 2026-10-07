@@ -42,7 +42,11 @@ interface Props {
   onRun: (item: PaletteItem) => void;
 }
 
-/** One option. It never takes focus (focus stays in the input); the light behind it marks the active one. */
+/**
+ * One option. It never takes focus (focus stays in the input); the light behind it marks the active one. A keyword
+ * hit names its keyword beside the label; a command that opens a page ends in a chevron. On touch (compact) the
+ * hint shows as a second line, since there is no preview pane there.
+ */
 export default function PaletteRow({ row, id, active, compact, onHover, onRun }: Props) {
   const { item } = row;
   return (
@@ -56,7 +60,7 @@ export default function PaletteRow({ row, id, active, compact, onHover, onRun }:
       }}
       onClick={() => onRun(item)}
       className={`relative z-[1] flex cursor-pointer select-none items-center gap-3 rounded-[8px] px-3 text-[14px] leading-5 ${
-        compact ? 'h-12' : 'h-11'
+        compact ? 'h-14' : 'h-11'
       }`}
     >
       <span
@@ -66,11 +70,25 @@ export default function PaletteRow({ row, id, active, compact, onHover, onRun }:
       >
         <PaletteIcon kind={item.icon} />
       </span>
-      <span className="min-w-0 flex-1 truncate text-[rgb(var(--pal-ink))]">
-        <Highlight text={item.label} ranges={row.ranges} />
-        {item.hint ? <span className="sr-only">. {item.hint}</span> : null}
+      <span className="flex min-w-0 flex-1 flex-col">
+        <span className="truncate text-[rgb(var(--pal-ink))]">
+          <Highlight text={item.label} ranges={row.ranges} />
+          {row.via ? (
+            <span className="ml-2 font-mono text-[12px] text-[rgb(var(--pal-ink-2))]">
+              <span className="sr-only">, matches </span>
+              <mark className="bg-transparent font-semibold text-[rgb(var(--pal-heat))]">{row.via}</mark>
+            </span>
+          ) : null}
+          {item.hint && !compact ? <span className="sr-only">. {item.hint}</span> : null}
+        </span>
+        {item.hint && compact ? <span className="truncate text-[12px] leading-4 text-[rgb(var(--pal-ink-2))]">{item.hint}</span> : null}
       </span>
       {item.shortcut && !compact ? <Keycaps keys={item.shortcut} /> : null}
+      {item.page ? (
+        <svg aria-hidden="true" viewBox="0 0 12 12" className="h-3 w-3 shrink-0 text-[rgb(var(--pal-ink-2))]" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+          <path d="M4.5 2.5 8 6l-3.5 3.5" />
+        </svg>
+      ) : null}
     </div>
   );
 }

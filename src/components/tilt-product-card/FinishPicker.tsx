@@ -10,7 +10,8 @@ interface Props {
 /**
  * Finish: a native radio group. Tab enters once, arrow keys move the selection (browser behaviour). Each swatch is
  * a 28px metal disc in a 44px hit area; the chosen one gets a ring and a check glyph, and its name is written out
- * beside the label, so colour never carries the choice alone.
+ * beside the label, so colour never carries the choice alone. The focus ring is ink, not amber, so it never melts into
+ * the brass swatch's own edge.
  */
 export default function FinishPicker({ finishes, value, onChange }: Props) {
   const name = useId();
@@ -46,7 +47,7 @@ export default function FinishPicker({ finishes, value, onChange }: Props) {
               <span className="sr-only">{finish.label}</span>
               <span
                 aria-hidden="true"
-                className={`pointer-events-none grid h-7 w-7 place-items-center rounded-full shadow-[inset_0_1px_0_rgb(var(--f-hi)/0.9),inset_0_-2px_3px_rgb(var(--f-lo)/0.7),0_0_0_1px_rgb(var(--tc-line))] [background:radial-gradient(circle_at_35%_30%,rgb(var(--f-hi)),rgb(var(--f-mid))_55%,rgb(var(--f-lo)))] peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-[5px] peer-focus-visible:outline-[rgb(var(--tc-focus))] ${
+                className={`pointer-events-none grid h-7 w-7 place-items-center rounded-full shadow-[inset_0_1px_0_rgb(var(--f-hi)/0.9),inset_0_-2px_3px_rgb(var(--f-lo)/0.7),0_0_0_1px_rgb(var(--tc-line))] [background:radial-gradient(circle_at_35%_30%,rgb(var(--f-hi)),rgb(var(--f-mid))_55%,rgb(var(--f-lo)))] peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-[5px] peer-focus-visible:outline-[rgb(var(--tc-ink))] ${
                   checked ? 'ring-2 ring-[rgb(var(--tc-ink))] ring-offset-2 ring-offset-[rgb(var(--tc-surface))]' : 'group-hover:scale-[1.08] transition-transform duration-150 motion-reduce:transition-none'
                 }`}
               >

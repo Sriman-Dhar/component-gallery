@@ -11,6 +11,8 @@ export interface PaletteItem {
   /** Rendered as keycaps, e.g. ['G', 'L']. */
   shortcut?: string[];
   icon?: 'target' | 'action' | 'screen' | 'help';
+  /** A sub page: choosing the item opens these commands (breadcrumb pill, Backspace goes back) instead of running. */
+  page?: PaletteItem[];
   run: () => void;
 }
 
@@ -21,6 +23,8 @@ export type MatchRange = [number, number];
 export interface PaletteRow {
   item: PaletteItem;
   ranges: MatchRange[];
+  /** The keyword that matched when the label did not, shown beside it. */
+  via?: string;
   /** Index in the flattened, visible order (what arrow keys walk). */
   index: number;
 }

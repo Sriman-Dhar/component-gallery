@@ -25,14 +25,15 @@ const EDGE_ONLY: CSSProperties = { maskImage: RIM_RAMPS, WebkitMaskImage: RIM_RA
 interface Props {
   glare: RefObject<HTMLDivElement>;
   rim: RefObject<HTMLDivElement>;
+  streak: RefObject<HTMLDivElement>;
 }
 
 /**
- * The two lights, both pre-painted gradients that only ever move by transform (PERF.md: the cursor light fix): the
- * amber glare on the forward glass, resting upper left where the site's key light sits, and the cool rim on the case
- * edge, resting lower right. No blend modes, no filters.
+ * The three lights, all pre-painted gradients that only ever move by transform (PERF.md: the cursor light fix): the
+ * amber glare hotspot on the forward glass that follows the pointer, a thin specular streak that slides across the
+ * glass against the tilt, and the cool rim on the case edge. No blend modes, no filters.
  */
-export default function CardLight({ glare, rim }: Props) {
+export default function CardLight({ glare, rim, streak }: Props) {
   return (
     <>
       <div aria-hidden="true" style={EDGE_ONLY} className="pointer-events-none absolute inset-0 overflow-hidden rounded-control">
@@ -49,8 +50,15 @@ export default function CardLight({ glare, rim }: Props) {
         <div style={EDGE_FADE} className="absolute inset-0">
           <div
             ref={glare}
-            className="absolute left-[24%] top-[22%] -ml-[150px] -mt-[150px] h-[300px] w-[300px] rounded-full will-change-transform [background:radial-gradient(closest-side,rgb(var(--tc-glare)/var(--tc-glare-alpha)),rgb(var(--tc-glare-edge)/var(--tc-glare-edge-alpha))_48%,transparent)]"
+            className="absolute left-[24%] top-[22%] -ml-[110px] -mt-[110px] h-[220px] w-[220px] rounded-full will-change-transform [background:radial-gradient(closest-side,rgb(var(--tc-glare)/var(--tc-glare-alpha)),rgb(var(--tc-glare)/calc(var(--tc-glare-alpha)*0.45))_22%,rgb(var(--tc-glare-edge)/var(--tc-glare-edge-alpha))_52%,transparent)]"
           />
+          {/* The streak: a fixed lean on the outer box, the slide (x) on the inner one, so GSAP owns one transform. */}
+          <div className="absolute -inset-y-1/4 left-1/2 w-[34%] -translate-x-1/2 rotate-[22deg]">
+            <div
+              ref={streak}
+              className="h-full w-full will-change-transform [background:linear-gradient(90deg,transparent,rgb(var(--tc-glare)/calc(var(--tc-glare-alpha)*0.32))_44%,rgb(var(--tc-glare)/calc(var(--tc-glare-alpha)*0.5))_50%,rgb(var(--tc-glare)/calc(var(--tc-glare-alpha)*0.32))_56%,transparent)]"
+            />
+          </div>
         </div>
       </div>
     </>

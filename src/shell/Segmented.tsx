@@ -17,8 +17,8 @@ interface Props<T extends string> {
   compact?: boolean;
 }
 
-/** 44px tall on touch, 32px with a fine pointer from sm up. */
-const BUTTON = `inline-flex h-11 items-center gap-1.5 rounded-control px-3 font-mono text-meta transition-colors duration-fast sm:h-8 [@media(pointer:coarse)]:h-11 ${FOCUS_RING}`;
+/** 44px tall on touch, 32px with a fine pointer from sm up; never under 44px wide (an icon-only option on a phone). */
+const BUTTON = `inline-flex h-11 min-w-11 items-center justify-center gap-1.5 rounded-control px-3 font-mono text-meta transition-colors duration-fast sm:h-8 [@media(pointer:coarse)]:h-11 ${FOCUS_RING}`;
 const ON = 'bg-surface-2 text-text shadow-[inset_0_0_0_1px_rgb(var(--color-accent)/0.5)]';
 const OFF = 'text-text-2 hover:text-text';
 
